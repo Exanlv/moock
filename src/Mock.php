@@ -150,7 +150,20 @@ class Mock
     private static function getParameterSignature(ReflectionParameter $parameter): string
     {
         $type = $parameter->getType();
-        return self::getTypeSignature($type) . ' $' . $parameter->getName();
+
+        $signature = self::getTypeSignature($type) . ' $' . $parameter->getName();
+
+        if ($parameter->isDefaultValueAvailable()) {
+            $defaultValue = $parameter->getDefaultValue();
+
+            if (is_string($defaultValue)) {
+                $defaultValue = '\'' . str_replace('\'', '\\\'', $defaultValue) . '\'';
+            }
+
+            $signature .= ' = ' . ($defaultValue ?? 'null');
+        }
+
+        return $signature;
     }
 
     private static function getTypeSignature(ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $type): string
