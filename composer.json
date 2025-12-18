@@ -1,0 +1,15 @@
+{
+    "name": "exan/moock",
+    "description": "Modern class mocking package",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Exan\\Moock\\": "src/"
+        }
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^7.4",
+        "phpunit/phpunit": "^11.5"
+    }
+}
