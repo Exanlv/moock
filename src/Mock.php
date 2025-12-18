@@ -156,14 +156,31 @@ class Mock
         if ($parameter->isDefaultValueAvailable()) {
             $defaultValue = $parameter->getDefaultValue();
 
-            if (is_string($defaultValue)) {
-                $defaultValue = '\'' . str_replace('\'', '\\\'', $defaultValue) . '\'';
-            }
-
-            $signature .= ' = ' . ($defaultValue ?? 'null');
+            $signature .= ' = ' . self::formatValue($defaultValue);
         }
 
         return $signature;
+    }
+
+    private static function formatValue(mixed $value): string
+    {
+        if (is_string($value)) {
+            $value = '\'' . str_replace('\'', '\\\'', $value) . '\'';
+        }
+
+        if (is_array($value)) {
+            $formattedArray = '[';
+
+            foreach ($value as $key => $x) {
+                $formattedArray .= self::formatValue($key) . ' => ' . self::formatValue($x) . ',';
+            }
+
+            return $formattedArray . ']';
+        }
+
+        return is_null($value)
+            ? 'null'
+            : (string) $value;
     }
 
     private static function getTypeSignature(ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $type): string
