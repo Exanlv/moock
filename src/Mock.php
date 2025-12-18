@@ -17,13 +17,58 @@ use RuntimeException;
 class Mock
 {
     /**
+     * Returns a Mock for a singular given interface
+     *
      * @template T
-     * @param class-string<T> $class
+     * @param class-string<T> $interface
      * @return T&MockedClassInterface
      */
     public static function interface($interface): mixed
     {
-        return null;
+        return self::interfaces($interface);
+    }
+
+    /**
+     * Returns a singular Mock for all given interfaces.
+     *
+     * Manually type the result with @var for proper IDE support.
+     *
+     * @param class-string $interfaces
+     */
+    public static function interfaces(...$interfaces): mixed
+    {
+        $replacements = array_map(function (string $interface) {
+            if (!interface_exists($interface)) {
+                throw new RuntimeException('Invalid interface');
+            }
+
+            $ref = new ReflectionClass($interface);
+
+            return self::getMethodReplacements($ref);
+        }, $interfaces);
+
+        $interfaces[] = MockedClassInterface::class;
+
+        $interfaces = array_map(fn (string $interface) => '\\' . $interface, $interfaces);
+        $implementedInterfaces = implode(', ', $interfaces);
+
+        $mockedClassTrait = MockedClass::class;
+
+        $replacement = implode(PHP_EOL, $replacements);
+
+        $creator = <<<PHP
+            return new class implements $implementedInterfaces {
+                use \\$mockedClassTrait;
+
+                public function __construct() { }
+
+                $replacement
+            };
+        PHP;
+
+        $instance = eval($creator);
+
+        return $instance;
     }
 
     /**
@@ -39,6 +84,28 @@ class Mock
 
         $ref = new ReflectionClass($class);
 
+        $replacement = self::getMethodReplacements($ref);
+
+        $mockedClassInterface = MockedClassInterface::class;
+        $mockedClassTrait = MockedClass::class;
+
+        $creator = <<<PHP
+            return new class extends $class implements \\$mockedClassInterface {
+                use \\$mockedClassTrait;
+
+                public function __construct() { }
+
+                $replacement
+            };
+        PHP;
+
+        $instance = eval($creator);
+
+        return $instance;
+    }
+
+    private static function getMethodReplacements(ReflectionClass $ref): string
+    {
         $methodsToReplace = array_filter(
             $ref->getMethods(ReflectionMethod::IS_PUBLIC),
             fn (ReflectionMethod $method) => !in_array($method->name, ['__call', '__construct']),
@@ -63,24 +130,7 @@ class Mock
             $methodsToReplace, $signatures
         );
 
-        $replacement = implode(PHP_EOL, $methodReplacements);
-
-        $mockedClassInterface = MockedClassInterface::class;
-        $mockedClassTrait = MockedClass::class;
-
-        $creator = <<<PHP
-            return new class extends $class implements \\$mockedClassInterface {
-                use \\$mockedClassTrait;
-
-                public function __construct() { }
-
-                $replacement
-            };
-        PHP;
-
-        $instance = eval($creator);
-
-        return $instance;
+        return implode(PHP_EOL, $methodReplacements);
     }
 
     /**

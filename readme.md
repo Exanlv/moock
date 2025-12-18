@@ -1,10 +1,38 @@
 # Moock
-<center>
+<p align="center">
     <img src="moock.png" alt="Moock logo"><br>
     A simple way of mocking objects in PHP
-</center>
+</p>
 
 ## Usage
+
+### Mocking a class
+
+```php
+use Exan\Moock\Mock;
+
+$userService = Mock::class(UserService::class);
+```
+
+### Mocking an interface
+
+```php
+use Exan\Moock\Mock;
+
+$userService = Mock::interface(UserServiceInterface::class);
+```
+
+### Mocking several interfaces
+
+```php
+use Exan\Moock\Mock;
+
+/** @var CreatesUsersInterface&DeletesUsersInterface */
+$userService = Mock::interfaces(
+    CreatesUsersInterface::class,
+    DeletesUsersInterface::class,
+);
+```
 
 ### Replacing a method
 
