@@ -5,14 +5,7 @@ declare(strict_types=1);
 namespace Exan\Moock;
 
 use Closure;
-use ReflectionClass;
 use ReflectionFunction;
-use ReflectionIntersectionType;
-use ReflectionMethod;
-use ReflectionNamedType;
-use ReflectionParameter;
-use ReflectionUnionType;
-use RuntimeException;
 
 class Mock
 {
@@ -37,38 +30,9 @@ class Mock
      */
     public static function interfaces(...$interfaces): mixed
     {
-        $replacements = array_map(function (string $interface) {
-            if (!interface_exists($interface)) {
-                throw new RuntimeException('Invalid interface');
-            }
+        $classBuilder = new MockClassBuilder(null, $interfaces);
 
-            $ref = new ReflectionClass($interface);
-
-            return self::getMethodReplacements($ref);
-        }, $interfaces);
-
-        $interfaces[] = MockedClassInterface::class;
-
-        $interfaces = array_map(fn (string $interface) => '\\' . $interface, $interfaces);
-        $implementedInterfaces = implode(', ', $interfaces);
-
-        $mockedClassTrait = MockedClass::class;
-
-        $replacement = implode(PHP_EOL, $replacements);
-
-        $creator = <<<PHP
-            return new class implements $implementedInterfaces {
-                use \\$mockedClassTrait;
-
-                public function __construct() { }
-
-                $replacement
-            };
-        PHP;
-
-        $instance = eval($creator);
-
-        return $instance;
+        return eval($classBuilder->getCode());
     }
 
     /**
@@ -78,133 +42,9 @@ class Mock
      */
     public static function class($class): mixed
     {
-        if (!class_exists($class)) {
-            throw new RuntimeException('Invalid class');
-        }
+        $classBuilder = new MockClassBuilder($class);
 
-        $ref = new ReflectionClass($class);
-
-        $replacement = self::getMethodReplacements($ref);
-
-        $mockedClassInterface = MockedClassInterface::class;
-        $mockedClassTrait = MockedClass::class;
-
-        $creator = <<<PHP
-            return new class extends $class implements \\$mockedClassInterface {
-                use \\$mockedClassTrait;
-
-                public function __construct() { }
-
-                $replacement
-            };
-        PHP;
-
-        $instance = eval($creator);
-
-        return $instance;
-    }
-
-    private static function getMethodReplacements(ReflectionClass $ref): string
-    {
-        $methodsToReplace = array_filter(
-            $ref->getMethods(ReflectionMethod::IS_PUBLIC),
-            fn (ReflectionMethod $method) => !in_array($method->name, ['__call', '__construct']),
-        );
-
-        $signatures = self::getSignatures($methodsToReplace);
-
-        $methodReplacements = array_map(
-            function (ReflectionMethod $method, string $signature) {
-                $name = $method->name;
-
-                $return = $method->hasReturnType()
-                    ? ': ' . self::getTypeSignature($method->getReturnType())
-                    : '';
-
-                return <<<FUNC
-                    public function $name($signature) $return   {
-                        return \$this->__call('$name', func_get_args());
-                    }
-                FUNC;
-            },
-            $methodsToReplace, $signatures
-        );
-
-        return implode(PHP_EOL, $methodReplacements);
-    }
-
-    /**
-     * @param ReflectionMethod[] $methods
-     *
-     * @return string[]
-     */
-    private static function getSignatures(array $methods): array
-    {
-        return array_map(function (ReflectionMethod $method) {
-            $parameters = $method->getParameters();
-
-            return implode(', ', array_map(self::getParameterSignature(...), $parameters));
-        }, $methods);
-    }
-
-    private static function getParameterSignature(ReflectionParameter $parameter): string
-    {
-        $type = $parameter->getType();
-
-        $signature = self::getTypeSignature($type) . ' $' . $parameter->getName();
-
-        if ($parameter->isDefaultValueAvailable()) {
-            $defaultValue = $parameter->getDefaultValue();
-
-            $signature .= ' = ' . self::formatValue($defaultValue);
-        }
-
-        return $signature;
-    }
-
-    private static function formatValue(mixed $value): string
-    {
-        if (is_string($value)) {
-            $value = '\'' . str_replace('\'', '\\\'', $value) . '\'';
-        }
-
-        if (is_array($value)) {
-            $formattedArray = '[';
-
-            foreach ($value as $key => $x) {
-                $formattedArray .= self::formatValue($key) . ' => ' . self::formatValue($x) . ',';
-            }
-
-            return $formattedArray . ']';
-        }
-
-        return is_null($value)
-            ? 'null'
-            : (string) $value;
-    }
-
-    private static function getTypeSignature(ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $type): string
-    {
-        if ($type === null) {
-            return '';
-        }
-
-        $types = [];
-
-        if ($type instanceof ReflectionNamedType) {
-            $types[] = $type->isBuiltin() ? $type->getName() : '\\' . $type->getName();
-        } else {
-            $types = array_map(
-                fn (ReflectionNamedType $subType) => $subType->isBuiltin() ? $subType->getName() : '\\' . $subType->getName(),
-                $type->getTypes()
-            );
-        }
-
-        if ($type->allowsNull()) {
-            $types[] = 'null';
-        }
-
-        return implode('|', $types);
+        return eval($classBuilder->getCode());
     }
 
     public static function method(Closure $arg)
