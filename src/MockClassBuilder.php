@@ -24,6 +24,7 @@ class MockClassBuilder
     public function getCode(): mixed
     {
         $replacements = [];
+        $inheritedMethods = [];
 
         if ($this->extends !== null) {
             if (!class_exists($this->extends)) {
@@ -32,6 +33,11 @@ class MockClassBuilder
 
             $ref = new ReflectionClass($this->extends);
             $replacements[] = $this->getMethodReplacements($ref);
+
+            $inheritedMethods = array_map(
+                fn (ReflectionMethod $method) => $method->name,
+                $ref->getMethods(ReflectionMethod::IS_PUBLIC)
+            );
         }
 
         foreach ($this->implements as $interface) {
@@ -59,6 +65,7 @@ class MockClassBuilder
 
         $creator .= '{' . PHP_EOL;
         $creator .= 'use \\' . MockedClass::class . ';' . PHP_EOL;
+        $creator .= 'private array $inheritedMethods = ' . $this->formatValue($inheritedMethods) . ';' . PHP_EOL;
         $creator .= 'public function __construct() { }' . PHP_EOL;
 
         $creator .= implode(PHP_EOL, $replacements);
