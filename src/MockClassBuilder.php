@@ -79,7 +79,7 @@ class MockClassBuilder
     {
         $methodsToReplace = array_filter(
             $ref->getMethods(ReflectionMethod::IS_PUBLIC),
-            fn (ReflectionMethod $method) => !in_array($method->name, ['__call', '__construct']),
+            fn (ReflectionMethod $method) => !in_array($method->name, ['__construct']),
         );
 
         $signatures = self::getSignatures($methodsToReplace);
@@ -94,7 +94,7 @@ class MockClassBuilder
 
                 return <<<FUNC
                     public function $name($signature) $return   {
-                        return \$this->__call('$name', func_get_args());
+                        return \$this->__moockFunctionCall('$name', func_get_args());
                     }
                 FUNC;
             },

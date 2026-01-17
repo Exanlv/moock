@@ -53,4 +53,9 @@ class Mock
 
         return new MockMethod($ref);
     }
+
+    public static function partial(MockedClassInterface $mock, mixed $spyOn): void
+    {
+        $mock->__setPartial($spyOn);
+    }
 }

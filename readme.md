@@ -92,6 +92,8 @@ $userService->isValidEmail('::other_value::'); // ...
 
 ### Asserting number of calls
 
+Note: currently does not work for failing/passing tests in PHPUnit, WIP
+
 ```php
 use Exan\Moock\Mock;
 
@@ -115,4 +117,27 @@ Mock::method($userService->isValidEmail(...))
 
 Mock::method($userService->isValidEmail(...))
     ->shouldNotHaveBeenCalledTimes(3);
+
+Mock::method($userService->isValidEmail(...))->calls() // 3
+```
+
+### Force returning a sequence of values
+
+```php
+use Exan\Moock\Mock;
+
+$realUserService = (...);
+$userService = Mock::class(UserService::class);
+
+/**
+ * $realUserService does NOT have to implement any of the mocked interfaces or classes
+ * it can be anything you want. The only requirement is that method names match.
+ */
+Mock::partial($userService, $realUserService);
+
+Mock::method($userService->isValidEmail(...))
+    ->forceReturn(true);
+
+$userService->isValidEmail('::my_test_email::'); // true
+$userService->anyOtherMethod('...'); // calls $realUserService
 ```

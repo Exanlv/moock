@@ -49,7 +49,7 @@ class MockMethod
         });
     }
 
-    private function callsCount(): int
+    public function calls(): int
     {
         return $this->classMock->__getCallCount($this->ref->getName());
     }
@@ -66,8 +66,8 @@ class MockMethod
 
     public function shouldHaveBeenCalledTimes(int $expectedCalls): void
     {
-        $calls = $this->callsCount();
-
+        $calls = $this->calls();
+        
         assert(
             $calls === $expectedCalls,
             sprintf('Method should have been called %d time(s), but was called %d times', $expectedCalls, $calls)
@@ -76,7 +76,7 @@ class MockMethod
 
     public function shouldNotHaveBeenCalledTimes(int $notExpectedCalls): void
     {
-        $calls = $this->callsCount();
+        $calls = $this->calls();
 
         assert(
             $calls !== $notExpectedCalls,

@@ -12,6 +12,8 @@ trait MockedClass
 
     private array $calls = [];
 
+    private mixed $spyOn = null;
+
     public function __replace(string $method, callable $replacement): void
     {
         $this->replacements[$method] = $replacement;
@@ -23,13 +25,27 @@ trait MockedClass
         return $this->calls[$method] ?? 0;
     }
 
-    public function __call($method, $arguments): mixed
+    public function __setPartial(mixed $spyOn): void
     {
-        if (!isset($this->replacements[$method])) {
-            throw new RuntimeException('No replacement provided for `' . $method . '`');
+        $this->spyOn = $spyOn;
+        $this->calls = [];
+    }
+
+    private function __moockFunctionCall($method, $arguments): mixed
+    {
+        if (!key_exists($method, $this->calls)) {
+            $this->calls[$method] = 0;
         }
 
         $this->calls[$method]++;
+
+        if (!isset($this->replacements[$method])) {
+            if ($this->spyOn !== null && method_exists($this->spyOn, $method)) {
+                return $this->spyOn->{$method}(...$arguments);
+            }
+
+            throw new RuntimeException('No replacement provided for `' . $method . '`');
+        }
 
         return $this->replacements[$method](...$arguments);
     }
