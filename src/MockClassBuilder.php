@@ -21,8 +21,7 @@ class MockClassBuilder
         private readonly array $inherits = [],
         private readonly ?string $extends = null,
         private readonly array $implements = [],
-    ) {
-    }
+    ) {}
 
     public function getCode(): mixed
     {
@@ -44,7 +43,7 @@ class MockClassBuilder
 
         $quantifiedImplements = array_map(
             fn ($interface) => '\\' . $interface,
-            $this->implements
+            $this->implements,
         );
 
         $quantifiedImplements[] = '\\' . MockedClassInterface::class;
@@ -70,8 +69,8 @@ class MockClassBuilder
         );
 
         $this->skipMethods = [
-            ...$this->skipMethods, 
-            ...array_map(fn (ReflectionMethod $method) => $method->name, $methodsToReplace)
+            ...$this->skipMethods,
+            ...array_map(fn (ReflectionMethod $method) => $method->name, $methodsToReplace),
         ];
 
         $signatures = self::getSignatures($methodsToReplace);
@@ -90,7 +89,8 @@ class MockClassBuilder
                     }
                 FUNC;
             },
-            $methodsToReplace, $signatures
+            $methodsToReplace,
+            $signatures,
         );
 
         return implode(PHP_EOL, $methodReplacements);
@@ -159,7 +159,7 @@ class MockClassBuilder
         } else {
             $types = array_map(
                 fn (ReflectionNamedType $subType) => $subType->isBuiltin() ? $subType->getName() : '\\' . $subType->getName(),
-                $type->getTypes()
+                $type->getTypes(),
             );
         }
 

@@ -14,7 +14,7 @@ class MockClassTest extends TestCase
     {
         $mock = Mock::class(TestClass::class);
 
-        $this->assertInstanceOf(TestClass::class, $mock);
+        static::assertInstanceOf(TestClass::class, $mock);
     }
 
     public function test_it_can_replace_methods(): void
@@ -24,7 +24,7 @@ class MockClassTest extends TestCase
         Mock::method($mock->myMethod(...))
             ->replace(fn () => '::return value::');
 
-        $this->assertEquals('::return value::', $mock->myMethod());
+        static::assertEquals('::return value::', $mock->myMethod());
     }
 
     public function test_it_keeps_track_of_amount_of_calls(): void
@@ -39,7 +39,7 @@ class MockClassTest extends TestCase
         $mock->myMethod();
         $mock->myMethod();
 
-        $this->assertEquals(4, Mock::method($mock->myMethod(...))->calls());
+        static::assertEquals(4, Mock::method($mock->myMethod(...))->calls());
     }
 
     public function test_method_input_is_passed_to_replacement(): void
@@ -54,12 +54,12 @@ class MockClassTest extends TestCase
                 return [$inputB, $inputA];
             });
 
-        $this->assertEquals(
+        static::assertEquals(
             ['::input b::', '::input a::'],
-            $mock->myOtherMethod('::input a::', '::input b::')
+            $mock->myOtherMethod('::input a::', '::input b::'),
         );
 
-        $this->assertEquals(1, Mock::method($mock->myOtherMethod(...))->calls());
+        static::assertEquals(1, Mock::method($mock->myOtherMethod(...))->calls());
     }
 
     public function test_it_can_partially_mock(): void
@@ -70,7 +70,7 @@ class MockClassTest extends TestCase
          * Note: object being spied on does NOT have to implement any interfaces and such, even
          * if the actual mock object does implement said interfaces.
          */
-        $spyOn = new class {
+        $spyOn = new class () {
             public bool $wasCalled = false;
 
             public function myMethod()
@@ -83,9 +83,9 @@ class MockClassTest extends TestCase
 
         Mock::partial($mock, $spyOn);
 
-        $this->assertEquals('::return value::', $mock->myMethod());
+        static::assertEquals('::return value::', $mock->myMethod());
 
-        $this->assertTrue($spyOn->wasCalled);
+        static::assertTrue($spyOn->wasCalled);
     }
 
     public function test_it_can_overwrite_methods_on_partial_mocks()
@@ -96,7 +96,7 @@ class MockClassTest extends TestCase
          * Note: object being spied on does NOT have to implement any interfaces and such, even
          * if the actual mock object does implement said interfaces.
          */
-        $spyOn = new class {
+        $spyOn = new class () {
             public bool $wasCalled = false;
 
             public function myMethod()
@@ -111,7 +111,7 @@ class MockClassTest extends TestCase
 
         Mock::method($mock->myMethod(...))->replace(fn () => '::other return value::');
 
-        $this->assertEquals('::other return value::', $mock->myMethod());
-        $this->assertFalse($spyOn->wasCalled);
+        static::assertEquals('::other return value::', $mock->myMethod());
+        static::assertFalse($spyOn->wasCalled);
     }
 }

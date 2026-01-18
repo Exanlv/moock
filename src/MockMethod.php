@@ -12,7 +12,7 @@ class MockMethod
     private readonly MockedClassInterface $classMock;
 
     public function __construct(
-        private readonly ReflectionFunction $ref
+        private readonly ReflectionFunction $ref,
     ) {
         $classMock = $this->ref->getClosureThis();
         if (!$classMock instanceof MockedClassInterface) {
@@ -67,10 +67,10 @@ class MockMethod
     public function shouldHaveBeenCalledTimes(int $expectedCalls): void
     {
         $calls = $this->calls();
-        
+
         assert(
             $calls === $expectedCalls,
-            sprintf('Method should have been called %d time(s), but was called %d times', $expectedCalls, $calls)
+            sprintf('Method should have been called %d time(s), but was called %d times', $expectedCalls, $calls),
         );
     }
 
@@ -80,7 +80,7 @@ class MockMethod
 
         assert(
             $calls !== $notExpectedCalls,
-            sprintf('Method should not have been called %d time(s)', $notExpectedCalls)
+            sprintf('Method should not have been called %d time(s)', $notExpectedCalls),
         );
     }
 }
