@@ -12,10 +12,13 @@ use RuntimeException;
 
 class MockClassBuilder
 {
+    private array $skipMethods = ['__construct'];
+
     /**
      * @param string[] $implements
      */
     public function __construct(
+        private readonly array $inherits = [],
         private readonly ?string $extends = null,
         private readonly array $implements = [],
     ) {
@@ -24,25 +27,10 @@ class MockClassBuilder
     public function getCode(): mixed
     {
         $replacements = [];
-        $inheritedMethods = [];
 
-        if ($this->extends !== null) {
-            if (!class_exists($this->extends)) {
-                throw new RuntimeException('Invalid class ' . $this->extends);
-            }
-
-            $ref = new ReflectionClass($this->extends);
-            $replacements[] = $this->getMethodReplacements($ref);
-
-            $inheritedMethods = array_map(
-                fn (ReflectionMethod $method) => $method->name,
-                $ref->getMethods(ReflectionMethod::IS_PUBLIC)
-            );
-        }
-
-        foreach ($this->implements as $interface) {
-            if (!interface_exists($interface)) {
-                throw new RuntimeException('Invalid interface ' . $interface);
+        foreach ($this->inherits as $interface) {
+            if (!interface_exists($interface) && !class_exists($interface)) {
+                throw new RuntimeException('Invalid class or interface ' . $interface);
             }
 
             $ref = new ReflectionClass($interface);
@@ -65,7 +53,6 @@ class MockClassBuilder
 
         $creator .= '{' . PHP_EOL;
         $creator .= 'use \\' . MockedClass::class . ';' . PHP_EOL;
-        $creator .= 'private array $inheritedMethods = ' . $this->formatValue($inheritedMethods) . ';' . PHP_EOL;
         $creator .= 'public function __construct() { }' . PHP_EOL;
 
         $creator .= implode(PHP_EOL, $replacements);
@@ -79,8 +66,13 @@ class MockClassBuilder
     {
         $methodsToReplace = array_filter(
             $ref->getMethods(ReflectionMethod::IS_PUBLIC),
-            fn (ReflectionMethod $method) => !in_array($method->name, ['__construct']),
+            fn (ReflectionMethod $method) => !in_array($method->name, $this->skipMethods),
         );
+
+        $this->skipMethods = [
+            ...$this->skipMethods, 
+            ...array_map(fn (ReflectionMethod $method) => $method->name, $methodsToReplace)
+        ];
 
         $signatures = self::getSignatures($methodsToReplace);
 

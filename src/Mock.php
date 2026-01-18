@@ -16,7 +16,7 @@ class Mock
      * @param class-string<T> $interface
      * @return T&MockedClassInterface
      */
-    public static function interface($interface): mixed
+    public static function interface(string $interface): mixed
     {
         return self::interfaces($interface);
     }
@@ -28,9 +28,9 @@ class Mock
      *
      * @param class-string $interfaces
      */
-    public static function interfaces(...$interfaces): mixed
+    public static function interfaces(string ...$interfaces): mixed
     {
-        $classBuilder = new MockClassBuilder(null, $interfaces);
+        $classBuilder = new MockClassBuilder($interfaces, null, $interfaces);
 
         return eval($classBuilder->getCode());
     }
@@ -40,9 +40,27 @@ class Mock
      * @param class-string<T> $class
      * @return T&MockedClassInterface
      */
-    public static function class($class): mixed
+    public static function class(string $class): mixed
     {
-        $classBuilder = new MockClassBuilder($class);
+        if (str_contains($class, '@anonymous')) {
+            return self::anonymousClass($class);
+        }
+
+        $classBuilder = new MockClassBuilder([$class], $class);
+
+        return eval($classBuilder->getCode());
+    }
+
+    private static function anonymousClass(string $class): mixed
+    {
+        $parent = get_parent_class($class);
+        $implements = class_implements($class);
+
+        $classBuilder = new MockClassBuilder(
+            [$class],
+            $parent ? $parent : null,
+            $implements ? $implements : [],
+        );
 
         return eval($classBuilder->getCode());
     }
