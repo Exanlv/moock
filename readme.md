@@ -14,6 +14,8 @@ use Exan\Moock\Mock;
 $userService = Mock::class(UserService::class);
 ```
 
+_Note: This also works for anonymous classes, however as these are not proper class structures, they will not extend the given anonymous class. Rather, they will extend the parent and implement the same interfaces if applicable._
+
 ### Mocking an interface
 
 ```php
@@ -118,7 +120,7 @@ Mock::method($userService->isValidEmail(...))
 Mock::method($userService->isValidEmail(...))
     ->shouldNotHaveBeenCalledTimes(3);
 
-Mock::method($userService->isValidEmail(...))->calls() // 3
+Mock::method($userService->isValidEmail(...))->calls(); // 3
 ```
 
 ### Force returning a sequence of values
