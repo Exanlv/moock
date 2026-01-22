@@ -92,10 +92,10 @@ class MockClassBuilder
                     ? ': ' . self::getTypeSignature($method->getReturnType())
                     : '';
 
-                $isVoid = $method->hasReturnType() &&
-                    $method->getReturnType() instanceof ReflectionNamedType &&
-                    $method->getReturnType()->isBuiltin() &&
-                    $method->getReturnType()->getName() === 'void';
+                $isVoid = $method->hasReturnType()
+                    && $method->getReturnType() instanceof ReflectionNamedType
+                    && $method->getReturnType()->isBuiltin()
+                    && $method->getReturnType()->getName() === 'void';
 
                 $return = $isVoid ? '' : 'return';
 

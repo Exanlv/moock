@@ -39,7 +39,8 @@ class MockClassTest extends TestCase
         $mock->myMethod();
         $mock->myMethod();
 
-        Mock::method($mock->myMethod(...))->shouldHaveBeenCalledTimes(4);
+        Mock::method($mock->myMethod(...))
+            ->should()->haveBeenCalledTimes(4);
     }
 
     public function test_method_input_is_passed_to_replacement(): void
@@ -60,7 +61,7 @@ class MockClassTest extends TestCase
         );
 
         Mock::method($mock->myOtherMethod(...))
-            ->shouldHaveBeenCalledOnce();
+            ->should()->haveBeenCalledOnce();
     }
 
     public function test_it_can_partially_mock(): void

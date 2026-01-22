@@ -108,17 +108,19 @@ Mock::method($userService->isValidEmail(...))
 $userService->isValidEmail('::my_test_email::');
 
 Mock::method($userService->isValidEmail(...))
-    ->shouldHaveBeenCalledOnce();
+    ->should()->haveBeenCalled();
+
+Mock::method($userService->isValidEmail(...))
+    ->should()->haveBeenCalledOnce();
 
 $userService->isValidEmail('::my_other_test_email::');
 
 Mock::method($userService->isValidEmail(...))
-    ->shouldHaveBeenCalledTimes(2);
+    ->should()->haveBeenCalledTimes(2);
 
+# Invert any assertion using ->should()->not()
 Mock::method($userService->isValidEmail(...))
-    ->shouldNotHaveBeenCalledTimes(3);
-
-Mock::method($userService->isValidEmail(...))->calls(); // 3
+    ->should()->not()->haveBeenCalledTimes(3);
 ```
 
 ### Force returning a sequence of values

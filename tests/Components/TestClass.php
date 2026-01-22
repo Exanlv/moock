@@ -16,29 +16,19 @@ class TestClass
         return [$inputA, $inputB];
     }
 
-    public function testWithStringDefault(string $input = 'my-string'): void
-    {
-    }
+    public function testWithStringDefault(string $input = 'my-string'): void {}
 
-    public function testWithArrayDefault(array $input = ['key' => 'value']): void
-    {
-    }
+    public function testWithArrayDefault(array $input = ['key' => 'value']): void {}
 
-    public function testWithNullDefault(?array $input = null): void
-    {
-    }
+    public function testWithNullDefault(?array $input = null): void {}
 
-    public function testWithTrueDefault(bool $input = true): void
-    {
-    }
+    public function testWithTrueDefault(bool $input = true): void {}
 
-    public function testWithFalseDefault(bool $input = false): void
-    {
-    }
+    public function testWithFalseDefault(bool $input = false): void {}
 
     public function testWithDualReturnType(bool $input = false): AnotherTestInterface|TestInterface
     {
-        return new class implements TestInterface {
+        return new class () implements TestInterface {
             public function myMethod()
             {
                 throw new \Exception('Not implemented');
@@ -53,7 +43,7 @@ class TestClass
 
     public function testWithIntersectionReturnType(): AnotherTestInterface&TestInterface
     {
-        return new class implements AnotherTestInterface, TestInterface {
+        return new class () implements AnotherTestInterface, TestInterface {
             public function myMethod()
             {
                 throw new \Exception('Not implemented');
@@ -96,28 +86,13 @@ class TestClass
         return 1;
     }
 
-    public static function someStaticMethod(): void
-    {
+    public static function someStaticMethod(): void {}
 
-    }
+    final public function myFinalMethod(): void {}
 
-    final public function myFinalMethod(): void
-    {
+    public function testSpreadArg(int ...$myInts): void {}
 
-    }
+    public function testParameterAsReference(string &$myVar): void {}
 
-    public function testSpreadArg(int ...$myInts): void
-    {
-
-    }
-
-    public function testParameterAsReference(string &$myVar): void
-    {
-
-    }
-
-    public function testSpreadParameterAsReference(string &...$myVar): void
-    {
-
-    }
+    public function testSpreadParameterAsReference(string &...$myVar): void {}
 }

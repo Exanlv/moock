@@ -17,12 +17,12 @@ trait MockedClass
     public function __replace(string $method, callable $replacement): void
     {
         $this->replacements[$method] = $replacement;
-        $this->calls[$method] = 0;
+        $this->calls[$method] = [];
     }
 
-    public function __getCallCount(string $method): int
+    public function __getCalls(string $method): array
     {
-        return $this->calls[$method] ?? 0;
+        return $this->calls[$method] ?? [];
     }
 
     public function __setPartial(mixed $spyOn): void
@@ -31,13 +31,13 @@ trait MockedClass
         $this->calls = [];
     }
 
-    private function __moockFunctionCall($method, $arguments): mixed
+    private function __moockFunctionCall(string $method, array $arguments): mixed
     {
         if (!key_exists($method, $this->calls)) {
-            $this->calls[$method] = 0;
+            $this->calls[$method] = [];
         }
 
-        $this->calls[$method]++;
+        $this->calls[$method][] = $arguments;
 
         if (!isset($this->replacements[$method])) {
             if ($this->spyOn !== null && method_exists($this->spyOn, $method)) {

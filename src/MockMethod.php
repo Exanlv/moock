@@ -11,6 +11,8 @@ class MockMethod
 {
     private readonly MockedClassInterface $classMock;
 
+    private readonly string $methodName;
+
     public function __construct(
         private readonly ReflectionFunction $ref,
     ) {
@@ -20,21 +22,22 @@ class MockMethod
         }
 
         $this->classMock = $classMock;
+        $this->methodName = $this->ref->getName();
     }
 
     public function replace(callable $replacement): void
     {
-        $this->classMock->__replace($this->ref->getName(), $replacement);
+        $this->classMock->__replace($this->methodName, $replacement);
     }
 
     public function forceReturn(mixed $returnValue): void
     {
-        $this->classMock->__replace($this->ref->getName(), fn () => $returnValue);
+        $this->classMock->__replace($this->methodName, fn () => $returnValue);
     }
 
     public function forceReturnSequence(array $values): void
     {
-        $this->classMock->__replace($this->ref->getName(), function () use (&$values): mixed {
+        $this->classMock->__replace($this->methodName, function () use (&$values): mixed {
             return array_shift($values);
         });
     }
@@ -44,52 +47,13 @@ class MockMethod
      */
     public function throwsException(string $exception)
     {
-        $this->classMock->__replace($this->ref->getName(), function () use ($exception): never {
+        $this->classMock->__replace($this->methodName, function () use ($exception): never {
             throw new $exception();
         });
     }
 
-    public function calls(): int
+    public function should(): Expectation
     {
-        return $this->classMock->__getCallCount($this->ref->getName());
-    }
-
-    public function shouldNotHaveBeenCalled(): void
-    {
-        $this->shouldHaveBeenCalledTimes(0);
-    }
-
-    public function shouldHaveBeenCalledOnce(): void
-    {
-        $this->shouldHaveBeenCalledTimes(1);
-    }
-
-    public function shouldHaveBeenCalledTimes(int $expectedCalls): void
-    {
-        $calls = $this->calls();
-
-        $this->phpunitCompatibleAssert(
-            $calls === $expectedCalls,
-            sprintf('Method should have been called %d time(s), but was called %d times', $expectedCalls, $calls),
-        );
-    }
-
-    public function shouldNotHaveBeenCalledTimes(int $notExpectedCalls): void
-    {
-        $calls = $this->calls();
-
-        $this->phpunitCompatibleAssert(
-            $calls !== $notExpectedCalls,
-            sprintf('Method should not have been called %d time(s)', $notExpectedCalls),
-        );
-    }
-
-    private function phpunitCompatibleAssert(bool $condition, string $message): void
-    {
-        if (class_exists("\PHPUnit\Framework\Assert")) {
-            \PHPUnit\Framework\Assert::assertTrue($condition, $message);
-        } else {
-            assert($condition, $message);
-        }
+        return new Expectation($this->methodName, $this->classMock->__getCalls($this->methodName));
     }
 }
