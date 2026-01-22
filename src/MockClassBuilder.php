@@ -186,6 +186,8 @@ class MockClassBuilder
             ? '&'
             : '|';
 
-        return implode($seperator, $types);
+        return in_array('mixed', $types)
+            ? 'mixed'
+            : implode($seperator, $types);
     }
 }

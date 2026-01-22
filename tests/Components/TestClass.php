@@ -75,4 +75,9 @@ class TestClass
             }
         };
     }
+
+    public function testMixedTypes(mixed $myvar): mixed
+    {
+        return '';
+    }
 }
