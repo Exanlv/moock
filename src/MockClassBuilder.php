@@ -130,7 +130,18 @@ class MockClassBuilder
     {
         $type = $parameter->getType();
 
-        $signature = self::getTypeSignature($type) . ' $' . $parameter->getName();
+        $variableIndicator = '$';
+
+        if ($parameter->isVariadic()) {
+            $variableIndicator = '...' . $variableIndicator;
+        }
+
+        if ($parameter->isPassedByReference()) {
+            $variableIndicator = '&' . $variableIndicator;
+        }
+
+        $signature = self::getTypeSignature($type)
+            . ' ' . $variableIndicator . $parameter->getName();
 
         if ($parameter->isDefaultValueAvailable()) {
             $defaultValue = $parameter->getDefaultValue();

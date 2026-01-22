@@ -105,4 +105,19 @@ class TestClass
     {
 
     }
+
+    public function testSpreadArg(int ...$myInts): void
+    {
+
+    }
+
+    public function testParameterAsReference(string &$myVar): void
+    {
+
+    }
+
+    public function testSpreadParameterAsReference(string &...$myVar): void
+    {
+
+    }
 }
