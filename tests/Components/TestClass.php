@@ -90,4 +90,9 @@ class TestClass
     {
         return new static();
     }
+
+    public function testReturnNullAsType(): int|string|null
+    {
+        return 1;
+    }
 }

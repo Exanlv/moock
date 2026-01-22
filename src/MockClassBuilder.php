@@ -186,6 +186,8 @@ class MockClassBuilder
             ? '&'
             : '|';
 
+        $types = array_unique($types);
+
         return in_array('mixed', $types)
             ? 'mixed'
             : implode($seperator, $types);
