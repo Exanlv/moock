@@ -8,4 +8,4 @@ on:
 
 jobs:
   build:
-    uses: Exanlv/ci/.github/workflows/php/unit-tests.yml@main
+    uses: Exanlv/ci/.github/workflows/unit-tests.yml@main
