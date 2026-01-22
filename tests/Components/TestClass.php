@@ -35,4 +35,44 @@ class TestClass
     public function testWithFalseDefault(bool $input = false): void
     {
     }
+
+    public function testWithDualReturnType(bool $input = false): AnotherTestInterface|TestInterface
+    {
+        return new class implements TestInterface {
+            public function myMethod()
+            {
+                throw new \Exception('Not implemented');
+            }
+
+            public function myOtherMethod(string $inputA, string $inputB)
+            {
+                throw new \Exception('Not implemented');
+            }
+        };
+    }
+
+    public function testWithIntersectionReturnType(): AnotherTestInterface&TestInterface
+    {
+        return new class implements AnotherTestInterface, TestInterface {
+            public function myMethod()
+            {
+                throw new \Exception('Not implemented');
+            }
+
+            public function anotherMethod()
+            {
+                throw new \Exception('Not implemented');
+            }
+
+            public function yetAnotherMethod(string $inputA, string $inputB)
+            {
+                throw new \Exception('Not implemented');
+            }
+
+            public function myOtherMethod(string $inputA, string $inputB)
+            {
+                throw new \Exception('Not implemented');
+            }
+        };
+    }
 }

@@ -84,6 +84,7 @@ class MockClassBuilder
                     : '';
 
                 $isVoid = $method->hasReturnType() &&
+                    $method->getReturnType() instanceof ReflectionNamedType &&
                     $method->getReturnType()->isBuiltin() &&
                     $method->getReturnType()->getName() === 'void';
 
@@ -181,6 +182,10 @@ class MockClassBuilder
             $types[] = 'null';
         }
 
-        return implode('|', $types);
+        $seperator = $type instanceof ReflectionIntersectionType
+            ? '&'
+            : '|';
+
+        return implode($seperator, $types);
     }
 }
