@@ -95,4 +95,14 @@ class TestClass
     {
         return 1;
     }
+
+    public static function someStaticMethod(): void
+    {
+
+    }
+
+    final public function myFinalMethod(): void
+    {
+
+    }
 }

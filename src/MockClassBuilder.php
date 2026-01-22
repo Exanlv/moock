@@ -23,6 +23,14 @@ class MockClassBuilder
         private readonly array $implements = [],
     ) {}
 
+    private function skipMethods(ReflectionMethod ...$methods)
+    {
+        $this->skipMethods = [
+            ...$this->skipMethods,
+            ...array_map(fn (ReflectionMethod $method) => $method->name, $methods),
+        ];
+    }
+
     public function getCode(): mixed
     {
         $replacements = [];
@@ -33,6 +41,10 @@ class MockClassBuilder
             }
 
             $ref = new ReflectionClass($interface);
+
+            $this->skipMethods(...$ref->getMethods(ReflectionMethod::IS_STATIC));
+            $this->skipMethods(...$ref->getMethods(ReflectionMethod::IS_FINAL));
+
             $replacements[] = $this->getMethodReplacements($ref);
         }
 
@@ -68,10 +80,7 @@ class MockClassBuilder
             fn (ReflectionMethod $method) => !in_array($method->name, $this->skipMethods),
         );
 
-        $this->skipMethods = [
-            ...$this->skipMethods,
-            ...array_map(fn (ReflectionMethod $method) => $method->name, $methodsToReplace),
-        ];
+        $this->skipMethods(...$methodsToReplace);
 
         $signatures = self::getSignatures($methodsToReplace);
 
