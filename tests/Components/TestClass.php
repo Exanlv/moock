@@ -15,4 +15,24 @@ class TestClass
     {
         return [$inputA, $inputB];
     }
+
+    public function testWithStringDefault(string $input = 'my-string'): void
+    {
+    }
+
+    public function testWithArrayDefault(array $input = ['key' => 'value']): void
+    {
+    }
+
+    public function testWithNullDefault(?array $input = null): void
+    {
+    }
+
+    public function testWithTrueDefault(bool $input = true): void
+    {
+    }
+
+    public function testWithFalseDefault(bool $input = false): void
+    {
+    }
 }

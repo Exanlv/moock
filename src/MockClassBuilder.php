@@ -79,13 +79,19 @@ class MockClassBuilder
             function (ReflectionMethod $method, string $signature) {
                 $name = $method->name;
 
-                $return = $method->hasReturnType()
+                $returnSignature = $method->hasReturnType()
                     ? ': ' . self::getTypeSignature($method->getReturnType())
                     : '';
 
+                $isVoid = $method->hasReturnType() &&
+                    $method->getReturnType()->isBuiltin() &&
+                    $method->getReturnType()->getName() === 'void';
+
+                $return = $isVoid ? '' : 'return';
+
                 return <<<FUNC
-                    public function $name($signature) $return   {
-                        return \$this->__moockFunctionCall('$name', func_get_args());
+                    public function $name($signature) $returnSignature {
+                        $return \$this->__moockFunctionCall('$name', func_get_args());
                     }
                 FUNC;
             },
@@ -139,6 +145,14 @@ class MockClassBuilder
             }
 
             return $formattedArray . ']';
+        }
+
+        if ($value === true) {
+            return 'true';
+        }
+
+        if ($value === false) {
+            return 'false';
         }
 
         return is_null($value)
