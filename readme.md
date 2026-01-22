@@ -94,8 +94,6 @@ $userService->isValidEmail('::other_value::'); // ...
 
 ### Asserting number of calls
 
-Note: currently does not work for failing/passing tests in PHPUnit, WIP
-
 ```php
 use Exan\Moock\Mock;
 

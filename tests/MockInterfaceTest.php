@@ -40,7 +40,8 @@ class MockInterfaceTest extends TestCase
         $mock->myMethod();
         $mock->myMethod();
 
-        static::assertEquals(4, Mock::method($mock->myMethod(...))->calls());
+        Mock::method($mock->myMethod(...))
+            ->shouldHaveBeenCalledTimes(4);
     }
 
     public function test_method_input_is_passed_to_replacement(): void
@@ -55,7 +56,8 @@ class MockInterfaceTest extends TestCase
 
         $mock->myOtherMethod('::input a::', '::input b::');
 
-        static::assertEquals(1, Mock::method($mock->myOtherMethod(...))->calls());
+        Mock::method($mock->myOtherMethod(...))
+            ->shouldHaveBeenCalledOnce();
     }
 
     public function test_it_can_mock_several_interfaces()

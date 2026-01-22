@@ -11,11 +11,17 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests"
-        }  
+        }
     },
     "require-dev": {
         "symfony/var-dumper": "^7.4",
         "phpunit/phpunit": "^11.5",
         "friendsofphp/php-cs-fixer": "^3.92"
+    },
+    "scripts": {
+        "test": "phpunit tests",
+
+        "csf": "php-cs-fixer fix --using-cache=no --allow-risky=yes",
+        "cs": "php-cs-fixer fix --using-cache=no --allow-risky=yes --dry-run"
     }
 }

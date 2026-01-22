@@ -68,7 +68,7 @@ class MockMethod
     {
         $calls = $this->calls();
 
-        assert(
+        $this->phpunitCompatibleAssert(
             $calls === $expectedCalls,
             sprintf('Method should have been called %d time(s), but was called %d times', $expectedCalls, $calls),
         );
@@ -78,9 +78,18 @@ class MockMethod
     {
         $calls = $this->calls();
 
-        assert(
+        $this->phpunitCompatibleAssert(
             $calls !== $notExpectedCalls,
             sprintf('Method should not have been called %d time(s)', $notExpectedCalls),
         );
+    }
+
+    private function phpunitCompatibleAssert(bool $condition, string $message): void
+    {
+        if (class_exists("\PHPUnit\Framework\Assert")) {
+            \PHPUnit\Framework\Assert::assertTrue($condition, $message);
+        } else {
+            assert($condition, $message);
+        }
     }
 }
