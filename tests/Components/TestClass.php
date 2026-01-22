@@ -80,4 +80,14 @@ class TestClass
     {
         return '';
     }
+
+    public function testReturnSelf(): self
+    {
+        return new self();
+    }
+
+    public function testReturnStatic(): static
+    {
+        return new static();
+    }
 }

@@ -170,10 +170,10 @@ class MockClassBuilder
         $types = [];
 
         if ($type instanceof ReflectionNamedType) {
-            $types[] = $type->isBuiltin() ? $type->getName() : '\\' . $type->getName();
+            $types[] = $this->isSemiBuiltIn($type) ? $type->getName() : '\\' . $type->getName();
         } else {
             $types = array_map(
-                fn (ReflectionNamedType $subType) => $subType->isBuiltin() ? $subType->getName() : '\\' . $subType->getName(),
+                fn (ReflectionNamedType $subType) => $this->isSemiBuiltIn($subType) ? $subType->getName() : '\\' . $subType->getName(),
                 $type->getTypes(),
             );
         }
@@ -189,5 +189,11 @@ class MockClassBuilder
         return in_array('mixed', $types)
             ? 'mixed'
             : implode($seperator, $types);
+    }
+
+    private function isSemiBuiltIn(ReflectionNamedType $type): bool
+    {
+        return $type->isBuiltin()
+            || in_array($type->getName(), ['self', 'static']);
     }
 }
