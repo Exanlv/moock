@@ -52,7 +52,7 @@ class MockMethod
         });
     }
 
-    public function should(): Expectation
+    public function expect(): Expectation
     {
         return new Expectation($this->methodName, $this->classMock->__getCalls($this->methodName));
     }

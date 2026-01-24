@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Exan\Moock;
 
+use ReflectionClass;
 use RuntimeException;
 
 trait MockedClass
@@ -31,13 +32,13 @@ trait MockedClass
         $this->calls = [];
     }
 
-    private function __moockFunctionCall(string $method, array $arguments): mixed
+    private function __moockFunctionCall(string $method, array $argumentNames, array $arguments): mixed
     {
         if (!key_exists($method, $this->calls)) {
             $this->calls[$method] = [];
         }
 
-        $this->calls[$method][] = $arguments;
+        $this->calls[$method][] = $this->formatCalls($method, $argumentNames, $arguments);
 
         if (!isset($this->replacements[$method])) {
             if ($this->spyOn !== null && method_exists($this->spyOn, $method)) {
@@ -47,6 +48,36 @@ trait MockedClass
             throw new RuntimeException('No replacement provided for `' . $method . '`');
         }
 
-        return $this->replacements[$method](...$arguments);
+        return $this->replacements[$method](...array_values($arguments));
+    }
+
+    private function formatCalls(string $method, array $argumentNames, array $arguments): array
+    {
+        if (!$this->hasSpread($method)) {
+            return array_combine($argumentNames, $arguments);
+        }
+
+        $formatted = [];
+
+        while (count($argumentNames) > 1) {
+            $formatted[array_shift($argumentNames)] = array_shift($arguments);
+        }
+
+        $formatted[array_shift($argumentNames)] = array_values($arguments);
+
+        return $formatted;
+    }
+
+    private function hasSpread(string $method): bool
+    {
+        $ref = new ReflectionClass($this);
+        $method = $ref->getMethod($method);
+        $args = $method->getParameters();
+
+        if (empty($args)) {
+            return false;
+        }
+
+        return $args[array_key_last($args)]->isVariadic();
     }
 }

@@ -83,30 +83,32 @@ class MockClassBuilder
         $this->skipMethods(...$methodsToReplace);
 
         $signatures = self::getSignatures($methodsToReplace);
+        $argNames = self::getArgNames($methodsToReplace);
 
         $methodReplacements = array_map(
-            function (ReflectionMethod $method, string $signature) {
+            function (ReflectionMethod $method, string $signature, string $argNames) {
                 $name = $method->name;
 
                 $returnSignature = $method->hasReturnType()
                     ? ': ' . self::getTypeSignature($method->getReturnType())
                     : '';
 
-                $isVoid = $method->hasReturnType()
+                $canReturn = $method->hasReturnType()
                     && $method->getReturnType() instanceof ReflectionNamedType
                     && $method->getReturnType()->isBuiltin()
-                    && $method->getReturnType()->getName() === 'void';
+                    && in_array($method->getReturnType()->getName(), ['void', 'never']);
 
-                $return = $isVoid ? '' : 'return';
+                $return = $canReturn ? '' : 'return';
 
                 return <<<FUNC
                     public function $name($signature) $returnSignature {
-                        $return \$this->__moockFunctionCall('$name', func_get_args());
+                        $return \$this->__moockFunctionCall('$name', $argNames, func_get_args());
                     }
                 FUNC;
             },
             $methodsToReplace,
             $signatures,
+            $argNames,
         );
 
         return implode(PHP_EOL, $methodReplacements);
@@ -123,6 +125,25 @@ class MockClassBuilder
             $parameters = $method->getParameters();
 
             return implode(', ', array_map(self::getParameterSignature(...), $parameters));
+        }, $methods);
+    }
+
+    /**
+     * @param ReflectionMethod[] $methods
+     *
+     * @return string[]
+     */
+    private function getArgNames(array $methods): array
+    {
+        return array_map(function (ReflectionMethod $method) {
+            $parameters = $method->getParameters();
+
+            return $this->formatValue(
+                array_map(
+                    fn (ReflectionParameter $parameter) => $parameter->name,
+                    $parameters
+                )
+            );
         }, $methods);
     }
 

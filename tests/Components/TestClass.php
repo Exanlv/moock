@@ -95,4 +95,9 @@ class TestClass
     public function testParameterAsReference(string &$myVar): void {}
 
     public function testSpreadParameterAsReference(string &...$myVar): void {}
+
+    public function testReturnNever(): never
+    {
+        die();
+    }
 }

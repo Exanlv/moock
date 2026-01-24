@@ -40,7 +40,7 @@ class MockClassTest extends TestCase
         $mock->myMethod();
 
         Mock::method($mock->myMethod(...))
-            ->should()->haveBeenCalledTimes(4);
+            ->expect()->toHaveBeenCalledTimes(4);
     }
 
     public function test_method_input_is_passed_to_replacement(): void
@@ -61,7 +61,7 @@ class MockClassTest extends TestCase
         );
 
         Mock::method($mock->myOtherMethod(...))
-            ->should()->haveBeenCalledOnce();
+            ->expect()->toHaveBeenCalledOnce();
     }
 
     public function test_it_can_partially_mock(): void
@@ -115,5 +115,43 @@ class MockClassTest extends TestCase
 
         static::assertEquals('::other return value::', $mock->myMethod());
         static::assertFalse($spyOn->wasCalled);
+    }
+
+    public function test_it_can_set_arg_expectations()
+    {
+        $mock = Mock::class(TestClass::class);
+
+        Mock::method($mock->myOtherMethod(...))->replace(fn () => ['::return value::']);
+
+        $mock->myOtherMethod('::1::', '::2::');
+        $mock->myOtherMethod('::1::', '::2::');
+        $mock->myOtherMethod('::1::', '::3::');
+        $mock->myOtherMethod('::3::', '::3::');
+        $mock->myOtherMethod('::3::', '::3::');
+
+        Mock::method($mock->myOtherMethod(...))
+            ->expect()
+            ->with('::1::')
+            ->toHaveBeenCalled();
+
+        Mock::method($mock->myOtherMethod(...))
+            ->expect()
+            ->with('::1::')
+            ->toHaveBeenCalledTimes(3);
+
+        Mock::method($mock->myOtherMethod(...))
+            ->expect()
+            ->with('::1::', '::2::')
+            ->toHaveBeenCalledTimes(2);
+
+        Mock::method($mock->myOtherMethod(...))
+            ->expect()
+            ->with(fn (string $inputA) => $inputA === '::3::')
+            ->toHaveBeenCalledTimes(2);
+
+        Mock::method($mock->myOtherMethod(...))
+            ->expect()
+            ->with(inputB: fn (string $inputB) => $inputB === '::3::')
+            ->toHaveBeenCalledTimes(3);
     }
 }

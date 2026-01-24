@@ -103,24 +103,25 @@ Mock::method($userService->isValidEmail(...))
     ->forceReturn(true);
 
 Mock::method($userService->isValidEmail(...))
-    ->shouldNotHaveBeenCalled();
+    ->expect()
+    ->not()->toHaveBeenCalled();
 
 $userService->isValidEmail('::my_test_email::');
 
 Mock::method($userService->isValidEmail(...))
-    ->should()->haveBeenCalled();
+    ->expect()->toHaveBeenCalled();
 
 Mock::method($userService->isValidEmail(...))
-    ->should()->haveBeenCalledOnce();
+    ->expect()->toHaveBeenCalledOnce();
 
 $userService->isValidEmail('::my_other_test_email::');
 
 Mock::method($userService->isValidEmail(...))
-    ->should()->haveBeenCalledTimes(2);
+    ->expect()->toHaveBeenCalledTimes(2);
 
-# Invert any assertion using ->should()->not()
+# Invert any assertion using ->expect()->not()
 Mock::method($userService->isValidEmail(...))
-    ->should()->not()->haveBeenCalledTimes(3);
+    ->expect()->not()->haveBeenCalledTimes(3);
 ```
 
 ### Force returning a sequence of values
@@ -142,4 +143,43 @@ Mock::method($userService->isValidEmail(...))
 
 $userService->isValidEmail('::my_test_email::'); // true
 $userService->anyOtherMethod('...'); // calls $realUserService
+```
+
+### Expecting specific input
+
+```php
+$userService = Mock::class(UserService::class);
+
+Mock::method($userService->isValidEmail(...))
+    ->forceReturn(true);
+
+$userService->isValidEmail('::my_test_email::');
+$userService->isValidEmail('::my_other_test_email::');
+$userService->isValidEmail('::my_other_test_email::');
+
+Mock::method($userService->isValidEmail(...))
+    ->expect()
+    ->with('::my_test_email::')
+    ->toHaveBeenCalledOnce();
+
+Mock::method($userService->isValidEmail(...))
+    ->expect()
+    ->with('::my_other_test_email::')
+    ->toHaveBeenCalledTimes(2);
+
+# Using closures
+Mock::method($userService->isValidEmail(...))
+    ->expect()
+    ->with(fn ($email) => true)
+    ->toHaveBeenCalledTimes(3);
+
+$userService->isValidEmail('::my_test_email::', 'test-password');
+$userService->isValidEmail('::my_other_test_email::', 'test-password');
+$userService->isValidEmail('::my_other_test_email::', 'other-password');
+
+# Using named args
+Mock::method($userService->isValidEmail(...))
+    ->expect()
+    ->with(password: 'test-password')
+    ->toHaveBeenCalledTimes(2);
 ```
