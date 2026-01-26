@@ -18,7 +18,7 @@ class Str
     public static function contains(string $needle): Closure
     {
         return function (string $actual) use ($needle): bool {
-            return str_contains($actual, $needle);
+            return str_contains(strtolower($actual), strtolower($needle));
         };
     }
 }

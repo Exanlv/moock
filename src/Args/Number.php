@@ -11,7 +11,7 @@ class Number
     public static function lt(int|float $lessThan): Closure
     {
         return function (int|float $actual) use ($lessThan): bool {
-            return $actual > $lessThan;
+            return $actual < $lessThan;
         };
     }
 
@@ -19,6 +19,13 @@ class Number
     {
         return function (int|float $actual) use ($greaterThan): bool {
             return $actual > $greaterThan;
+        };
+    }
+
+    public static function range(int|float $min, int|float $max): Closure
+    {
+        return function (int|float $actual) use ($min, $max): bool {
+            return $actual >= $min && $actual <= $max;
         };
     }
 }
