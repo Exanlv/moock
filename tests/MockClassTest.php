@@ -27,6 +27,17 @@ class MockClassTest extends TestCase
         static::assertEquals('::return value::', $mock->myMethod());
     }
 
+    public function test_it_does_not_require_replacing_methods_for_expectations(): void
+    {
+        $mock = Mock::class(TestClass::class);
+
+        $mock->testWithTrueDefault();
+
+        Mock::method($mock->testWithTrueDefault(...))
+            ->expect()
+            ->toHaveBeenCalled();
+    }
+
     public function test_it_keeps_track_of_amount_of_calls(): void
     {
         $mock = Mock::class(TestClass::class);

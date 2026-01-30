@@ -32,23 +32,36 @@ trait MockedClass
         $this->calls = [];
     }
 
-    private function __moockFunctionCall(string $method, array $argumentNames, array $arguments): mixed
+    private function __moockFunctionCall(string $method, array $args): mixed
     {
         if (!key_exists($method, $this->calls)) {
             $this->calls[$method] = [];
         }
 
-        $this->calls[$method][] = $this->formatCalls($method, $argumentNames, $arguments);
+        $this->calls[$method][] = $args;
+
+        $args = array_values($args);
+
+        if ($this->hasSpread($method)) {
+            $lastArg = array_pop($args);
+
+            $args = [
+                ...$args,
+                ...$lastArg,
+            ];
+        }
 
         if (!isset($this->replacements[$method])) {
             if ($this->spyOn !== null && method_exists($this->spyOn, $method)) {
-                return $this->spyOn->{$method}(...$arguments);
+                return $this->spyOn->{$method}(...$args);
             }
 
-            throw new RuntimeException('No replacement provided for `' . $method . '`');
+            return null;
         }
 
-        return $this->replacements[$method](...array_values($arguments));
+
+
+        return $this->replacements[$method](...$args);
     }
 
     private function formatCalls(string $method, array $argumentNames, array $arguments): array

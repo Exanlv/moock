@@ -102,7 +102,7 @@ class MockClassBuilder
 
                 return <<<FUNC
                     public function $name($signature) $returnSignature {
-                        $return \$this->__moockFunctionCall('$name', $argNames, func_get_args());
+                        $return \$this->__moockFunctionCall('$name', compact($argNames));
                     }
                 FUNC;
             },
