@@ -25,7 +25,7 @@ class Arr
 
                 $actualValue = $actual[$key];
 
-                if (is_callable($expectedValue)) {
+                if ($expectedValue instanceof Closure) {
                     if ($expectedValue($actualValue) !== true) {
                         return false;
                     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Exan\Moock;
 
+use Closure;
 use RuntimeException;
 
 class Expectation
@@ -33,7 +34,7 @@ class Expectation
         $validCalls = $this->calls;
 
         foreach ($expectedArg as $name => $valueOrValidator) {
-            $validator = is_callable($valueOrValidator)
+            $validator = $valueOrValidator instanceof Closure
                 ? fn ($call): bool => $valueOrValidator($call[$name])
                 : fn ($call): bool => $call[$name] === $valueOrValidator;
 
