@@ -6,6 +6,7 @@ namespace Tests;
 
 use Exan\Moock\Mock;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Tests\Components\TestClass;
 
 class MockClassTest extends TestCase
@@ -164,5 +165,21 @@ class MockClassTest extends TestCase
             ->expect()
             ->with(inputB: fn (string $inputB) => $inputB === '::3::')
             ->toHaveBeenCalledTimes(3);
+    }
+
+    public function test_it_can_filter_allowed_inputs()
+    {
+        $mock = Mock::class(TestClass::class);
+
+        Mock::method($mock->myOtherMethod(...))->forceReturn([]);
+
+        Mock::method($mock->myOtherMethod(...))->filter('::A::', fn () => true);
+
+        $mock->myOtherMethod('::A::', 'asdf');
+        $mock->myOtherMethod('::A::', 'ghjk');
+
+        $this->expectException(RuntimeException::class);
+
+        $mock->myOtherMethod('::B::', 'asdf');
     }
 }

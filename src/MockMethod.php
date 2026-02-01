@@ -18,11 +18,16 @@ class MockMethod
     ) {
         $classMock = $this->ref->getClosureThis();
         if (!$classMock instanceof MockedClassInterface) {
-            throw new RuntimeException('Closure class is not mocked');
+            throw new RuntimeException('Closures\' parent object is not mocked');
         }
 
         $this->classMock = $classMock;
         $this->methodName = $this->ref->getName();
+    }
+
+    public function filter(mixed ...$filters): void
+    {
+        $this->classMock->__filter($this->methodName, ...$filters);
     }
 
     public function replace(callable $replacement): void

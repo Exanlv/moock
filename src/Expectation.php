@@ -9,6 +9,8 @@ use RuntimeException;
 
 class Expectation
 {
+    use FiltersMethodArgs;
+
     public function __construct(
         private readonly string $methodName,
         private readonly array $calls,
@@ -27,41 +29,9 @@ class Expectation
             return $this;
         }
 
-        $expectedArg = array_is_list($expectedArg)
-            ? $this->convertToArgDictionary($expectedArg)
-            : $expectedArg;
+        $filteredCalls = $this->filterArgs($this->calls, $expectedArg);
 
-        $validCalls = $this->calls;
-
-        foreach ($expectedArg as $name => $valueOrValidator) {
-            $validator = $valueOrValidator instanceof Closure
-                ? fn ($call): bool => $valueOrValidator($call[$name])
-                : fn ($call): bool => $call[$name] === $valueOrValidator;
-
-            $validCalls = array_filter($validCalls, $validator);
-        }
-
-        return new Expectation($this->methodName, $validCalls, $this->expectation);
-    }
-
-    private function convertToArgDictionary($args): array
-    {
-        $argKeys = array_keys($this->calls[0]);
-
-        if (count($args) > count($argKeys)) {
-            throw new RuntimeException(sprintf(
-                'Method %s only has %d parameters, %d expectations given. Note: variadic args are validated as a singular array',
-                $this->methodName,
-                count($argKeys),
-                count($args),
-            ));
-        }
-
-        while (count($args) < count($argKeys)) {
-            array_pop($argKeys);
-        }
-
-        return array_combine($argKeys, $args);
+        return new Expectation($this->methodName, $filteredCalls, $this->expectation);
     }
 
     private function callsAmount(): int

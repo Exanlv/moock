@@ -25,6 +25,14 @@ class MockClassBuilder
 
     private function skipMethods(ReflectionMethod ...$methods)
     {
+        /**
+         * This is bad, and I apologize.
+         *
+         * I did not feel like refactoring the entire class in order to achieve this behaviour properly.
+         *
+         * @see https://xkcd.com/292/
+         */
+
         $this->skipMethods = [
             ...$this->skipMethods,
             ...array_map(fn (ReflectionMethod $method) => $method->name, $methods),
