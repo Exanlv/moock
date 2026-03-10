@@ -30,9 +30,7 @@ trait DeterminesPropertyNames
         if (isset($this->abs[$type])) {
             [$a, $b] = $this->abs[$type];
 
-            if (!$this->isReadonly($ref, $a)) {
-                return [$this->determineVarNameByAB($a, $b, $ref)];
-            }
+            return [$this->determineVarNameByAB($a, $b, $ref)];
         }
 
         if (is_object($ref)) {
@@ -44,20 +42,6 @@ trait DeterminesPropertyNames
         }
 
         return $this->findByEquality($ref);
-    }
-
-    private function isReadonly(&$ref, $a)
-    {
-        $original = $ref;
-
-        try {
-            $ref = $a;
-            return false;
-        } catch (Throwable) {
-            return true;
-        } finally {
-            $ref = $original;
-        }
     }
 
     protected function determinePropNameByFakeObject(&$ref): array

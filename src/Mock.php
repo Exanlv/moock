@@ -77,7 +77,7 @@ class Mock
         $mock->__setPartial($spyOn);
     }
 
-    public function properties(MockedClassInterface $mock): PropertyMocker
+    public static function properties(MockedClassInterface $mock): PropertyMocker
     {
         return new PropertyMocker($mock);
     }

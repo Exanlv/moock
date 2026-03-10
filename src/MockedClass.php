@@ -18,6 +18,8 @@ trait MockedClass
 
     private mixed $spyOn = null;
 
+    private array $forwardedMagicProperties = [];
+
     public function __replace(string $method, callable $replacement): void
     {
         $this->replacements[$method] = $replacement;
@@ -113,5 +115,26 @@ trait MockedClass
         }
 
         return $args[array_key_last($args)]->isVariadic();
+    }
+
+    public function __forwardProp(string $property)
+    {
+        dump($property);
+        if (property_exists($this, $property)) {
+            dump($property);
+            $this->{$property} = &$this->spyOn->$property;
+            return;
+        }
+
+        $this->forwardedMagicProperties[] = $property;
+    }
+
+    public function __get(string $property): mixed
+    {
+        if (!in_array($property, $this->forwardedMagicProperties)) {
+            throw new RuntimeException(sprintf('Accessing non-fowarded property %s', $property));
+        }
+
+        return $this->spyOn->{$property};
     }
 }

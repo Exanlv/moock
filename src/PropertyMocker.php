@@ -6,15 +6,16 @@ namespace Exan\Moock;
 
 use ReflectionClass;
 use ReflectionProperty;
-use RuntimeException;
 
 class PropertyMocker
 {
+    use DeterminesPropertyNames;
+
     /** @var string[] */
     private readonly array $publicProperties;
 
     public function __construct(
-        private readonly object $object,
+        private readonly MockedClassInterface $object,
     ) {
         $this->publicProperties = array_map(
             fn (ReflectionProperty $prop) => $prop->name,
@@ -22,4 +23,17 @@ class PropertyMocker
         );
     }
 
+    public function forward(mixed &...$properties)
+    {
+        foreach ($properties as &$property) {
+            $this->forwardProperties($this->determinePropNames($property));
+        }
+    }
+
+    private function forwardProperties(array $properties)
+    {
+        foreach ($properties as $property) {
+            $this->object->__forwardProp($property);
+        }
+    }
 }
