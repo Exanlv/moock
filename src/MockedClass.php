@@ -7,6 +7,9 @@ namespace Exan\Moock;
 use ReflectionClass;
 use RuntimeException;
 
+/**
+ * @internal
+ */
 trait MockedClass
 {
     use FiltersMethodArgs;
@@ -119,9 +122,7 @@ trait MockedClass
 
     public function __forwardProp(string $property)
     {
-        dump($property);
         if (property_exists($this, $property)) {
-            dump($property);
             $this->{$property} = &$this->spyOn->$property;
             return;
         }
@@ -129,12 +130,13 @@ trait MockedClass
         $this->forwardedMagicProperties[] = $property;
     }
 
-    public function __get(string $property): mixed
+    public function __moockPropertyGet(string $property): mixed
     {
-        if (!in_array($property, $this->forwardedMagicProperties)) {
-            throw new RuntimeException(sprintf('Accessing non-fowarded property %s', $property));
-        }
+        return $this->{$property};
+    }
 
-        return $this->spyOn->{$property};
+    public function __mockPropertySet(string $property, mixed $value): mixed
+    {
+        return $value;
     }
 }

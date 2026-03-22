@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Exan\Moock;
 
 use Closure;
+use Exan\Moock\Class\Mocker as ClassMocker;
 use ReflectionFunction;
 
 class Mock
@@ -30,9 +31,13 @@ class Mock
      */
     public static function interfaces(string ...$interfaces): mixed
     {
-        $classBuilder = new MockClassBuilder($interfaces, null, $interfaces);
+        $mocker = new ClassMocker();
 
-        return eval($classBuilder->getCode());
+        foreach ($interfaces as $interface) {
+            $mocker->addInterface($interface);
+        }
+
+        return eval($mocker->getCode());
     }
 
     /**
@@ -46,23 +51,22 @@ class Mock
             return self::anonymousClass($class);
         }
 
-        $classBuilder = new MockClassBuilder([$class], $class);
+        $mocker = new ClassMocker();
 
-        return eval($classBuilder->getCode());
+        return eval($mocker->extends($class)->getCode());
     }
 
     private static function anonymousClass(string $class): mixed
     {
-        $parent = get_parent_class($class);
         $implements = class_implements($class);
 
-        $classBuilder = new MockClassBuilder(
-            [$class],
-            $parent ? $parent : null,
-            $implements ? $implements : [],
-        );
+        $mocker = new ClassMocker();
 
-        return eval($classBuilder->getCode());
+        foreach ($implements as $interface) {
+            $mocker->addInterface($interface);
+        }
+
+        return eval($mocker->extends($class)->getCode());
     }
 
     public static function method(Closure $arg)

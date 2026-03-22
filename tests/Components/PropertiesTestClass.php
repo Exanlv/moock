@@ -4,6 +4,7 @@ namespace Tests\Components;
 
 class PropertiesTestClass
 {
-    public string $myString = 'my-string';
-    public int $myInt = 123;
+    final public string $finalString;
+    public protected(set) string $protectedSetString;
+    public private(set) string $privateSetString;
 }
