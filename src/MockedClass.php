@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Exan\Moock;
 
+use Exan\Moock\Properties\MockPropertyValue;
 use ReflectionClass;
 use RuntimeException;
 
@@ -14,7 +15,8 @@ trait MockedClass
 {
     use FiltersMethodArgs;
 
-    private array $replacements = [];
+    private array $propertyReplacements = [];
+    private array $methodReplacements = [];
 
     private array $calls = [];
     private array $filters = [];
@@ -23,9 +25,16 @@ trait MockedClass
 
     private array $forwardedMagicProperties = [];
 
+    public private(set) string $quine;
+
+    public function __setQuine(string $code): void
+    {
+        $this->quine = $code;
+    }
+
     public function __replace(string $method, callable $replacement): void
     {
-        $this->replacements[$method] = $replacement;
+        $this->methodReplacements[$method] = $replacement;
         $this->calls[$method] = [];
     }
 
@@ -72,7 +81,7 @@ trait MockedClass
             ];
         }
 
-        if (!isset($this->replacements[$method])) {
+        if (!isset($this->methodReplacements[$method])) {
             if ($this->spyOn !== null && method_exists($this->spyOn, $method)) {
                 return $this->spyOn->{$method}(...$args);
             }
@@ -82,7 +91,7 @@ trait MockedClass
 
 
 
-        return $this->replacements[$method](...$args);
+        return $this->methodReplacements[$method](...$args);
     }
 
     private function callFailsFilter(string $method, array $args): bool
@@ -132,7 +141,11 @@ trait MockedClass
 
     public function __moockPropertyGet(string $property): mixed
     {
-        return null;
+        if (isset($this->propertyReplacements[$property])) {
+            return new MockPropertyValue(true, $this->propertyReplacements[$property]);
+        }
+
+        return new MockPropertyValue(false, null);
     }
 
     public function __mockPropertySet(string $property, mixed $value): mixed

@@ -191,7 +191,7 @@ class MockerTest extends TestCase
 
     private function getGetHook(string $property): string
     {
-        return sprintf('get { return $this->__moockPropertyGet(\'%s\') ?? $this->%s; }', $property, $property);
+        return sprintf('$this->__moockPropertyGet(\'%s\')', $property, $property);
     }
 
     private function getSetHook(string $property): string
