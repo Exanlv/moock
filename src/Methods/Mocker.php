@@ -21,7 +21,7 @@ class Mocker
 
     /** @param string[] */
     public function __construct(
-        public readonly array $interfaces
+        public readonly array $interfaces,
     ) {
         /** @var ReflectionMethod[] */
         $allMethods = array_merge(
@@ -56,7 +56,7 @@ class Mocker
 
     public function getCode(): string
     {
-        return implode(PHP_EOL,array_map(
+        return implode(PHP_EOL, array_map(
             $this->getFormattedMethod(...),
             $this->methods,
         ));
@@ -68,7 +68,7 @@ class Mocker
 
         $functionArgs = implode(
             ', ',
-            array_map($this->getParameterSignature(...), $method->getParameters())
+            array_map($this->getParameterSignature(...), $method->getParameters()),
         );
 
         $moockFunctionCallArgs = $this->getInternalMockCallArgs($method);
@@ -124,8 +124,8 @@ class Mocker
         return $this->formatValue(
             array_map(
                 fn (ReflectionParameter $parameter) => $parameter->name,
-                $parameters
-            )
+                $parameters,
+            ),
         );
     }
 }

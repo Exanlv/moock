@@ -31,13 +31,12 @@ class DeterminePropertyNamesTest extends TestCase
             public function __construct(
                 public mixed $myVar,
                 public mixed $myOtherVar,
-            ) {
-            }
+            ) {}
         };
 
         $this->assertEquals(
             ['myVar'],
-            $this->determinePropName($class, $class->myVar)
+            $this->determinePropName($class, $class->myVar),
         );
 
         $this->assertEquals($myVar, $class->myVar);
@@ -46,11 +45,12 @@ class DeterminePropertyNamesTest extends TestCase
     #[Test]
     public function it_determines_property_name_for_resources()
     {
-        $class = new class {
+        $class = new class () {
             public mixed $myOtherVar;
             public mixed $myVar;
 
-            public function __construct() {
+            public function __construct()
+            {
                 $this->myVar = fopen('php://memory', 'r+');
                 $this->myOtherVar = fopen('php://memory', 'r+');
             }
@@ -58,14 +58,15 @@ class DeterminePropertyNamesTest extends TestCase
 
         $this->assertEquals(
             ['myVar'],
-            $this->determinePropName($class, $class->myVar)
+            $this->determinePropName($class, $class->myVar),
         );
 
-        $otherClass = new class {
+        $otherClass = new class () {
             public mixed $myOtherVar;
             public mixed $myVar;
 
-            public function __construct() {
+            public function __construct()
+            {
                 $resource = fopen('php://memory', 'r+');
                 $this->myVar = $resource;
                 $this->myOtherVar = $resource;
@@ -74,34 +75,36 @@ class DeterminePropertyNamesTest extends TestCase
 
         $this->assertEquals(
             ['myOtherVar', 'myVar'],
-            $this->determinePropName($otherClass, $otherClass->myVar)
+            $this->determinePropName($otherClass, $otherClass->myVar),
         );
     }
 
     #[Test]
     public function it_determines_property_name_for_objects()
     {
-        $class = new class {
+        $class = new class () {
             public mixed $myOtherVar;
             public mixed $myVar;
 
-            public function __construct() {
-                $this->myVar = new class {};
-                $this->myOtherVar = new class {};
+            public function __construct()
+            {
+                $this->myVar = new class () {};
+                $this->myOtherVar = new class () {};
             }
         };
 
         $this->assertEquals(
             ['myVar'],
-            $this->determinePropName($class, $class->myVar)
+            $this->determinePropName($class, $class->myVar),
         );
 
-        $otherClass = new class {
+        $otherClass = new class () {
             public mixed $myOtherVar;
             public mixed $myVar;
 
-            public function __construct() {
-                $class = new class {};
+            public function __construct()
+            {
+                $class = new class () {};
                 $this->myVar = $class;
                 $this->myOtherVar = $class;
             }
@@ -109,7 +112,7 @@ class DeterminePropertyNamesTest extends TestCase
 
         $this->assertEquals(
             ['myVar'],
-            $this->determinePropName($otherClass, $otherClass->myVar)
+            $this->determinePropName($otherClass, $otherClass->myVar),
         );
     }
 
@@ -117,7 +120,7 @@ class DeterminePropertyNamesTest extends TestCase
     {
         $properties = (new ReflectionClass($object))->getProperties(ReflectionProperty::IS_PUBLIC);
 
-        $class = new class($object, array_map(fn(ReflectionProperty $prop) => $prop->name, $properties)) {
+        $class = new class ($object, array_map(fn (ReflectionProperty $prop) => $prop->name, $properties)) {
             use DeterminesPropertyNames;
 
             public function __construct(

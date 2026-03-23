@@ -76,7 +76,7 @@ class Mocker
              * "Abuse" hooks to ""properly"" mock properties
              */
             $signature .= '{' . PHP_EOL;
-            $signature .= 'get { return $this->__moockPropertyGet(\'' . $property->getName() . '\'); }' . PHP_EOL;
+            $signature .= 'get { return $this->__moockPropertyGet(\'' . $property->getName() . '\') ?? $this->' . $property->getName() . '; }' . PHP_EOL;
             $signature .= 'set(mixed $value) { $this->' . $property->getName() . ' = $this->__mockPropertySet(\'' . $property->getName() . '\', $value); }' . PHP_EOL;
             $signature .= '}' . PHP_EOL;
         } else {
@@ -114,7 +114,7 @@ class Mocker
                 } catch (ReflectionException) {
                     return true;
                 }
-            }
+            },
         );
     }
 }

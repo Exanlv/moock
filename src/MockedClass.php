@@ -51,7 +51,7 @@ trait MockedClass
             throw new RuntimeException(sprintf(
                 'Method %s called with args that do not pass its set filters. Called with: %s',
                 $method,
-                print_r($args, true)
+                print_r($args, true),
             ));
         }
 
@@ -132,7 +132,7 @@ trait MockedClass
 
     public function __moockPropertyGet(string $property): mixed
     {
-        return $this->{$property};
+        return null;
     }
 
     public function __mockPropertySet(string $property, mixed $value): mixed

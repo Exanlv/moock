@@ -26,8 +26,8 @@ class Mocker
             fn (string $interface) => '\\' . $interface,
             array_filter(
                 $this->interfaces,
-                fn (string $interface) => interface_exists($interface)
-            )
+                fn (string $interface) => interface_exists($interface),
+            ),
         );
 
         $implements[] = '\\' . MockedClassInterface::class;

@@ -19,7 +19,7 @@ class PropertyMocker
     ) {
         $this->publicProperties = array_map(
             fn (ReflectionProperty $prop) => $prop->name,
-            (new ReflectionClass($object))->getProperties(ReflectionProperty::IS_PUBLIC)
+            (new ReflectionClass($object))->getProperties(ReflectionProperty::IS_PUBLIC),
         );
     }
 

@@ -36,7 +36,7 @@ class ArrTest extends TestCase
                 'level' => [
                     'array' => 'other-value',
                 ],
-                'additional-key' => 'some-value'
+                'additional-key' => 'some-value',
             ],
         ]));
 
@@ -47,7 +47,7 @@ class ArrTest extends TestCase
                 'level' => [
                     'array' => 'other-value',
                 ],
-                'additional-key' => 'some-value'
+                'additional-key' => 'some-value',
             ],
         ]));
 
@@ -58,7 +58,7 @@ class ArrTest extends TestCase
                 'level' => [
                     'array' => 'other-value',
                 ],
-                'additional-key' => 'some-value'
+                'additional-key' => 'some-value',
             ],
         ]));
 
@@ -69,7 +69,7 @@ class ArrTest extends TestCase
                 'level' => [
                     'array' => 'non matching in multi level array',
                 ],
-                'additional-key' => 'some-value'
+                'additional-key' => 'some-value',
             ],
         ]));
     }
@@ -92,7 +92,7 @@ class ArrTest extends TestCase
                 'level' => [
                     'array' => 'other-value',
                 ],
-                'additional-key' => 'some-value'
+                'additional-key' => 'some-value',
             ],
         ]));
 
@@ -103,7 +103,7 @@ class ArrTest extends TestCase
                 'level' => [
                     'array' => 'other-value',
                 ],
-                'additional-key' => 'some-value'
+                'additional-key' => 'some-value',
             ],
         ]));
 
@@ -114,7 +114,7 @@ class ArrTest extends TestCase
                 'level' => [
                     'array' => 'non matching in multi level array',
                 ],
-                'additional-key' => 'some-value'
+                'additional-key' => 'some-value',
             ],
         ]));
     }
@@ -146,7 +146,7 @@ class ArrTest extends TestCase
                 'level' => [
                     'array' => 'other-value',
                 ],
-                'additional-key' => 'some-value'
+                'additional-key' => 'some-value',
             ],
         ]));
     }

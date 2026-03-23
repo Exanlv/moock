@@ -66,8 +66,8 @@ trait DeterminesPropertyNames
     {
         return array_values(array_filter(
             $this->publicProperties,
-            fn (string $property) => is_resource($this->object->{$property}) &&
-                get_resource_id($this->object->{$property}) === $resourceId,
+            fn (string $property) => is_resource($this->object->{$property})
+                && get_resource_id($this->object->{$property}) === $resourceId,
         ));
     }
 
@@ -87,14 +87,14 @@ trait DeterminesPropertyNames
 
         $limits = array_filter(
             $this->publicProperties,
-            fn (string $property) => $this->object->{$property} === $a
+            fn (string $property) => $this->object->{$property} === $a,
         );
 
         $ref = $b;
 
         $prop = array_filter(
             $limits,
-            fn (string $property) => $this->object->{$property} === $b
+            fn (string $property) => $this->object->{$property} === $b,
         );
 
         $ref = $original;

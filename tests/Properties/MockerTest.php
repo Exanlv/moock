@@ -50,7 +50,7 @@ class MockerTest extends TestCase
     #[Test]
     public function it_overwrites_property_hooks(): void
     {
-        $class = new class {
+        $class = new class () {
             public string $myString = 'some value' {
                 get {
                     return 'some other value';
@@ -73,7 +73,7 @@ class MockerTest extends TestCase
     {
         // Note: PHP limitation, unable to create hooks for these properties
 
-        $class = new class {
+        $class = new class () {
             public readonly string $myString;
         };
 
@@ -89,7 +89,7 @@ class MockerTest extends TestCase
     {
         // Note: PHP limitation, unable to create hooks for these properties
 
-        $class = new class {
+        $class = new class () {
             final public readonly string $myString;
         };
 
@@ -106,7 +106,7 @@ class MockerTest extends TestCase
         // Note: this would only work on properties defined in an anonymous class, as extending a class with these
         // properties would result in an error if attempting to overwrite
 
-        $class = new class {
+        $class = new class () {
             public private(set) string $myString;
         };
 
@@ -123,7 +123,7 @@ class MockerTest extends TestCase
     #[Test]
     public function it_mocks_protected_set_properties(): void
     {
-        $class = new class {
+        $class = new class () {
             public protected(set) string $myString;
         };
 
@@ -139,7 +139,7 @@ class MockerTest extends TestCase
     #[Test]
     public function it_mocks_final_properties(): void
     {
-        $class = new class {
+        $class = new class () {
             final public string $myString;
         };
 
@@ -155,7 +155,7 @@ class MockerTest extends TestCase
     #[Test]
     public function it_only_mocks_public_properties(): void
     {
-        $class = new class {
+        $class = new class () {
             public string $publicString = 'public-string';
             protected string $protectedString = 'protected-string';
             private string $privateString = 'private-string';
@@ -172,7 +172,7 @@ class MockerTest extends TestCase
     #[Test]
     public function it_mocks_properties_of_parent_as_well(): void
     {
-        $class = new class extends PropertiesTestClass {
+        $class = new class () extends PropertiesTestClass {
             public string $myString;
         };
 
@@ -191,7 +191,7 @@ class MockerTest extends TestCase
 
     private function getGetHook(string $property): string
     {
-        return sprintf('get { return $this->__moockPropertyGet(\'%s\'); }', $property);
+        return sprintf('get { return $this->__moockPropertyGet(\'%s\') ?? $this->%s; }', $property, $property);
     }
 
     private function getSetHook(string $property): string

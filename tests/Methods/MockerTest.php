@@ -15,8 +15,8 @@ class MockerTest extends TestCase
     #[Test]
     public function it_writes_mock_functions(): void
     {
-        $class = new class {
-            public function myMethod(): void { }
+        $class = new class () {
+            public function myMethod(): void {}
         };
 
         $mocker = new Mocker([$class::class]);
@@ -28,15 +28,18 @@ class MockerTest extends TestCase
         $this->assertStringContainsInOrder($code, [
             'public function myMethod',
             ': void',
-            '$this->__moockFunctionCall(\'myMethod\', compact([]));'
+            '$this->__moockFunctionCall(\'myMethod\', compact([]));',
         ]);
     }
 
     #[Test]
     public function it_handles_never_return_type(): void
     {
-        $class = new class {
-            public function myMethod(): never { die(); }
+        $class = new class () {
+            public function myMethod(): never
+            {
+                die();
+            }
         };
 
         $mocker = new Mocker([$class::class]);
@@ -48,15 +51,15 @@ class MockerTest extends TestCase
         $this->assertStringContainsInOrder($code, [
             'public function myMethod',
             ': never',
-            '$this->__moockFunctionCall(\'myMethod\', compact([]));'
+            '$this->__moockFunctionCall(\'myMethod\', compact([]));',
         ]);
     }
 
     #[Test]
     public function it_recreates_signature_args(): void
     {
-        $class = new class {
-            public function myMethod(string $myArg = 'string', array $myArray = ['default' => 'value']): void { }
+        $class = new class () {
+            public function myMethod(string $myArg = 'string', array $myArray = ['default' => 'value']): void {}
         };
 
         $mocker = new Mocker([$class::class]);
@@ -66,7 +69,7 @@ class MockerTest extends TestCase
             'string $myArg = \'string\'',
             'array $myArray = [\'default\' => \'value\', ]',
             ': void',
-            '$this->__moockFunctionCall(\'myMethod\', compact([0 => \'myArg\', 1 => \'myArray\', ]));'
+            '$this->__moockFunctionCall(\'myMethod\', compact([0 => \'myArg\', 1 => \'myArray\', ]));',
         ]);
     }
 
