@@ -15,6 +15,8 @@ trait MockedClass
 {
     use FiltersMethodArgs;
 
+    private array $propertyAccesses = [];
+
     private array $propertyReplacements = [];
     private array $methodReplacements = [];
 
@@ -89,8 +91,6 @@ trait MockedClass
             return null;
         }
 
-
-
         return $this->methodReplacements[$method](...$args);
     }
 
@@ -139,8 +139,20 @@ trait MockedClass
         $this->forwardedMagicProperties[] = $property;
     }
 
+    public function __replaceProp(string $property, mixed $value): void
+    {
+        $this->propertyReplacements[$property] = $value;
+    }
+
+    public function __getAccessedProperties(): array
+    {
+        return $this->propertyAccesses;
+    }
+
     public function __moockPropertyGet(string $property): mixed
     {
+        $this->propertyAccesses[] = $property;
+
         if (isset($this->propertyReplacements[$property])) {
             return new MockPropertyValue(true, $this->propertyReplacements[$property]);
         }
