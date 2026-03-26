@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Exan\Moock\Formatting;
 
+use ReflectionClass;
 use ReflectionIntersectionType;
+use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionUnionType;
 
@@ -42,7 +44,7 @@ trait Variables
             : (string) $value;
     }
 
-    private function getTypeSignature(ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $type): string
+    private function getTypeSignature(ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $type, ?ReflectionClass $declaringClass = null): string
     {
         if ($type === null) {
             return '';
@@ -51,7 +53,13 @@ trait Variables
         $types = [];
 
         if ($type instanceof ReflectionNamedType) {
-            $types[] = $this->isSemiBuiltIn($type) ? $type->getName() : '\\' . $type->getName();
+            $signature = $this->isSemiBuiltIn($type) ? $type->getName() : '\\' . $type->getName();
+
+            if ($signature === 'self' && $declaringClass !== null) {
+                $signature = '\\' . $declaringClass->getName();
+            }
+
+            $types[] = $signature;
         } else {
             $types = array_map(
                 fn (ReflectionNamedType $subType) => $this->isSemiBuiltIn($subType) ? $subType->getName() : '\\' . $subType->getName(),

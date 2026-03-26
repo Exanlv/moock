@@ -71,7 +71,7 @@ class Mocker
             $signature .= ' = ' . $this->formatValue($property->getDefaultValue());
         }
 
-        if (!$property->isReadOnly()) {
+        if (!$property->isReadOnly() && !$property->isStatic()) {
             /**
              * "Abuse" hooks to ""properly"" mock properties
              */
@@ -80,7 +80,7 @@ class Mocker
             $signature .= '$overwrite = $this->__moockPropertyGet(\'' . $property->getName() . '\');';
             $signature .= 'if ($overwrite->hasValue) return $overwrite->value;';
             $signature .= 'return $this->' . $property->getName() . '; }' . PHP_EOL;
-            $signature .= 'set(mixed $value) { $this->' . $property->getName() . ' = $this->__mockPropertySet(\'' . $property->getName() . '\', $value); }' . PHP_EOL;
+            $signature .= 'set { $this->' . $property->getName() . ' = $this->__mockPropertySet(\'' . $property->getName() . '\', $value); }' . PHP_EOL;
             $signature .= '}' . PHP_EOL;
         } else {
             /**

@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Tests;
 
 use Exan\Moock\Mock;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use Tests\Components\ExtendingClassWithSelfParam;
 use Tests\Components\TestClass;
 
 class MockClassTest extends TestCase
@@ -181,5 +183,13 @@ class MockClassTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $mock->myOtherMethod('::B::', 'asdf');
+    }
+
+    #[Test]
+    public function it_mocks_classes_extending_class_with_self_param(): void
+    {
+        $mock = Mock::class(ExtendingClassWithSelfParam::class);
+
+        $this->assertInstanceOf(ExtendingClassWithSelfParam::class, $mock);
     }
 }

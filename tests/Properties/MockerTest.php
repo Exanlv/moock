@@ -196,6 +196,6 @@ class MockerTest extends TestCase
 
     private function getSetHook(string $property): string
     {
-        return sprintf('set(mixed $value) { $this->%s = $this->__mockPropertySet(\'%s\', $value); }', $property, $property);
+        return sprintf('set { $this->%s = $this->__mockPropertySet(\'%s\', $value); }', $property, $property);
     }
 }

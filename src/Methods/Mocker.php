@@ -65,16 +65,20 @@ class Mocker
     private function getFormattedMethod(ReflectionMethod $method): string
     {
         $name = $method->name;
+        $declaringClass = $method->getDeclaringClass();
 
         $functionArgs = implode(
             ', ',
-            array_map($this->getParameterSignature(...), $method->getParameters()),
+            array_map(
+                fn (ReflectionParameter $parameter) => $this->getParameterSignature($parameter, $declaringClass),
+                $method->getParameters()
+            ),
         );
 
         $moockFunctionCallArgs = $this->getInternalMockCallArgs($method);
 
         $returnSignature = $method->hasReturnType()
-            ? ': ' . self::getTypeSignature($method->getReturnType())
+            ? ': ' . self::getTypeSignature($method->getReturnType(), $declaringClass)
             : '';
 
         $canReturn = $method->hasReturnType()
@@ -91,7 +95,7 @@ class Mocker
         FUNC;
     }
 
-    private function getParameterSignature(ReflectionParameter $parameter): string
+    private function getParameterSignature(ReflectionParameter $parameter, ReflectionClass $declaringClass): string
     {
         $type = $parameter->getType();
 
@@ -105,13 +109,13 @@ class Mocker
             $variableIndicator = '&' . $variableIndicator;
         }
 
-        $signature = self::getTypeSignature($type)
+        $signature = $this->getTypeSignature($type, $declaringClass)
             . ' ' . $variableIndicator . $parameter->getName();
 
         if ($parameter->isDefaultValueAvailable()) {
             $defaultValue = $parameter->getDefaultValue();
 
-            $signature .= ' = ' . self::formatValue($defaultValue);
+            $signature .= ' = ' . $this->formatValue($defaultValue);
         }
 
         return $signature;
