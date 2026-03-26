@@ -15,8 +15,7 @@ class Expectation
         private readonly string $methodName,
         private readonly array $calls,
         private readonly bool $expectation = true,
-    ) {
-    }
+    ) {}
 
     public function not(): Expectation
     {
@@ -71,7 +70,7 @@ class Expectation
         $data = ['method' => $this->methodName, 'calls' => $this->calls, 'expectation' => $this->expectation];
 
         if (function_exists('dd')) {
-            dd($data);;
+            dd($data);
         }
 
         var_dump($this->calls);

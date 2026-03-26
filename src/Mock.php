@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Exan\Moock;
 
 use Closure;
+use Exan\Moock\Class\Mocker as ClassMocker;
 use ReflectionFunction;
+use Throwable;
 
 class Mock
 {
@@ -30,9 +32,13 @@ class Mock
      */
     public static function interfaces(string ...$interfaces): mixed
     {
-        $classBuilder = new MockClassBuilder($interfaces, null, $interfaces);
+        $mocker = new ClassMocker();
 
-        return eval($classBuilder->getCode());
+        foreach ($interfaces as $interface) {
+            $mocker->addInterface($interface);
+        }
+
+        return static::codeToMock($mocker->getCode());
     }
 
     /**
@@ -46,23 +52,22 @@ class Mock
             return self::anonymousClass($class);
         }
 
-        $classBuilder = new MockClassBuilder([$class], $class);
+        $mocker = new ClassMocker();
 
-        return eval($classBuilder->getCode());
+        return static::codeToMock($mocker->extends($class)->getCode());
     }
 
     private static function anonymousClass(string $class): mixed
     {
-        $parent = get_parent_class($class);
         $implements = class_implements($class);
 
-        $classBuilder = new MockClassBuilder(
-            [$class],
-            $parent ? $parent : null,
-            $implements ? $implements : [],
-        );
+        $mocker = new ClassMocker();
 
-        return eval($classBuilder->getCode());
+        foreach ($implements as $interface) {
+            $mocker->addInterface($interface);
+        }
+
+        return static::codeToMock($mocker->extends($class)->getCode());
     }
 
     public static function method(Closure $arg)
@@ -75,5 +80,24 @@ class Mock
     public static function partial(MockedClassInterface $mock, mixed $spyOn): void
     {
         $mock->__setPartial($spyOn);
+    }
+
+    public static function properties(MockedClassInterface $mock): PropertyMocker
+    {
+        return new PropertyMocker($mock);
+    }
+
+    private static function codeToMock(string $code): MockedClassInterface
+    {
+        try {
+            /** @var MockedClassInterface */
+            $mock = eval($code);
+        } catch (Throwable $e) {
+            dd($e->getMessage(), $code);
+        }
+
+        $mock->__setQuine($code);
+
+        return $mock;
     }
 }

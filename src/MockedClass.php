@@ -4,23 +4,40 @@ declare(strict_types=1);
 
 namespace Exan\Moock;
 
+use Exan\Moock\Properties\MockPropertyValue;
 use ReflectionClass;
 use RuntimeException;
 
+/**
+ * @internal
+ */
 trait MockedClass
 {
     use FiltersMethodArgs;
 
-    private array $replacements = [];
+    private array $propertyAccesses = [];
+
+    /** @var string[] */
+    private array $forwardedProperties = [];
+
+    private array $propertyReplacements = [];
+    private array $methodReplacements = [];
 
     private array $calls = [];
     private array $filters = [];
 
     private mixed $spyOn = null;
 
+    public private(set) string $quine;
+
+    public function __setQuine(string $code): void
+    {
+        $this->quine = $code;
+    }
+
     public function __replace(string $method, callable $replacement): void
     {
-        $this->replacements[$method] = $replacement;
+        $this->methodReplacements[$method] = $replacement;
         $this->calls[$method] = [];
     }
 
@@ -46,7 +63,7 @@ trait MockedClass
             throw new RuntimeException(sprintf(
                 'Method %s called with args that do not pass its set filters. Called with: %s',
                 $method,
-                print_r($args, true)
+                print_r($args, true),
             ));
         }
 
@@ -67,7 +84,7 @@ trait MockedClass
             ];
         }
 
-        if (!isset($this->replacements[$method])) {
+        if (!isset($this->methodReplacements[$method])) {
             if ($this->spyOn !== null && method_exists($this->spyOn, $method)) {
                 return $this->spyOn->{$method}(...$args);
             }
@@ -75,9 +92,7 @@ trait MockedClass
             return null;
         }
 
-
-
-        return $this->replacements[$method](...$args);
+        return $this->methodReplacements[$method](...$args);
     }
 
     private function callFailsFilter(string $method, array $args): bool
@@ -113,5 +128,31 @@ trait MockedClass
         }
 
         return $args[array_key_last($args)]->isVariadic();
+    }
+
+    public function __forwardProp(string $property): void
+    {
+        $this->forwardedProperties[] = $property;
+    }
+
+    public function __getAccessedProperties(): array
+    {
+        return $this->propertyAccesses;
+    }
+
+    public function __moockPropertyGet(string $property): mixed
+    {
+        $this->propertyAccesses[] = $property;
+
+        if (in_array($property, $this->forwardedProperties)) {
+            return new MockPropertyValue(true, $this->spyOn->{$property});
+        }
+
+        return new MockPropertyValue(false, null);
+    }
+
+    public function __mockPropertySet(string $property, mixed $value): mixed
+    {
+        return $value;
     }
 }

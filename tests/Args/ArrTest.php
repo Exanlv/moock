@@ -13,9 +13,9 @@ class ArrTest extends TestCase
     {
         $validator = Arr::count(3);
 
-        $this->assertTrue($validator([1, 2, 3]));
-        $this->assertFalse($validator([1, 2, 3, 4]));
-        $this->assertFalse($validator([1, 2]));
+        static::assertTrue($validator([1, 2, 3]));
+        static::assertFalse($validator([1, 2, 3, 4]));
+        static::assertFalse($validator([1, 2]));
     }
 
     public function test_it_validates_partial_arrays(): void
@@ -29,47 +29,47 @@ class ArrTest extends TestCase
             ],
         ]);
 
-        $this->assertTrue($validator([
+        static::assertTrue($validator([
             'key' => 'value',
             'second-key' => 'another-value',
             'multi' => [
                 'level' => [
                     'array' => 'other-value',
                 ],
-                'additional-key' => 'some-value'
+                'additional-key' => 'some-value',
             ],
         ]));
 
-        $this->assertFalse($validator([
+        static::assertFalse($validator([
             'key' => 'non matching value',
             'second-key' => 'another-value',
             'multi' => [
                 'level' => [
                     'array' => 'other-value',
                 ],
-                'additional-key' => 'some-value'
+                'additional-key' => 'some-value',
             ],
         ]));
 
-        $this->assertFalse($validator([
+        static::assertFalse($validator([
             // 'key' => 'value', item missing
             'second-key' => 'another-value',
             'multi' => [
                 'level' => [
                     'array' => 'other-value',
                 ],
-                'additional-key' => 'some-value'
+                'additional-key' => 'some-value',
             ],
         ]));
 
-        $this->assertFalse($validator([
+        static::assertFalse($validator([
             'key' => 'value',
             'second-key' => 'another-value',
             'multi' => [
                 'level' => [
                     'array' => 'non matching in multi level array',
                 ],
-                'additional-key' => 'some-value'
+                'additional-key' => 'some-value',
             ],
         ]));
     }
@@ -85,36 +85,36 @@ class ArrTest extends TestCase
             ],
         ]);
 
-        $this->assertTrue($validator([
+        static::assertTrue($validator([
             'key' => 'value',
             'second-key' => 'another-value',
             'multi' => [
                 'level' => [
                     'array' => 'other-value',
                 ],
-                'additional-key' => 'some-value'
+                'additional-key' => 'some-value',
             ],
         ]));
 
-        $this->assertFalse($validator([
+        static::assertFalse($validator([
             'key' => 'non matching value',
             'second-key' => 'another-value',
             'multi' => [
                 'level' => [
                     'array' => 'other-value',
                 ],
-                'additional-key' => 'some-value'
+                'additional-key' => 'some-value',
             ],
         ]));
 
-        $this->assertFalse($validator([
+        static::assertFalse($validator([
             'key' => 'value',
             'second-key' => 'another-value',
             'multi' => [
                 'level' => [
                     'array' => 'non matching in multi level array',
                 ],
-                'additional-key' => 'some-value'
+                'additional-key' => 'some-value',
             ],
         ]));
     }
@@ -130,7 +130,7 @@ class ArrTest extends TestCase
             ],
         ]);
 
-        $this->assertTrue($validator([
+        static::assertTrue($validator([
             'key' => 'value',
             'second-key' => 'another-value',
             'multi' => [
@@ -140,13 +140,13 @@ class ArrTest extends TestCase
             ],
         ]));
 
-        $this->assertFalse($validator([
+        static::assertFalse($validator([
             'key' => 'value',
             'multi' => [
                 'level' => [
                     'array' => 'other-value',
                 ],
-                'additional-key' => 'some-value'
+                'additional-key' => 'some-value',
             ],
         ]));
     }

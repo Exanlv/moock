@@ -1,3 +1,5 @@
 vendor
 *.local.php
 composer.lock
+.phpunit.cache
+.vscode
