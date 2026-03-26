@@ -12,7 +12,6 @@ interface MockedClassInterface
     public function __getCalls(string $method): array;
     public function __setPartial(mixed $spyOn): void;
 
-    public function __forwardProp(string $property): void;
     public function __moockPropertyGet(string $property): mixed;
     public function __mockPropertySet(string $property, mixed $value): mixed;
     public function __getAccessedProperties(): array;

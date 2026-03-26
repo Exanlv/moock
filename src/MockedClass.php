@@ -130,11 +130,6 @@ trait MockedClass
         return $args[array_key_last($args)]->isVariadic();
     }
 
-    public function __forwardProp(string $property): void
-    {
-        $this->forwardedProperties[] = $property;
-    }
-
     public function __getAccessedProperties(): array
     {
         return $this->propertyAccesses;
@@ -144,7 +139,7 @@ trait MockedClass
     {
         $this->propertyAccesses[] = $property;
 
-        if (in_array($property, $this->forwardedProperties)) {
+        if (isset($this->spyOn)) {
             return new MockPropertyValue(true, $this->spyOn->{$property});
         }
 
