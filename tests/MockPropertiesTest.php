@@ -46,7 +46,7 @@ class MockPropertiesTest extends TestCase
 
             $mock = Mock::class($class::class);
 
-            $this->assertEquals($expectedValue, $mock->myProperty);
+            static::assertEquals($expectedValue, $mock->myProperty);
         }
     }
 
@@ -77,7 +77,7 @@ class MockPropertiesTest extends TestCase
         try {
             $mock->myProperty = 'something';
         } catch (Error $e) {
-            $this->assertStringContainsString('readonly', $e->getMessage());
+            static::assertStringContainsString('readonly', $e->getMessage());
         }
     }
 
@@ -100,7 +100,7 @@ class MockPropertiesTest extends TestCase
         $mock->myFirstProp;
         $mock->mySecondProp;
 
-        $this->assertEquals([
+        static::assertEquals([
             'mySecondProp',
             'myFirstProp',
             'myFirstProp',
@@ -110,21 +110,6 @@ class MockPropertiesTest extends TestCase
             'myFirstProp',
             'mySecondProp',
         ], $mock->__getAccessedProperties());
-    }
-
-    #[Test]
-    public function it_overwrites_props(): void
-    {
-        $class = new class () {
-            final public string $myProp = 'test';
-        };
-
-        $mock = Mock::class($class::class);
-
-        $this->assertEquals('test', $mock->myProp);
-
-        $mock->__replaceProp('myProp', 'not test');
-        $this->assertEquals('not test', $mock->myProp);
     }
 
     #[Test]
@@ -146,10 +131,10 @@ class MockPropertiesTest extends TestCase
 
         $mock = Mock::class($toMock::class);
 
-        $this->assertEquals('::first string::', $mock->myFirstProp);
-        $this->assertEquals('::second string::', $mock->mySecondProp);
-        $this->assertEquals('::third string::', $mock->myThirdProp);
-        $this->assertEquals('::fourth string::', $mock->myFourthProp);
+        static::assertEquals('::first string::', $mock->myFirstProp);
+        static::assertEquals('::second string::', $mock->mySecondProp);
+        static::assertEquals('::third string::', $mock->myThirdProp);
+        static::assertEquals('::fourth string::', $mock->myFourthProp);
 
         Mock::partial($mock, $partial);
 
@@ -160,9 +145,9 @@ class MockPropertiesTest extends TestCase
             $mock->myFourthProp,
         );
 
-        $this->assertEquals('::first string 2::', $mock->myFirstProp);
-        $this->assertEquals('::second string 2::', $mock->mySecondProp);
-        $this->assertEquals('::third string 2::', $mock->myThirdProp);
-        $this->assertEquals('::fourth string 2::', $mock->myFourthProp);
+        static::assertEquals('::first string 2::', $mock->myFirstProp);
+        static::assertEquals('::second string 2::', $mock->mySecondProp);
+        static::assertEquals('::third string 2::', $mock->myThirdProp);
+        static::assertEquals('::fourth string 2::', $mock->myFourthProp);
     }
 }

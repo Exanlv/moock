@@ -13,27 +13,27 @@ class NumberTest extends TestCase
     {
         $validator = Number::gt(5);
 
-        $this->assertTrue($validator(6));
-        $this->assertFalse($validator(4));
+        static::assertTrue($validator(6));
+        static::assertFalse($validator(4));
     }
 
     public function test_it_validates_lt(): void
     {
         $validator = Number::lt(5);
 
-        $this->assertTrue($validator(4));
-        $this->assertFalse($validator(6));
+        static::assertTrue($validator(4));
+        static::assertFalse($validator(6));
     }
 
     public function test_it_validates_range(): void
     {
         $validator = Number::range(3, 6);
 
-        $this->assertTrue($validator(3));
-        $this->assertTrue($validator(4));
-        $this->assertTrue($validator(6));
+        static::assertTrue($validator(3));
+        static::assertTrue($validator(4));
+        static::assertTrue($validator(6));
 
-        $this->assertFalse($validator(7));
-        $this->assertFalse($validator(2));
+        static::assertFalse($validator(7));
+        static::assertFalse($validator(2));
     }
 }

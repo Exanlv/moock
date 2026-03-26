@@ -42,9 +42,9 @@ class MockerTest extends TestCase
 
         $code = $mocker->getCode();
 
-        $this->assertStringStartsWith($expected, $code);
-        $this->assertStringContainsString($this->getGetHook($propertyName), $code);
-        $this->assertStringContainsString($this->getSetHook($propertyName), $code);
+        static::assertStringStartsWith($expected, $code);
+        static::assertStringContainsString($this->getGetHook($propertyName), $code);
+        static::assertStringContainsString($this->getSetHook($propertyName), $code);
     }
 
     #[Test]
@@ -64,8 +64,8 @@ class MockerTest extends TestCase
         $mocker = new Mocker($class::class);
         $code = $mocker->getCode();
 
-        $this->assertStringContainsString($this->getGetHook('myString'), $code);
-        $this->assertStringContainsString($this->getSetHook('myString'), $code);
+        static::assertStringContainsString($this->getGetHook('myString'), $code);
+        static::assertStringContainsString($this->getSetHook('myString'), $code);
     }
 
     #[Test]
@@ -81,7 +81,7 @@ class MockerTest extends TestCase
         $code = $mocker->getCode();
 
         // Note: Since this property does not have hooks, it MUST have a trailing ';'
-        $this->assertEquals('public readonly string $myString;', trim($code));
+        static::assertEquals('public readonly string $myString;', trim($code));
     }
 
     #[Test]
@@ -97,7 +97,7 @@ class MockerTest extends TestCase
         $code = $mocker->getCode();
 
         // Note: Since this property does not have hooks, it MUST have a trailing ';'
-        $this->assertEquals('final public readonly string $myString;', trim($code));
+        static::assertEquals('final public readonly string $myString;', trim($code));
     }
 
     #[Test]
@@ -114,10 +114,10 @@ class MockerTest extends TestCase
         $code = $mocker->getCode();
 
         // private(set) implicitly makes a property final, this is fine to "incorrectly" add here.
-        $this->assertStringStartsWith('final public private(set) string $myString', $code);
+        static::assertStringStartsWith('final public private(set) string $myString', $code);
 
-        $this->assertStringContainsString($this->getGetHook('myString'), $code);
-        $this->assertStringContainsString($this->getSetHook('myString'), $code);
+        static::assertStringContainsString($this->getGetHook('myString'), $code);
+        static::assertStringContainsString($this->getSetHook('myString'), $code);
     }
 
     #[Test]
@@ -130,10 +130,10 @@ class MockerTest extends TestCase
         $mocker = new Mocker($class::class);
         $code = $mocker->getCode();
 
-        $this->assertStringStartsWith('public protected(set) string $myString', $code);
+        static::assertStringStartsWith('public protected(set) string $myString', $code);
 
-        $this->assertStringContainsString($this->getGetHook('myString'), $code);
-        $this->assertStringContainsString($this->getSetHook('myString'), $code);
+        static::assertStringContainsString($this->getGetHook('myString'), $code);
+        static::assertStringContainsString($this->getSetHook('myString'), $code);
     }
 
     #[Test]
@@ -146,10 +146,10 @@ class MockerTest extends TestCase
         $mocker = new Mocker($class::class);
         $code = $mocker->getCode();
 
-        $this->assertStringStartsWith('final public string $myString', $code);
+        static::assertStringStartsWith('final public string $myString', $code);
 
-        $this->assertStringContainsString($this->getGetHook('myString'), $code);
-        $this->assertStringContainsString($this->getSetHook('myString'), $code);
+        static::assertStringContainsString($this->getGetHook('myString'), $code);
+        static::assertStringContainsString($this->getSetHook('myString'), $code);
     }
 
     #[Test]
@@ -164,9 +164,9 @@ class MockerTest extends TestCase
         $mocker = new Mocker($class::class);
         $code = $mocker->getCode();
 
-        $this->assertStringContainsString('public-string', $code);
-        $this->assertStringNotContainsString('protected-string', $code);
-        $this->assertStringNotContainsString('private-string', $code);
+        static::assertStringContainsString('public-string', $code);
+        static::assertStringNotContainsString('protected-string', $code);
+        static::assertStringNotContainsString('private-string', $code);
     }
 
     #[Test]
@@ -179,14 +179,14 @@ class MockerTest extends TestCase
         $mocker = new Mocker($class::class);
         $code = $mocker->getCode();
 
-        $this->assertStringContainsString('public string $myString', $code);
-        $this->assertStringContainsString('public protected(set) string $protectedSetString', $code);
+        static::assertStringContainsString('public string $myString', $code);
+        static::assertStringContainsString('public protected(set) string $protectedSetString', $code);
 
-        $this->assertStringContainsString($this->getGetHook('myString'), $code);
-        $this->assertStringContainsString($this->getSetHook('myString'), $code);
+        static::assertStringContainsString($this->getGetHook('myString'), $code);
+        static::assertStringContainsString($this->getSetHook('myString'), $code);
 
-        $this->assertStringContainsString($this->getGetHook('protectedSetString'), $code);
-        $this->assertStringContainsString($this->getSetHook('protectedSetString'), $code);
+        static::assertStringContainsString($this->getGetHook('protectedSetString'), $code);
+        static::assertStringContainsString($this->getSetHook('protectedSetString'), $code);
     }
 
     private function getGetHook(string $property): string

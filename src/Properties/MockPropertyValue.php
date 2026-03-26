@@ -9,6 +9,5 @@ readonly class MockPropertyValue
     public function __construct(
         public mixed $hasValue,
         public mixed $value,
-    ) {
-    }
+    ) {}
 }

@@ -23,7 +23,7 @@ class MockerTest extends TestCase
 
         $code = $mocker->getCode();
 
-        $this->assertStringNotContainsString('return $this->__moockFunctionCall', $code);
+        static::assertStringNotContainsString('return $this->__moockFunctionCall', $code);
 
         $this->assertStringContainsInOrder($code, [
             'public function myMethod',
@@ -46,7 +46,7 @@ class MockerTest extends TestCase
 
         $code = $mocker->getCode();
 
-        $this->assertStringNotContainsString('return $this->__moockFunctionCall', $code);
+        static::assertStringNotContainsString('return $this->__moockFunctionCall', $code);
 
         $this->assertStringContainsInOrder($code, [
             'public function myMethod',
@@ -86,7 +86,7 @@ class MockerTest extends TestCase
     public function assertStringContainsInOrder(string $haystack, array $needles): void
     {
         foreach ($needles as $needle) {
-            $this->assertStringContainsString($needle, $haystack);
+            static::assertStringContainsString($needle, $haystack);
             $pos = strpos($haystack, $needle);
             $pos += strlen($needle);
 

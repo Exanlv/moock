@@ -71,7 +71,6 @@ class Expectation
 
         if (function_exists('dd')) {
             dd($data);
-            ;
         }
 
         var_dump($this->calls);

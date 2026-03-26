@@ -10,8 +10,7 @@ class PropertyMocker
 {
     public function __construct(
         private readonly MockedClassInterface $mock,
-    ) {
-    }
+    ) {}
 
     public function forward(mixed ...$props): static
     {
