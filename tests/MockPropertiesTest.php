@@ -128,7 +128,7 @@ class MockPropertiesTest extends TestCase
     }
 
     #[Test]
-    public function it_forwards_props()
+    public function it_forwards_props(): void
     {
         $toMock = new class () {
             public string $myFirstProp = '::first string::';
@@ -160,5 +160,9 @@ class MockPropertiesTest extends TestCase
             $mock->myFourthProp,
         );
 
+        $this->assertEquals('::first string 2::', $mock->myFirstProp);
+        $this->assertEquals('::second string 2::', $mock->mySecondProp);
+        $this->assertEquals('::third string 2::', $mock->myThirdProp);
+        $this->assertEquals('::fourth string 2::', $mock->myFourthProp);
     }
 }

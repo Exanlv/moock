@@ -17,6 +17,9 @@ trait MockedClass
 
     private array $propertyAccesses = [];
 
+    /** @var string[] */
+    private array $forwardedProperties = [];
+
     private array $propertyReplacements = [];
     private array $methodReplacements = [];
 
@@ -24,8 +27,6 @@ trait MockedClass
     private array $filters = [];
 
     private mixed $spyOn = null;
-
-    private array $forwardedMagicProperties = [];
 
     public private(set) string $quine;
 
@@ -129,19 +130,9 @@ trait MockedClass
         return $args[array_key_last($args)]->isVariadic();
     }
 
-    public function __forwardProp(string $property)
+    public function __forwardProp(string $property): void
     {
-        if (property_exists($this, $property)) {
-            $this->{$property} = &$this->spyOn->$property;
-            return;
-        }
-
-        $this->forwardedMagicProperties[] = $property;
-    }
-
-    public function __replaceProp(string $property, mixed $value): void
-    {
-        $this->propertyReplacements[$property] = $value;
+        $this->forwardedProperties[] = $property;
     }
 
     public function __getAccessedProperties(): array
@@ -153,8 +144,8 @@ trait MockedClass
     {
         $this->propertyAccesses[] = $property;
 
-        if (isset($this->propertyReplacements[$property])) {
-            return new MockPropertyValue(true, $this->propertyReplacements[$property]);
+        if (in_array($property, $this->forwardedProperties)) {
+            return new MockPropertyValue(true, $this->spyOn->{$property});
         }
 
         return new MockPropertyValue(false, null);
