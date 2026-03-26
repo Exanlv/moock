@@ -7,6 +7,7 @@ use Exan\Moock\Mock;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tests\Components\PropertiesTestClass;
+use Tests\Components\PropertiesGetterTestClass;
 use TypeError;
 
 class MockPropertiesTest extends TestCase
@@ -149,5 +150,30 @@ class MockPropertiesTest extends TestCase
         static::assertEquals('::second string 2::', $mock->mySecondProp);
         static::assertEquals('::third string 2::', $mock->myThirdProp);
         static::assertEquals('::fourth string 2::', $mock->myFourthProp);
+    }
+
+    #[Test]
+    public function it_forwards_magic_props(): void
+    {
+        $partial = new class () {
+            public function __get($name)
+            {
+                if ($name === 'one') {
+                    return '::one 2::';
+                }
+
+                if ($name === 'other') {
+                    return '::other 2::';
+                }
+            }
+        };
+
+        $mock = Mock::class(PropertiesGetterTestClass::class);
+
+        Mock::partial($mock, $partial);
+        Mock::properties($mock)->forward($mock->one, $mock->other);
+
+        static::assertEquals('::one 2::', $mock->one);
+        static::assertEquals('::other 2::', $mock->other);
     }
 }

@@ -140,7 +140,7 @@ trait MockedClass
         return $this->propertyAccesses;
     }
 
-    public function __moockPropertyGet(string $property): mixed
+    public function __moockPropertyGet(string $property): MockPropertyValue
     {
         $this->propertyAccesses[] = $property;
 
@@ -154,5 +154,19 @@ trait MockedClass
     public function __mockPropertySet(string $property, mixed $value): mixed
     {
         return $value;
+    }
+
+    public function __get($property)
+    {
+        $value = $this->__moockPropertyGet($property);
+
+        if ($value->hasValue) {
+            return $value->value;
+        }
+
+        $parentClass = get_parent_class($this);
+        if ($parentClass !== false && (new ReflectionClass($parentClass))->hasMethod('__get')) {
+            return parent::__get($property);
+        }
     }
 }

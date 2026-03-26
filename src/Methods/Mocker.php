@@ -38,7 +38,7 @@ class Mocker
         foreach ($allMethods as $method) {
             $methodName = $method->getName();
 
-            if ($methodName === '__construct'
+            if (in_array($methodName, ['__construct', '__get'])
                 || in_array($methodName, $methodNames)
                 || str_starts_with($methodName, '__moock')
                 || $method->isStatic() // TODO: Why did I exclude these from being mocked in the first place?
