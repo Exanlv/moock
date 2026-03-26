@@ -16,6 +16,8 @@ class TestClass
         return [$inputA, $inputB];
     }
 
+    public function returnVoid(): void {}
+
     public function testWithStringDefault(string $input = 'my-string'): void {}
 
     public function testWithArrayDefault(array $input = ['key' => 'value']): void {}

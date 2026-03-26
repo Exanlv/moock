@@ -121,6 +121,11 @@ class MockClassTest extends TestCase
 
                 return '::return value::';
             }
+
+            public function returnVoid(): void
+            {
+                $this->wasCalled = true;
+            }
         };
 
         Mock::partial($mock, $spyOn);
@@ -129,6 +134,12 @@ class MockClassTest extends TestCase
 
         static::assertEquals('::other return value::', $mock->myMethod());
         static::assertFalse($spyOn->wasCalled);
+
+        Mock::method($mock->returnVoid(...))->void();
+        $mock->returnVoid();
+
+        static::assertFalse($spyOn->wasCalled);
+
     }
 
     public function test_it_can_set_arg_expectations()

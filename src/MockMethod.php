@@ -39,6 +39,13 @@ class MockMethod
         return $this;
     }
 
+    public function void(): static
+    {
+        $this->classMock->__replace($this->methodName, function () { });
+
+        return $this;
+    }
+
     public function forceReturn(mixed $returnValue): static
     {
         $this->classMock->__replace($this->methodName, fn () => $returnValue);
