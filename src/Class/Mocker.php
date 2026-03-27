@@ -109,7 +109,10 @@ class Mocker
             return new PropertiesMocker($this->extends);
         }
 
-        $toMock = eval('return new class extends \\' . $this->extends . ' { };');
+        $toMock = eval('return new class extends \\' . $this->extends . ' {'
+            . 'public function __construct() { }'
+            . '};'
+        );
 
         return new PropertiesMocker($toMock::class);
     }
