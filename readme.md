@@ -184,3 +184,7 @@ Mock::method($userService->isValidEmail(...))
     ->with(password: 'test-password')
     ->toHaveBeenCalledTimes(2);
 ```
+
+### Mocking non-public API of a class
+
+You don't.
