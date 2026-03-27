@@ -90,11 +90,6 @@ class Mock
         return $mock;
     }
 
-    public static function properties(MockedClassInterface $mock): PropertyMocker
-    {
-        return new PropertyMocker($mock);
-    }
-
     private static function codeToMock(string $code): MockedClassInterface
     {
         try {
