@@ -26,7 +26,7 @@ trait MockedClass
     private array $calls = [];
     private array $filters = [];
 
-    private mixed $spyOn = null;
+    private mixed $real = null;
 
     public private(set) string $quine;
 
@@ -53,7 +53,7 @@ trait MockedClass
 
     public function __setPartial(mixed $spyOn): void
     {
-        $this->spyOn = $spyOn;
+        $this->real = $spyOn;
         $this->calls = [];
     }
 
@@ -85,8 +85,8 @@ trait MockedClass
         }
 
         if (!isset($this->methodReplacements[$method])) {
-            if ($this->spyOn !== null && method_exists($this->spyOn, $method)) {
-                return $this->spyOn->{$method}(...$args);
+            if ($this->real !== null && method_exists($this->real, $method)) {
+                return $this->real->{$method}(...$args);
             }
 
             return null;
@@ -139,8 +139,8 @@ trait MockedClass
     {
         $this->propertyAccesses[] = $property;
 
-        if (isset($this->spyOn)) {
-            return new MockPropertyValue(true, $this->spyOn->{$property});
+        if (isset($this->real)) {
+            return new MockPropertyValue(true, $this->real->{$property});
         }
 
         return new MockPropertyValue(false, null);
