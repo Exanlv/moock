@@ -41,7 +41,7 @@ class MockMethod
 
     public function void(): static
     {
-        $this->classMock->__replace($this->methodName, function () { });
+        $this->classMock->__replace($this->methodName, function () {});
 
         return $this;
     }
