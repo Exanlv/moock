@@ -26,7 +26,7 @@ trait MockedClass
     private array $calls = [];
     private array $filters = [];
 
-    private mixed $spyOn = null;
+    private mixed $real = null;
 
     public private(set) string $quine;
 
@@ -51,9 +51,9 @@ trait MockedClass
         return $this->calls[$method] ?? [];
     }
 
-    public function __setPartial(mixed $spyOn): void
+    public function __makePartial(mixed $real): void
     {
-        $this->spyOn = $spyOn;
+        $this->real = $real;
         $this->calls = [];
     }
 
@@ -85,8 +85,8 @@ trait MockedClass
         }
 
         if (!isset($this->methodReplacements[$method])) {
-            if ($this->spyOn !== null && method_exists($this->spyOn, $method)) {
-                return $this->spyOn->{$method}(...$args);
+            if ($this->real !== null && method_exists($this->real, $method)) {
+                return $this->real->{$method}(...$args);
             }
 
             return null;
@@ -130,11 +130,6 @@ trait MockedClass
         return $args[array_key_last($args)]->isVariadic();
     }
 
-    public function __forwardProp(string $property): void
-    {
-        $this->forwardedProperties[] = $property;
-    }
-
     public function __getAccessedProperties(): array
     {
         return $this->propertyAccesses;
@@ -144,8 +139,8 @@ trait MockedClass
     {
         $this->propertyAccesses[] = $property;
 
-        if (in_array($property, $this->forwardedProperties)) {
-            return new MockPropertyValue(true, $this->spyOn->{$property});
+        if (isset($this->real)) {
+            return new MockPropertyValue(true, $this->real->{$property});
         }
 
         return new MockPropertyValue(false, null);

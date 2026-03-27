@@ -116,35 +116,14 @@ class MockPropertiesTest extends TestCase
     #[Test]
     public function it_forwards_props(): void
     {
-        $toMock = new class () {
-            public string $myFirstProp = '::first string::';
-            public string $mySecondProp = '::second string::';
-            public string $myThirdProp = '::third string::';
-            public string $myFourthProp = '::fourth string::';
-        };
+        $toMock = new PropertiesTestClass();
 
-        $partial = new class () {
-            public string $myFirstProp = '::first string 2::';
-            public string $mySecondProp = '::second string 2::';
-            public string $myThirdProp = '::third string 2::';
-            public string $myFourthProp = '::fourth string 2::';
-        };
+        $toMock->myFirstProp = '::first string 2::';
+        $toMock->mySecondProp = '::second string 2::';
+        $toMock->myThirdProp = '::third string 2::';
+        $toMock->myFourthProp = '::fourth string 2::';
 
-        $mock = Mock::class($toMock::class);
-
-        static::assertEquals('::first string::', $mock->myFirstProp);
-        static::assertEquals('::second string::', $mock->mySecondProp);
-        static::assertEquals('::third string::', $mock->myThirdProp);
-        static::assertEquals('::fourth string::', $mock->myFourthProp);
-
-        Mock::partial($mock, $partial);
-
-        Mock::properties($mock)->forward(
-            $mock->myFirstProp,
-            $mock->mySecondProp,
-            $mock->myThirdProp,
-            $mock->myFourthProp,
-        );
+        $mock = Mock::partial($toMock);
 
         static::assertEquals('::first string 2::', $mock->myFirstProp);
         static::assertEquals('::second string 2::', $mock->mySecondProp);
@@ -155,25 +134,10 @@ class MockPropertiesTest extends TestCase
     #[Test]
     public function it_forwards_magic_props(): void
     {
-        $partial = new class () {
-            public function __get($name)
-            {
-                if ($name === 'one') {
-                    return '::one 2::';
-                }
+        $instance = new PropertiesGetterTestClass(['test' => 'value']);
 
-                if ($name === 'other') {
-                    return '::other 2::';
-                }
-            }
-        };
+        $mock = Mock::partial($instance);
 
-        $mock = Mock::class(PropertiesGetterTestClass::class);
-
-        Mock::partial($mock, $partial);
-        Mock::properties($mock)->forward($mock->one, $mock->other);
-
-        static::assertEquals('::one 2::', $mock->one);
-        static::assertEquals('::other 2::', $mock->other);
+        static::assertEquals('value', $mock->test);
     }
 }

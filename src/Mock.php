@@ -77,14 +77,17 @@ class Mock
         return new MockMethod($ref);
     }
 
-    public static function partial(MockedClassInterface $mock, mixed $spyOn): void
+    /**
+     * @template T
+     * @param T $instance
+     * @return T&MockedClassInterface
+     */
+    public static function partial(mixed $instance): mixed
     {
-        $mock->__setPartial($spyOn);
-    }
+        $mock = static::class($instance::class);
+        $mock->__makePartial($instance);
 
-    public static function properties(MockedClassInterface $mock): PropertyMocker
-    {
-        return new PropertyMocker($mock);
+        return $mock;
     }
 
     private static function codeToMock(string $code): MockedClassInterface

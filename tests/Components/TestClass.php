@@ -6,9 +6,18 @@ namespace Tests\Components;
 
 class TestClass
 {
+    public $myMethodWasCalled = false;
+
     public function myMethod(): string
     {
+        $this->myMethodWasCalled = true;
+
         return '::original value::';
+    }
+
+    public function myVoidMethod(): void
+    {
+        $this->myMethodWasCalled = true;
     }
 
     public function myOtherMethod(string $inputA, string $inputB): array

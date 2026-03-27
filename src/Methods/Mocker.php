@@ -71,7 +71,7 @@ class Mocker
             ', ',
             array_map(
                 fn (ReflectionParameter $parameter) => $this->getParameterSignature($parameter, $declaringClass),
-                $method->getParameters()
+                $method->getParameters(),
             ),
         );
 
