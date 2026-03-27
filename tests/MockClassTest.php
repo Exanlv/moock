@@ -93,6 +93,18 @@ class MockClassTest extends TestCase
         static::assertFalse($mock->myMethodWasCalled);
     }
 
+    #[Test]
+    public function non_replaced_methods_on_partial_mocks_are_fowarded(): void
+    {
+        $instance = new TestClass();
+        $mock = Mock::partial($instance);
+
+        static::assertEquals('::original value::', $mock->myMethod());
+        static::assertTrue($mock->myMethodWasCalled);
+
+        Mock::method($mock->myMethod(...))->expect()->toHaveBeenCalledOnce();
+    }
+
     public function test_it_can_set_arg_expectations()
     {
         $mock = Mock::class(TestClass::class);
