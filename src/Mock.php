@@ -85,7 +85,7 @@ class Mock
     public static function partial(mixed $instance): mixed
     {
         $mock = static::class($instance::class);
-        $mock->__setPartial($instance);
+        $mock->__makePartial($instance);
 
         return $mock;
     }

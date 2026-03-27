@@ -51,9 +51,9 @@ trait MockedClass
         return $this->calls[$method] ?? [];
     }
 
-    public function __setPartial(mixed $spyOn): void
+    public function __makePartial(mixed $real): void
     {
-        $this->real = $spyOn;
+        $this->real = $real;
         $this->calls = [];
     }
 
