@@ -130,19 +130,20 @@ Mock::method($userService->isValidEmail(...))
 use Exan\Moock\Mock;
 
 $realUserService = (...);
-$userService = Mock::class(UserService::class);
 
-/**
- * $realUserService does NOT have to implement any of the mocked interfaces or classes
- * it can be anything you want. The only requirement is that method names match.
- */
-Mock::partial($userService, $realUserService);
+Mock::partial($realUserService);
 
 Mock::method($userService->isValidEmail(...))
     ->forceReturn(true);
 
 $userService->isValidEmail('::my_test_email::'); // true
 $userService->anyOtherMethod('...'); // calls $realUserService
+
+// If you now want a specific method to not be forwarded to $realUserService, you can void it
+Mock::method($userService->someOtherMethod(...))
+    ->void();
+
+$userService->someOtherMethod('my-arg'); // Does NOT call $realUserService
 ```
 
 ### Expecting specific input
