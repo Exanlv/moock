@@ -16,6 +16,8 @@ Moock is a package to abstract creating test dummies for objects, intended to be
 Using test dummies allows you to write more specific tests, where you don't have to worry about a class's dependencies.
 This works best when using the Dependency Injection pattern.
 
+Check out the docs [here!](./documentation.md)
+
 ### Sales pitch
 
 If you're looking into this library, there's a good chance you already know of some other mocking library.
