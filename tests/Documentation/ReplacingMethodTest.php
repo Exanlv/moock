@@ -11,7 +11,6 @@ use Exan\Pudocumenter\Attributes\Page;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use Tests\Components\TestClass;
 use Tests\Components\UserServiceInterface;
 
 #[Page('Replacing methods')]
@@ -28,7 +27,7 @@ class ReplacingMethodTest extends TestCase
 
     #[Example(
         'Replacing a method',
-        'You can replace any method on your mocks using the following examples'
+        'You can replace any public method on your mocks using the following examples',
     )]
     #[Test]
     public function it_can_replace_methods()
@@ -74,7 +73,7 @@ class ReplacingMethodTest extends TestCase
         $this->mock->createUser(
             'mail@domain.com',
             'username',
-            'password123'
+            'password123',
         );
     }
 }

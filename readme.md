@@ -4,102 +4,47 @@
     A simple way of mocking objects in PHP
 </p>
 
-## Usage
+## Installation
 
-
-### Asserting number of calls
-
-```php
-use Exan\Moock\Mock;
-
-$userService = Mock::class(UserService::class);
-
-Mock::method($userService->isValidEmail(...))
-    ->forceReturn(true);
-
-Mock::method($userService->isValidEmail(...))
-    ->expect()
-    ->not()->toHaveBeenCalled();
-
-$userService->isValidEmail('::my_test_email::');
-
-Mock::method($userService->isValidEmail(...))
-    ->expect()->toHaveBeenCalled();
-
-Mock::method($userService->isValidEmail(...))
-    ->expect()->toHaveBeenCalledOnce();
-
-$userService->isValidEmail('::my_other_test_email::');
-
-Mock::method($userService->isValidEmail(...))
-    ->expect()->toHaveBeenCalledTimes(2);
-
-# Invert any assertion using ->expect()->not()
-Mock::method($userService->isValidEmail(...))
-    ->expect()->not()->haveBeenCalledTimes(3);
+```sh
+composer require exan/moock
 ```
 
-### Force returning a sequence of values
+## About
+
+Moock is a package to abstract creating test dummies for objects, intended to be used in unit tests.
+Using test dummies allows you to write more specific tests, where you don't have to worry about a class's dependencies.
+This works best when using the Dependency Injection pattern.
+
+### Sales pitch
+
+If you're looking into this library, there's a good chance you already know of some other mocking library.
+For Moock, the goal is to rely on PHP language tricks as much as possible for the syntax.
+This makes it so IDE's don't (or shouldn't) need specific extensions to get nice auto-complete, or to support refactoring method names.
+
+Take for example the mocking of methods:
 
 ```php
-use Exan\Moock\Mock;
+/** @var MyClass */
+$myMock;
 
-$realUserService = (...);
-
-Mock::partial($realUserService);
-
-Mock::method($userService->isValidEmail(...))
-    ->forceReturn(true);
-
-$userService->isValidEmail('::my_test_email::'); // true
-$userService->anyOtherMethod('...'); // calls $realUserService
-
-// If you now want a specific method to not be forwarded to $realUserService, you can void it
-Mock::method($userService->someOtherMethod(...))
-    ->void();
-
-$userService->someOtherMethod('my-arg'); // Does NOT call $realUserService
+Mock::method($myMock->someMethod(...));
 ```
 
-### Expecting specific input
+If you go ahead and rename `someMethod` on `MyClass`, your IDE will properly recognize it in your creation of mocks, and thus also rename it there.
 
-```php
-$userService = Mock::class(UserService::class);
+This can be achieved extensions specific to your IDE & mocking library of choice too, of course.
+Relying on these specific types of extensions however, is not my personal preference.
 
-Mock::method($userService->isValidEmail(...))
-    ->forceReturn(true);
+### Conscious omissions
 
-$userService->isValidEmail('::my_test_email::');
-$userService->isValidEmail('::my_other_test_email::');
-$userService->isValidEmail('::my_other_test_email::');
+There are some features you may take for granted in other libraries, including but not limited to:
 
-Mock::method($userService->isValidEmail(...))
-    ->expect()
-    ->with('::my_test_email::')
-    ->toHaveBeenCalledOnce();
+- Overloading
+- Mocking protected/private methods
+- Mocking static methods
 
-Mock::method($userService->isValidEmail(...))
-    ->expect()
-    ->with('::my_other_test_email::')
-    ->toHaveBeenCalledTimes(2);
+These are (opinionated) conscious omissions.
+These features can lead you down a path of hard to maintain tests, or tests which don't meaningfully test your application.
 
-# Using closures
-Mock::method($userService->isValidEmail(...))
-    ->expect()
-    ->with(fn ($email) => true)
-    ->toHaveBeenCalledTimes(3);
-
-$userService->isValidEmail('::my_test_email::', 'test-password');
-$userService->isValidEmail('::my_other_test_email::', 'test-password');
-$userService->isValidEmail('::my_other_test_email::', 'other-password');
-
-# Using named args
-Mock::method($userService->isValidEmail(...))
-    ->expect()
-    ->with(password: 'test-password')
-    ->toHaveBeenCalledTimes(2);
-```
-
-### Mocking non-public API of a class
-
-You don't.
+If you are missing a feature, please consider the above. If you don't think it applies, please create an issue with your request.
