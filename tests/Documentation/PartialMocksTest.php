@@ -19,7 +19,7 @@ class PartialMocksTest extends TestCase
 
     #[Example(
         'Partial mocks',
-        'Creating a partial mock can be done in the following way. A partial mock will automatically forward any method call or property get to the partial object.'
+        'Creating a partial mock can be done in the following way. A partial mock will automatically forward any method call or property get to the partial object.',
     )]
     public function setUp(): void
     {

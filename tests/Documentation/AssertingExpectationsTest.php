@@ -312,7 +312,7 @@ class AssertingExpectationsTest extends TestCase
         $this->mock->deleteUsersByEmail([
             'some-email@example.com',
             'ignore-this@mail.com',
-            'another@example.com'
+            'another@example.com',
         ]);
 
         Mock::method($this->mock->deleteUsersByEmail(...))
