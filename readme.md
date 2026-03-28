@@ -4,187 +4,47 @@
     A simple way of mocking objects in PHP
 </p>
 
-## Usage
+## Installation
 
-### Mocking a class
-
-```php
-use Exan\Moock\Mock;
-
-$userService = Mock::class(UserService::class);
+```sh
+composer require exan/moock
 ```
 
-_Note: This also works for anonymous classes, however as these are not proper class structures, they will not extend the given anonymous class. Rather, they will extend the parent and implement the same interfaces if applicable._
+## About
 
-### Mocking an interface
+Moock is a package to abstract creating test dummies for objects, intended to be used in unit tests.
+Using test dummies allows you to write more specific tests, where you don't have to worry about a class's dependencies.
+This works best when using the Dependency Injection pattern.
 
-```php
-use Exan\Moock\Mock;
+### Sales pitch
 
-$userService = Mock::interface(UserServiceInterface::class);
-```
+If you're looking into this library, there's a good chance you already know of some other mocking library.
+For Moock, the goal is to rely on PHP language tricks as much as possible for the syntax.
+This makes it so IDE's don't (or shouldn't) need specific extensions to get nice auto-complete, or to support refactoring method names.
 
-### Mocking several interfaces
-
-```php
-use Exan\Moock\Mock;
-
-/** @var CreatesUsersInterface&DeletesUsersInterface */
-$userService = Mock::interfaces(
-    CreatesUsersInterface::class,
-    DeletesUsersInterface::class,
-);
-```
-
-### Replacing a method
+Take for example the mocking of methods:
 
 ```php
-use Exan\Moock\Mock;
+/** @var MyClass */
+$myMock;
 
-$userService = Mock::class(UserService::class);
-
-Mock::method($userService->isValidEmail(...))
-    ->replace(fn ($email) => $email === '::my_test_email::');
-
-$userService->isValidEmail('::my_test_email::'); // true
-$userService->isValidEmail('::other_value::'); // false
+Mock::method($myMock->someMethod(...));
 ```
 
-### Force returning a value
+If you go ahead and rename `someMethod` on `MyClass`, your IDE will properly recognize it in your creation of mocks, and thus also rename it there.
 
-```php
-use Exan\Moock\Mock;
+This can be achieved extensions specific to your IDE & mocking library of choice too, of course.
+Relying on these specific types of extensions however, is not my personal preference.
 
-$userService = Mock::class(UserService::class);
+### Conscious omissions
 
-Mock::method($userService->isValidEmail(...))
-    ->forceReturn(true);
+There are some features you may take for granted in other libraries, including but not limited to:
 
-$userService->isValidEmail('::my_test_email::'); // true
-$userService->isValidEmail('::other_value::'); // true
-```
+- Overloading
+- Mocking protected/private methods
+- Mocking static methods
 
-### Force returning a sequence of values
+These are (opinionated) conscious omissions.
+These features can lead you down a path of hard to maintain tests, or tests which don't meaningfully test your application.
 
-```php
-use Exan\Moock\Mock;
-
-$userService = Mock::class(UserService::class);
-
-Mock::method($userService->isValidEmail(...))
-    ->forceReturnSequence([true, false]);
-
-$userService->isValidEmail('::my_test_email::'); // true
-$userService->isValidEmail('::other_value::'); // false
-```
-
-### Force throwing of an exception
-
-```php
-use Exan\Moock\Mock;
-
-$userService = Mock::class(UserService::class);
-
-Mock::method($userService->isValidEmail(...))
-    ->throwsException(RuntimeException::class);
-
-$userService->isValidEmail('::my_test_email::'); // Fatal error: Uncaught RuntimeException
-$userService->isValidEmail('::other_value::'); // ...
-```
-
-### Asserting number of calls
-
-```php
-use Exan\Moock\Mock;
-
-$userService = Mock::class(UserService::class);
-
-Mock::method($userService->isValidEmail(...))
-    ->forceReturn(true);
-
-Mock::method($userService->isValidEmail(...))
-    ->expect()
-    ->not()->toHaveBeenCalled();
-
-$userService->isValidEmail('::my_test_email::');
-
-Mock::method($userService->isValidEmail(...))
-    ->expect()->toHaveBeenCalled();
-
-Mock::method($userService->isValidEmail(...))
-    ->expect()->toHaveBeenCalledOnce();
-
-$userService->isValidEmail('::my_other_test_email::');
-
-Mock::method($userService->isValidEmail(...))
-    ->expect()->toHaveBeenCalledTimes(2);
-
-# Invert any assertion using ->expect()->not()
-Mock::method($userService->isValidEmail(...))
-    ->expect()->not()->haveBeenCalledTimes(3);
-```
-
-### Force returning a sequence of values
-
-```php
-use Exan\Moock\Mock;
-
-$realUserService = (...);
-
-Mock::partial($realUserService);
-
-Mock::method($userService->isValidEmail(...))
-    ->forceReturn(true);
-
-$userService->isValidEmail('::my_test_email::'); // true
-$userService->anyOtherMethod('...'); // calls $realUserService
-
-// If you now want a specific method to not be forwarded to $realUserService, you can void it
-Mock::method($userService->someOtherMethod(...))
-    ->void();
-
-$userService->someOtherMethod('my-arg'); // Does NOT call $realUserService
-```
-
-### Expecting specific input
-
-```php
-$userService = Mock::class(UserService::class);
-
-Mock::method($userService->isValidEmail(...))
-    ->forceReturn(true);
-
-$userService->isValidEmail('::my_test_email::');
-$userService->isValidEmail('::my_other_test_email::');
-$userService->isValidEmail('::my_other_test_email::');
-
-Mock::method($userService->isValidEmail(...))
-    ->expect()
-    ->with('::my_test_email::')
-    ->toHaveBeenCalledOnce();
-
-Mock::method($userService->isValidEmail(...))
-    ->expect()
-    ->with('::my_other_test_email::')
-    ->toHaveBeenCalledTimes(2);
-
-# Using closures
-Mock::method($userService->isValidEmail(...))
-    ->expect()
-    ->with(fn ($email) => true)
-    ->toHaveBeenCalledTimes(3);
-
-$userService->isValidEmail('::my_test_email::', 'test-password');
-$userService->isValidEmail('::my_other_test_email::', 'test-password');
-$userService->isValidEmail('::my_other_test_email::', 'other-password');
-
-# Using named args
-Mock::method($userService->isValidEmail(...))
-    ->expect()
-    ->with(password: 'test-password')
-    ->toHaveBeenCalledTimes(2);
-```
-
-### Mocking non-public API of a class
-
-You don't.
+If you are missing a feature, please consider the above. If you don't think it applies, please create an issue with your request.
