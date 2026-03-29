@@ -75,6 +75,8 @@ $this->mock->createUser(
 
 ## Asserting expectations
 
+These assertions work out of the box with both [PHPUnit](https://packagist.org/packages/phpunit/phpunit) and [Nette Tester](https://packagist.org/packages/nette/tester). If neither are installed, a regular PHP `assert` is used.
+
 ### Asserting amount of calls
 Asserting the method not called at all.
 ```php
