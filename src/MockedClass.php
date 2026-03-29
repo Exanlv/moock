@@ -148,6 +148,10 @@ trait MockedClass
 
     public function __mockPropertySet(string $property, mixed $value): mixed
     {
+        if (isset($this->real)) {
+            $this->real->{$property} = $value;
+        }
+
         return $value;
     }
 
