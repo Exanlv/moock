@@ -46,7 +46,7 @@ class Expectation
             ? sprintf('Method %s should have been called %d time(s), but was called %d times', $this->methodName, $expectedCalls, $callsCount)
             : sprintf('Method %s should not have been called %d time(s)', $this->methodName, $expectedCalls);
 
-        $this->phpunitCompatibleAssert($callsCount === $expectedCalls, $message);
+        $this->testingToolCompatibleAssert($callsCount === $expectedCalls, $message);
     }
 
     public function toHaveBeenCalled(): void
@@ -57,7 +57,7 @@ class Expectation
             ? sprintf('Method %s should have been called at least once', $this->methodName)
             : sprintf('Method %s should not have been called, but was called %d time(s)', $this->methodName, $callsCount);
 
-        $this->phpunitCompatibleAssert($callsCount > 0, $message);
+        $this->testingToolCompatibleAssert($callsCount > 0, $message);
     }
 
     public function toHaveBeenCalledOnce(): void
@@ -77,12 +77,16 @@ class Expectation
         die();
     }
 
-    private function phpunitCompatibleAssert(bool $condition, string $message): void
+    private function testingToolCompatibleAssert(bool $condition, string $message): void
     {
         if (class_exists("\PHPUnit\Framework\Assert")) {
-            \PHPUnit\Framework\Assert::assertEquals($this->expectation, $condition, $message);
+            // @see https://packagist.org/packages/phpunit/phpunit
+            '\PHPUnit\Framework\Assert'::assertEquals($this->expectation, $condition, $message);
+        } elseif (class_exists('\Tester\Assert')) {
+            // @see https://packagist.org/packages/nette/tester
+            '\Tester\Assert'::same($this->expectation, $condition, $message);
         } else {
-            assert($condition, $message);
+            assert($this->expectation === $condition, $message);
         }
     }
 }
