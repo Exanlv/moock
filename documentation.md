@@ -383,15 +383,15 @@ $this->mock->userExists('third@domain.com');
 ### Partial mocks
 Creating a partial mock can be done in the following way. A partial mock will automatically forward any method call or property get to the partial object.
 ```php
-$userService = new UserService();
+$this->real = new UserService();
 
-$userService->users = [
+$this->real->users = [
     'first@mail.com',
     'second@mail.com',
     'third@mail.com',
 ];
 
-$this->partial = Mock::partial($userService);
+$this->partial = Mock::partial($this->real);
 ```
 
 Any method not explicitly mocked will be forwarded to it's full implementation.
@@ -409,11 +409,15 @@ $this->assertFalse($this->partial->userExists('first@mail.com'));
 $this->assertTrue($this->partial->userExists('fourth@mail.com'));
 ```
 
-Properties are also retrieved from the full implementation. _Note: setting of properties is not yet supported._
+Properties are also synced between real & fake. _Note: this does not work for properties with `private(set)`, `readonly`, or `final`.
 ```php
 $this->assertEquals([
     'first@mail.com',
     'second@mail.com',
     'third@mail.com',
 ], $this->partial->users);
+
+$this->partial->users = ['fourth@mail.com'];
+
+$this->assertEquals(['fourth@mail.com'], $this->real->users);
 ```
