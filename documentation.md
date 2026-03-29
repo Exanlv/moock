@@ -409,7 +409,7 @@ $this->assertFalse($this->partial->userExists('first@mail.com'));
 $this->assertTrue($this->partial->userExists('fourth@mail.com'));
 ```
 
-Properties are also synced between real & fake. _Note: this does not work for properties with `private(set)`, `readonly`, or `final`.
+Properties are also synced between real & fake. _Note: this does not work for properties with `private(set)`, `readonly`, or `final`._
 ```php
 $this->assertEquals([
     'first@mail.com',
