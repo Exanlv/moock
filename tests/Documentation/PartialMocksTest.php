@@ -15,6 +15,7 @@ use Tests\Components\UserService;
 #[Page('Partial mocks')]
 class PartialMocksTest extends TestCase
 {
+    protected UserService $real;
     protected UserService&MockedClassInterface $partial;
 
     #[Example(
@@ -25,15 +26,15 @@ class PartialMocksTest extends TestCase
     {
         parent::setUp(); // @hide
 
-        $userService = new UserService();
+        $this->real = new UserService();
 
-        $userService->users = [
+        $this->real->users = [
             'first@mail.com',
             'second@mail.com',
             'third@mail.com',
         ];
 
-        $this->partial = Mock::partial($userService);
+        $this->partial = Mock::partial($this->real);
     }
 
     #[Example(null, 'Any method not explicitly mocked will be forwarded to it\'s full implementation.')]
@@ -55,7 +56,7 @@ class PartialMocksTest extends TestCase
         $this->assertTrue($this->partial->userExists('fourth@mail.com'));
     }
 
-    #[Example(null, 'Properties are also retrieved from the full implementation. _Note: setting of properties is not yet supported._')]
+    #[Example(null, 'Properties are also synced between real & fake. _Note: this does not work for properties with `private(set)`, `readonly`, or `final`.')]
     #[Test]
     public function properties_are_forwarded()
     {
@@ -64,5 +65,9 @@ class PartialMocksTest extends TestCase
             'second@mail.com',
             'third@mail.com',
         ], $this->partial->users);
+
+        $this->partial->users = ['fourth@mail.com'];
+
+        $this->assertEquals(['fourth@mail.com'], $this->real->users);
     }
 }
