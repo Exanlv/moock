@@ -56,7 +56,7 @@ class PartialMocksTest extends TestCase
         $this->assertTrue($this->partial->userExists('fourth@mail.com'));
     }
 
-    #[Example(null, 'Properties are also synced between real & fake. _Note: this does not work for properties with `private(set)`, `readonly`, or `final`.')]
+    #[Example(null, 'Properties are also synced between real & fake. _Note: this does not work for properties with `private(set)`, `readonly`, or `final`._')]
     #[Test]
     public function properties_are_forwarded()
     {
