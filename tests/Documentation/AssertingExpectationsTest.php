@@ -17,7 +17,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tests\Components\UserServiceInterface;
 
-#[Page('Asserting expectations')]
+#[Page('Asserting expectations', 'These assertions work out of the box with both [PHPUnit](https://packagist.org/packages/phpunit/phpunit) and [Nette Tester](https://packagist.org/packages/nette/tester). If neither are installed, a regular PHP `assert` is used.')]
 class AssertingExpectationsTest extends TestCase
 {
     protected UserServiceInterface&MockedClassInterface $mock;
