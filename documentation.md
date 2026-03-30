@@ -32,9 +32,7 @@ $this->assertInstanceOf(TestInterface::class, $mock);
 ### Replacing a method
 You can replace any public method on your mocks using the following examples
 ```php
-Mock::method($this->mock->userExists(...))->replace(function (string $email) {
-    return $email === 'exists@mail.com';
-});
+Mock::method($this->mock->userExists(...))->replace(fn (string $email) => $email === 'exists@mail.com');
 
 $this->assertTrue($this->mock->userExists('exists@mail.com'));
 $this->assertFalse($this->mock->userExists('doesnt@mail.com'));
