@@ -39,7 +39,7 @@ class PartialMocksTest extends TestCase
 
     #[Example(null, 'Any method not explicitly mocked will be forwarded to it\'s full implementation.')]
     #[Test]
-    public function it_forwards_a_call_to_the_parent()
+    public function it_forwards_a_call_to_the_parent(): void
     {
         $this->assertTrue($this->partial->userExists('first@mail.com'));
         $this->assertFalse($this->partial->userExists('fourth@mail.com'));
@@ -47,7 +47,7 @@ class PartialMocksTest extends TestCase
 
     #[Example(null, 'Methods can still be mocked, in which case the full implementation is bypassed selectively.')]
     #[Test]
-    public function it_can_still_mock_methods()
+    public function it_can_still_mock_methods(): void
     {
         Mock::method($this->partial->userExists(...))
             ->replace(fn (string $email) => $email === 'fourth@mail.com');
@@ -58,7 +58,7 @@ class PartialMocksTest extends TestCase
 
     #[Example(null, 'Properties are also synced between real & fake. _Note: this does not work for properties with `private(set)`, `readonly`, or `final`._')]
     #[Test]
-    public function properties_are_forwarded()
+    public function properties_are_forwarded(): void
     {
         $this->assertEquals([
             'first@mail.com',

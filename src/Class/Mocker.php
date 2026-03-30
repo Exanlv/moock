@@ -33,7 +33,7 @@ class Mocker
         $implements[] = '\\' . MockedClassInterface::class;
 
         $properties = $this->getPropertyMocker()?->getCode() ?? '// Interface only mock, no properties';
-        $methods = (new MethodsMocker($this->interfaces))->getCode();
+        $methods = new MethodsMocker($this->interfaces)->getCode();
 
         $creator = 'return new class ';
 

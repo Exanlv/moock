@@ -30,7 +30,7 @@ class FilteringMethodsTest extends TestCase
         'To filter arguments that are allowed into a method, you can use the `filter()` method.',
     )]
     #[Test]
-    public function it_can_filter_method_args()
+    public function it_can_filter_method_args(): void
     {
         Mock::method($this->mock->userExists(...))
             ->filter('my-email@domain.com')
@@ -48,7 +48,7 @@ class FilteringMethodsTest extends TestCase
         'To filter specific args of a method, use named properties.',
     )]
     #[Test]
-    public function it_can_filter_method_args_using_named_props()
+    public function it_can_filter_method_args_using_named_props(): void
     {
         Mock::method($this->mock->createUser(...))
             ->filter(username: 'my-username');
@@ -65,7 +65,7 @@ class FilteringMethodsTest extends TestCase
         'You can also pass a closure instead of a straight value, or use some of the helper functions documented in the expectations section instead.',
     )]
     #[Test]
-    public function it_can_filter_method_args_with_closures()
+    public function it_can_filter_method_args_with_closures(): void
     {
         Mock::method($this->mock->userExists(...))
             ->filter(fn (string $email) => in_array($email, ['first@mail.com', 'second@mail.com']))

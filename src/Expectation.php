@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Exan\Moock;
 
-use Closure;
-use RuntimeException;
-
 class Expectation
 {
     use FiltersMethodArgs;
@@ -46,7 +43,7 @@ class Expectation
             ? sprintf('Method %s should have been called %d time(s), but was called %d times', $this->methodName, $expectedCalls, $callsCount)
             : sprintf('Method %s should not have been called %d time(s)', $this->methodName, $expectedCalls);
 
-        $this->testingToolCompatibleAssert($callsCount === $expectedCalls, $message);
+        $this->assert($callsCount === $expectedCalls, $message);
     }
 
     public function toHaveBeenCalled(): void
@@ -57,7 +54,7 @@ class Expectation
             ? sprintf('Method %s should have been called at least once', $this->methodName)
             : sprintf('Method %s should not have been called, but was called %d time(s)', $this->methodName, $callsCount);
 
-        $this->testingToolCompatibleAssert($callsCount > 0, $message);
+        $this->assert($callsCount > 0, $message);
     }
 
     public function toHaveBeenCalledOnce(): void
@@ -77,16 +74,8 @@ class Expectation
         die();
     }
 
-    private function testingToolCompatibleAssert(bool $condition, string $message): void
+    private function assert(bool $condition, string $message): void
     {
-        if (class_exists("\PHPUnit\Framework\Assert")) {
-            // @see https://packagist.org/packages/phpunit/phpunit
-            '\PHPUnit\Framework\Assert'::assertEquals($this->expectation, $condition, $message);
-        } elseif (class_exists('\Tester\Assert')) {
-            // @see https://packagist.org/packages/nette/tester
-            '\Tester\Assert'::same($this->expectation, $condition, $message);
-        } else {
-            assert($this->expectation === $condition, $message);
-        }
+        MoockAssert::assert($condition, $this->expectation, $message);
     }
 }

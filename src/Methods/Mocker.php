@@ -89,10 +89,10 @@ class Mocker
         $return = $canReturn ? '' : 'return';
 
         return <<<FUNC
-            public function $name($functionArgs) $returnSignature {
-                $return \$this->__moockFunctionCall('$name', compact($moockFunctionCallArgs));
-            }
-        FUNC;
+                public function $name($functionArgs) $returnSignature {
+                    $return \$this->__moockFunctionCall('$name', compact($moockFunctionCallArgs));
+                }
+            FUNC;
     }
 
     private function getParameterSignature(ReflectionParameter $parameter, ReflectionClass $declaringClass): string

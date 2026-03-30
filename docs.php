@@ -6,6 +6,7 @@ use Exan\Pudocumenter\Documenter;
 use Exan\Pudocumenter\StdOutMarkdownPrinter;
 use Tests\Documentation\AssertingExpectationsTest;
 use Tests\Documentation\BasicMockingTest;
+use Tests\Documentation\CompatibilityTest;
 use Tests\Documentation\FilteringMethodsTest;
 use Tests\Documentation\PartialMocksTest;
 use Tests\Documentation\ReplacingMethodTest;
@@ -18,6 +19,7 @@ $documenter = new Documenter(
     AssertingExpectationsTest::class,
     FilteringMethodsTest::class,
     PartialMocksTest::class,
+    CompatibilityTest::class,
 );
 
 $documenter->document(new StdOutMarkdownPrinter());

@@ -40,12 +40,12 @@ class TestClass
     public function testWithDualReturnType(bool $input = false): AnotherTestInterface|TestInterface
     {
         return new class () implements TestInterface {
-            public function myMethod()
+            public function myMethod(): void
             {
                 throw new \Exception('Not implemented');
             }
 
-            public function myOtherMethod(string $inputA, string $inputB)
+            public function myOtherMethod(string $inputA, string $inputB): void
             {
                 throw new \Exception('Not implemented');
             }
@@ -55,22 +55,22 @@ class TestClass
     public function testWithIntersectionReturnType(): AnotherTestInterface&TestInterface
     {
         return new class () implements AnotherTestInterface, TestInterface {
-            public function myMethod()
+            public function myMethod(): void
             {
                 throw new \Exception('Not implemented');
             }
 
-            public function anotherMethod()
+            public function anotherMethod(): void
             {
                 throw new \Exception('Not implemented');
             }
 
-            public function yetAnotherMethod(string $inputA, string $inputB)
+            public function yetAnotherMethod(string $inputA, string $inputB): void
             {
                 throw new \Exception('Not implemented');
             }
 
-            public function myOtherMethod(string $inputA, string $inputB)
+            public function myOtherMethod(string $inputA, string $inputB): void
             {
                 throw new \Exception('Not implemented');
             }

@@ -59,7 +59,7 @@ trait MockedClass
 
     private function __moockFunctionCall(string $method, array $args): mixed
     {
-        if (key_exists($method, $this->filters) && $this->callFailsFilter($method, $args)) {
+        if (array_key_exists($method, $this->filters) && $this->callFailsFilter($method, $args)) {
             throw new RuntimeException(sprintf(
                 'Method %s called with args that do not pass its set filters. Called with: %s',
                 $method,
@@ -67,7 +67,7 @@ trait MockedClass
             ));
         }
 
-        if (!key_exists($method, $this->calls)) {
+        if (!array_key_exists($method, $this->calls)) {
             $this->calls[$method] = [];
         }
 
@@ -164,7 +164,7 @@ trait MockedClass
         }
 
         $parentClass = get_parent_class($this);
-        if ($parentClass !== false && (new ReflectionClass($parentClass))->hasMethod('__get')) {
+        if ($parentClass !== false && new ReflectionClass($parentClass)->hasMethod('__get')) {
             return parent::__get($property);
         }
     }

@@ -30,11 +30,9 @@ class ReplacingMethodTest extends TestCase
         'You can replace any public method on your mocks using the following examples',
     )]
     #[Test]
-    public function it_can_replace_methods()
+    public function it_can_replace_methods(): void
     {
-        Mock::method($this->mock->userExists(...))->replace(function (string $email) {
-            return $email === 'exists@mail.com';
-        });
+        Mock::method($this->mock->userExists(...))->replace(fn (string $email) => $email === 'exists@mail.com');
 
         $this->assertTrue($this->mock->userExists('exists@mail.com'));
         $this->assertFalse($this->mock->userExists('doesnt@mail.com'));
@@ -42,7 +40,7 @@ class ReplacingMethodTest extends TestCase
 
     #[Example(null, 'Force returning a static value')]
     #[Test]
-    public function it_can_force_return_a_value()
+    public function it_can_force_return_a_value(): void
     {
         Mock::method($this->mock->userExists(...))->forceReturn(true);
 
@@ -51,7 +49,7 @@ class ReplacingMethodTest extends TestCase
 
     #[Example(null, 'Force returning a sequence of values')]
     #[Test]
-    public function it_can_force_return_a_sequence_of_values()
+    public function it_can_force_return_a_sequence_of_values(): void
     {
         Mock::method($this->mock->userExists(...))->forceReturnSequence([true, true, false]);
 
@@ -64,7 +62,7 @@ class ReplacingMethodTest extends TestCase
 
     #[Example(null, 'Force throwing an exception')]
     #[Test]
-    public function it_can_force_an_exception()
+    public function it_can_force_an_exception(): void
     {
         Mock::method($this->mock->createUser(...))->throwsException(RuntimeException::class);
 

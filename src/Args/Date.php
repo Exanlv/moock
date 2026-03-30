@@ -11,15 +11,11 @@ class Date
 {
     public static function before(DateTimeInterface $beforeDate): Closure
     {
-        return function (DateTimeInterface $date) use ($beforeDate): bool {
-            return $date < $beforeDate;
-        };
+        return fn (DateTimeInterface $date): bool => $date < $beforeDate;
     }
 
     public static function after(DateTimeInterface $beforeDate): Closure
     {
-        return function (DateTimeInterface $date) use ($beforeDate): bool {
-            return $date > $beforeDate;
-        };
+        return fn (DateTimeInterface $date): bool => $date > $beforeDate;
     }
 }
