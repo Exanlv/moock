@@ -15,7 +15,7 @@ interface MockedClassInterface
     /** @internal */
     public function __getCalls(string $method): array;
     /** @internal */
-    public function __makePartial(mixed $spyOn): void;
+    public function __makePartial(mixed $real): void;
 
     /** @internal */
     public function __moockPropertyGet(string $property): mixed;
