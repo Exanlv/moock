@@ -105,7 +105,7 @@ class MockClassTest extends TestCase
         Mock::method($mock->myMethod(...))->expect()->toHaveBeenCalledOnce();
     }
 
-    public function test_it_can_set_arg_expectations()
+    public function test_it_can_set_arg_expectations(): void
     {
         $mock = Mock::class(TestClass::class);
 
@@ -143,7 +143,7 @@ class MockClassTest extends TestCase
             ->toHaveBeenCalledTimes(3);
     }
 
-    public function test_it_can_filter_allowed_inputs()
+    public function test_it_can_filter_allowed_inputs(): void
     {
         $mock = Mock::class(TestClass::class);
 

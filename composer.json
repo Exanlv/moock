@@ -6,7 +6,10 @@
     "autoload": {
         "psr-4": {
             "Exan\\Moock\\": "src/"
-        }
+        },
+        "files": [
+            "./src/Compatibility.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -14,6 +17,7 @@
         }
     },
     "require-dev": {
+        "php": "^8.4",
         "symfony/var-dumper": "^7.4",
         "phpunit/phpunit": "^11.5",
         "friendsofphp/php-cs-fixer": "^3.92",

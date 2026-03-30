@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Error;
@@ -13,7 +15,7 @@ use TypeError;
 class MockPropertiesTest extends TestCase
 {
     #[Test]
-    public function it_mocks_public_properties_on_anonymous_classes()
+    public function it_mocks_public_properties_on_anonymous_classes(): void
     {
         $classes = [
             [
@@ -52,7 +54,7 @@ class MockPropertiesTest extends TestCase
     }
 
     #[Test]
-    public function it_retains_properties_typings()
+    public function it_retains_properties_typings(): void
     {
         $class = new class () {
             public PropertiesTestClass $myProperty;

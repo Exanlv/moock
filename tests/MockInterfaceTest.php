@@ -49,7 +49,7 @@ class MockInterfaceTest extends TestCase
         $mock = Mock::interface(TestInterface::class);
 
         Mock::method($mock->myOtherMethod(...))
-            ->replace(function (string $inputA, string $inputB) {
+            ->replace(function (string $inputA, string $inputB): void {
                 $this->assertEquals('::input a::', $inputA);
                 $this->assertEquals('::input b::', $inputB);
             });
@@ -60,7 +60,7 @@ class MockInterfaceTest extends TestCase
             ->expect()->toHaveBeenCalledOnce();
     }
 
-    public function test_it_can_mock_several_interfaces()
+    public function test_it_can_mock_several_interfaces(): void
     {
         $mock = Mock::interfaces(TestInterface::class, AnotherTestInterface::class);
 

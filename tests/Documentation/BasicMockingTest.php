@@ -45,7 +45,7 @@ class BasicMockingTest extends TestCase
         'Creating a dummy implementation of several interfaces. You should only use this if your interfaces are compatible.',
     )]
     #[Test]
-    public function it_can_mock_several_interfaces_at_once()
+    public function it_can_mock_several_interfaces_at_once(): void
     {
         $mock = Mock::interfaces(UserServiceInterface::class, TestInterface::class);
 

@@ -31,7 +31,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example('Asserting amount of calls', 'Asserting the method not called at all.')]
     #[Test]
-    public function it_asserts_method_not_called_at_all()
+    public function it_asserts_method_not_called_at_all(): void
     {
         Mock::method($this->mock->userExists(...))
             ->forceReturn(true);
@@ -44,7 +44,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, 'Asserting the method was called at all.')]
     #[Test]
-    public function it_asserts_method_was_called()
+    public function it_asserts_method_was_called(): void
     {
         Mock::method($this->mock->userExists(...))
             ->forceReturn(true);
@@ -58,7 +58,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, 'Asserting the method was called exactly once.')]
     #[Test]
-    public function it_asserts_method_called_once()
+    public function it_asserts_method_called_once(): void
     {
         Mock::method($this->mock->userExists(...))
             ->forceReturn(true);
@@ -72,7 +72,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, 'Asserting the method was not called exactly once.')]
     #[Test]
-    public function it_asserts_method_not_called_once()
+    public function it_asserts_method_not_called_once(): void
     {
         Mock::method($this->mock->userExists(...))
             ->forceReturn(true);
@@ -88,7 +88,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, 'Asserting the method was called _n_ times.')]
     #[Test]
-    public function it_asserts_method_called_n_times()
+    public function it_asserts_method_called_n_times(): void
     {
         Mock::method($this->mock->userExists(...))
             ->forceReturn(true);
@@ -103,7 +103,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, 'Asserting the method was not called _n_ times.')]
     #[Test]
-    public function it_asserts_method_not_called_n_times()
+    public function it_asserts_method_not_called_n_times(): void
     {
         Mock::method($this->mock->userExists(...))
             ->forceReturn(true);
@@ -118,7 +118,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example('Asserting method was called with specific input', 'You can assert a method was called with specific input by passing the expected arguments into `with()`.')]
     #[Test]
-    public function it_asserts_method_was_called_with_specific_input()
+    public function it_asserts_method_was_called_with_specific_input(): void
     {
         Mock::method($this->mock->userExists(...))
             ->forceReturn(true);
@@ -133,7 +133,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, 'This can of course also be reversed.')]
     #[Test]
-    public function it_asserts_method_was_called_not_with_specific_input()
+    public function it_asserts_method_was_called_not_with_specific_input(): void
     {
         Mock::method($this->mock->userExists(...))
             ->forceReturn(true);
@@ -149,7 +149,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, 'Rather than being tied to static values, you can pass a closure as well.')]
     #[Test]
-    public function it_asserts_method_was_called_with_value_validated_by_closure()
+    public function it_asserts_method_was_called_with_value_validated_by_closure(): void
     {
         Mock::method($this->mock->userExists(...))
             ->forceReturn(true);
@@ -164,7 +164,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, 'If you only care about a specific argument, you can use named arguments.')]
     #[Test]
-    public function it_asserts_method_was_called_with_specific_named_arguments()
+    public function it_asserts_method_was_called_with_specific_named_arguments(): void
     {
         $this->mock->createUser('my-email@domain.com', 'my-username', 'password');
 
@@ -176,7 +176,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, 'Of course, closures can be used here too.')]
     #[Test]
-    public function it_asserts_method_was_called_with_specific_named_arguments_and_closures()
+    public function it_asserts_method_was_called_with_specific_named_arguments_and_closures(): void
     {
         $this->mock->createUser('my-email@domain.com', 'my-username', 'password');
 
@@ -190,7 +190,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, '`string` must contain `@mail.com`')]
     #[Test]
-    public function it_asserts_string_contains_helper()
+    public function it_asserts_string_contains_helper(): void
     {
         Mock::method($this->mock->userExists(...))
             ->forceReturn(true);
@@ -205,7 +205,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, '`string` must have specific length')]
     #[Test]
-    public function it_asserts_string_length_helper()
+    public function it_asserts_string_length_helper(): void
     {
         Mock::method($this->mock->userExists(...))
             ->forceReturn(true);
@@ -220,7 +220,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, '`DateTimeInterface` must be before given time')]
     #[Test]
-    public function it_asserts_date_before_helper()
+    public function it_asserts_date_before_helper(): void
     {
         Mock::method($this->mock->getUsersCreatedBefore(...))
             ->forceReturn([]);
@@ -235,7 +235,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, '`DateTimeInterface` must be after given time')]
     #[Test]
-    public function it_asserts_date_after_helper()
+    public function it_asserts_date_after_helper(): void
     {
         Mock::method($this->mock->getUsersCreatedBefore(...))
             ->forceReturn([]);
@@ -250,7 +250,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, '`int|float` must be less than given number')]
     #[Test]
-    public function it_asserts_number_lt_helper()
+    public function it_asserts_number_lt_helper(): void
     {
         Mock::method($this->mock->getUsersByAge(...))
             ->forceReturn([]);
@@ -265,7 +265,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, '`int|float` must be greater than given number')]
     #[Test]
-    public function it_asserts_number_gt_helper()
+    public function it_asserts_number_gt_helper(): void
     {
         Mock::method($this->mock->getUsersByAge(...))
             ->forceReturn([]);
@@ -280,7 +280,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, '`int|float` must be within range')]
     #[Test]
-    public function it_asserts_number_range_helper()
+    public function it_asserts_number_range_helper(): void
     {
         Mock::method($this->mock->getUsersByAge(...))
             ->forceReturn([]);
@@ -295,7 +295,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, '`array` must have given number of items')]
     #[Test]
-    public function it_asserts_array_count_helper()
+    public function it_asserts_array_count_helper(): void
     {
         $this->mock->deleteUsersByEmail(['a','b','c']);
 
@@ -307,7 +307,7 @@ class AssertingExpectationsTest extends TestCase
 
     #[Example(null, '`array` must be a partial match')]
     #[Test]
-    public function it_asserts_array_partial_helper()
+    public function it_asserts_array_partial_helper(): void
     {
         $this->mock->deleteUsersByEmail([
             'some-email@example.com',

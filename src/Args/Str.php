@@ -10,15 +10,11 @@ class Str
 {
     public static function length(int $expectedLength): Closure
     {
-        return function (string $actual) use ($expectedLength): bool {
-            return strlen($actual) === $expectedLength;
-        };
+        return fn (string $actual): bool => strlen($actual) === $expectedLength;
     }
 
     public static function contains(string $needle): Closure
     {
-        return function (string $actual) use ($needle): bool {
-            return str_contains(strtolower($actual), strtolower($needle));
-        };
+        return fn (string $actual): bool => str_contains(strtolower($actual), strtolower($needle));
     }
 }

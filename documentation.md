@@ -423,3 +423,33 @@ $this->partial->users = ['fourth@mail.com'];
 
 $this->assertEquals(['fourth@mail.com'], $this->real->users);
 ```
+
+---
+
+## Compatibility
+
+Out of the box, Moock will use PHPUnit or Nette Tester assertion methods if they're available. If neither are available, a regular PHP assert is used instead.
+
+### Registering a custom assertion
+```php
+$usedAssert = false;
+
+MoockAssert::useAssert(function (bool $actual, bool $expected, string $message) use (&$usedAssert): void {
+    $usedAssert = true;
+});
+
+$mock = Mock::interface(UserServiceInterface::class);
+
+Mock::method($mock->createUser(...))
+    ->expect()
+    ->toHaveBeenCalled(); // This now uses our custom assert, which doesn't throw exceptions on failure
+
+$this->assertTrue($usedAssert);
+```
+
+If you like, you can also add optional Moock compatibility from your end by adding the following into an autoloaded file.
+```php
+if (class_exists('\Exan\Moock\MoockAssert')) {
+    \Exan\Moock\MoockAssert::useAssert($handler);
+}
+```

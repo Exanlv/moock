@@ -10,9 +10,7 @@ class Arr
 {
     public static function count(int $expectedCount): Closure
     {
-        return function (array $actual) use ($expectedCount): bool {
-            return count($actual) === $expectedCount;
-        };
+        return fn (array $actual): bool => count($actual) === $expectedCount;
     }
 
     public static function partial(array $expectation): Closure
