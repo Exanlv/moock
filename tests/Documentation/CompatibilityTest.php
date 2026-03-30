@@ -8,11 +8,13 @@ use Exan\Moock\Mock;
 use Exan\Moock\MoockAssert;
 use Exan\Pudocumenter\Attributes\Example;
 use Exan\Pudocumenter\Attributes\Page;
+use PHPUnit\Framework\Attributes\RunClassInSeparateProcess;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tests\Components\UserServiceInterface;
 
 #[Page('Compatibility', 'Out of the box, Moock will use PHPUnit or Nette Tester assertion methods if they\'re available. If neither are available, a regular PHP assert is used instead.')]
+#[RunClassInSeparateProcess]
 class CompatibilityTest extends TestCase
 {
     #[Example('Registering a custom assertion', null)]
