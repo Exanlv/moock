@@ -190,7 +190,7 @@ class AssertingExpectationsTest extends TestCase
     }
 
     #[ShowUse(Str::class)]
-    #[Example(null, '`string` must contain `@mail.com`')]
+    #[Example('Built-in helpers', '`string` must contain `@mail.com`')]
     #[Test]
     public function it_asserts_string_contains_helper(): void
     {

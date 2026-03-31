@@ -41,7 +41,7 @@ class ReplacingMethodTest extends TestCase
     }
 
     #[ShowUse(Mock::class)]
-    #[Example(null, 'Force returning a static value')]
+    #[Example(null, 'Returning a static value')]
     #[Test]
     public function it_can_force_return_a_value(): void
     {
@@ -51,7 +51,7 @@ class ReplacingMethodTest extends TestCase
     }
 
     #[ShowUse(Mock::class)]
-    #[Example(null, 'Force returning a sequence of values')]
+    #[Example(null, 'Returning a sequence of values')]
     #[Test]
     public function it_can_force_return_a_sequence_of_values(): void
     {
@@ -66,7 +66,7 @@ class ReplacingMethodTest extends TestCase
 
     #[ShowUse(Mock::class)]
     #[ShowUse(RuntimeException::class)]
-    #[Example(null, 'Force throwing an exception')]
+    #[Example(null, 'Throwing an exception')]
     #[Test]
     public function it_can_force_an_exception(): void
     {

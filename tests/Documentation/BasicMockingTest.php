@@ -18,10 +18,7 @@ use Tests\Components\UserServiceInterface;
 class BasicMockingTest extends TestCase
 {
     #[ShowUse(Mock::class)]
-    #[Example(
-        'Mocking a class',
-        'Creating a test dummy of whatever class you want',
-    )]
+    #[Example('Mocking a class', null)]
     #[Test]
     public function it_can_mock_a_class(): void
     {
@@ -31,10 +28,7 @@ class BasicMockingTest extends TestCase
     }
 
     #[ShowUse(Mock::class)]
-    #[Example(
-        'Mocking an interface',
-        'Creating a dummy implementation of whatever interface you want',
-    )]
+    #[Example('Mocking an interface', null)]
     #[Test]
     public function it_can_mock_an_interface(): void
     {
@@ -44,10 +38,7 @@ class BasicMockingTest extends TestCase
     }
 
     #[ShowUse(Mock::class)]
-    #[Example(
-        'Mocking several interfaces',
-        'Creating a mock implementation of several interfaces. Only use when interfaces are compatible to avoid unexpected behavior.',
-    )]
+    #[Example('Mocking several interfaces', null)]
     #[Test]
     public function it_can_mock_several_interfaces_at_once(): void
     {

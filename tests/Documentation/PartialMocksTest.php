@@ -21,7 +21,7 @@ class PartialMocksTest extends TestCase
 
     #[Example(
         'Partial mocks',
-        "A partial mocks wraps the given object. Any methods and properties will be forwarded and retrieved from its real instance, allowing you to selectively overwrite public behaviour. These can be useful in some scenarios, however, overuse may lead to hard-to-follow tests.",
+        "A partial mock wraps an existing object, forwarding method calls and property access to the underlying instance. This allows you to override specific behavior while leaving the rest untouched.\n\nThey can be useful when only a small part of an object needs to be controlled, though they tend to work best when used sparingly.",
     )]
     public function setUp(): void
     {
@@ -38,7 +38,7 @@ class PartialMocksTest extends TestCase
         $this->partial = Mock::partial($this->real);
     }
 
-    #[Example(null, 'Any method not explicitly mocked will be forwarded to its full implementation.')]
+    #[Example(null, 'Any method not explicitly mocked will be forwarded to its original implementation.')]
     #[Test]
     public function it_forwards_a_call_to_the_parent(): void
     {
@@ -47,7 +47,7 @@ class PartialMocksTest extends TestCase
     }
 
     #[ShowUse(Mock::class)]
-    #[Example(null, 'Methods can still be mocked, in which case the full implementation is bypassed selectively.')]
+    #[Example(null, 'Methods can still be mocked, in which case the original implementation is bypassed selectively.')]
     #[Test]
     public function it_can_still_mock_methods(): void
     {
