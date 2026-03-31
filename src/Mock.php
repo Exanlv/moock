@@ -70,7 +70,7 @@ class Mock
         return static::codeToMock($mocker->extends($class)->getCode());
     }
 
-    public static function method(Closure $arg)
+    public static function method(Closure $arg): MockMethod
     {
         $ref = new ReflectionFunction($arg);
 
