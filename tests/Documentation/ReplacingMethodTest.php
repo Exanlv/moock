@@ -8,6 +8,7 @@ use Exan\Moock\Mock;
 use Exan\Moock\MockedClassInterface;
 use Exan\Pudocumenter\Attributes\Example;
 use Exan\Pudocumenter\Attributes\Page;
+use Exan\Pudocumenter\Attributes\ShowUse;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -25,6 +26,7 @@ class ReplacingMethodTest extends TestCase
         $this->mock = Mock::interface(UserServiceInterface::class);
     }
 
+    #[ShowUse(Mock::class)]
     #[Example(
         'Replacing a method',
         'You can replace any public method on your mocks using the following examples',
@@ -38,6 +40,7 @@ class ReplacingMethodTest extends TestCase
         $this->assertFalse($this->mock->userExists('doesnt@mail.com'));
     }
 
+    #[ShowUse(Mock::class)]
     #[Example(null, 'Force returning a static value')]
     #[Test]
     public function it_can_force_return_a_value(): void
@@ -47,6 +50,7 @@ class ReplacingMethodTest extends TestCase
         $this->assertTrue($this->mock->userExists('some-email@domain.com'));
     }
 
+    #[ShowUse(Mock::class)]
     #[Example(null, 'Force returning a sequence of values')]
     #[Test]
     public function it_can_force_return_a_sequence_of_values(): void
@@ -60,6 +64,8 @@ class ReplacingMethodTest extends TestCase
         $this->assertFalse($this->mock->userExists('some-email@domain.com'));
     }
 
+    #[ShowUse(Mock::class)]
+    #[ShowUse(RuntimeException::class)]
     #[Example(null, 'Force throwing an exception')]
     #[Test]
     public function it_can_force_an_exception(): void

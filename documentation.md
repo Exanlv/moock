@@ -1,8 +1,12 @@
-## Mocking a class
+## Creating a mock
+
+_Note: all configuration of a mock is stored in `$mock`, the static `Mock::...` methods are there to provide the user-facing API._
 
 ### Mocking a class
 Creating a test dummy of whatever class you want
 ```php
+use Exan\Moock\Mock;
+
 $mock = Mock::class(UserService::class);
 
 $this->assertInstanceOf(UserService::class, $mock);
@@ -11,14 +15,18 @@ $this->assertInstanceOf(UserService::class, $mock);
 ### Mocking an interface
 Creating a dummy implementation of whatever interface you want
 ```php
+use Exan\Moock\Mock;
+
 $mock = Mock::interface(UserServiceInterface::class);
 
 $this->assertInstanceOf(UserServiceInterface::class, $mock);
 ```
 
 ### Mocking several interfaces
-Creating a dummy implementation of several interfaces. You should only use this if your interfaces are compatible.
+Creating a mock implementation of several interfaces. Only use when interfaces are compatible to avoid unexpected behavior.
 ```php
+use Exan\Moock\Mock;
+
 $mock = Mock::interfaces(UserServiceInterface::class, TestInterface::class);
 
 $this->assertInstanceOf(UserServiceInterface::class, $mock);
@@ -32,6 +40,8 @@ $this->assertInstanceOf(TestInterface::class, $mock);
 ### Replacing a method
 You can replace any public method on your mocks using the following examples
 ```php
+use Exan\Moock\Mock;
+
 Mock::method($this->mock->userExists(...))->replace(fn (string $email) => $email === 'exists@mail.com');
 
 $this->assertTrue($this->mock->userExists('exists@mail.com'));
@@ -40,6 +50,8 @@ $this->assertFalse($this->mock->userExists('doesnt@mail.com'));
 
 Force returning a static value
 ```php
+use Exan\Moock\Mock;
+
 Mock::method($this->mock->userExists(...))->forceReturn(true);
 
 $this->assertTrue($this->mock->userExists('some-email@domain.com'));
@@ -47,6 +59,8 @@ $this->assertTrue($this->mock->userExists('some-email@domain.com'));
 
 Force returning a sequence of values
 ```php
+use Exan\Moock\Mock;
+
 Mock::method($this->mock->userExists(...))->forceReturnSequence([true, true, false]);
 
 $this->assertTrue($this->mock->userExists('some-email@domain.com'));
@@ -58,6 +72,9 @@ $this->assertFalse($this->mock->userExists('some-email@domain.com'));
 
 Force throwing an exception
 ```php
+use Exan\Moock\Mock;
+use RuntimeException;
+
 Mock::method($this->mock->createUser(...))->throwsException(RuntimeException::class);
 
 $this->expectException(RuntimeException::class);
@@ -216,6 +233,8 @@ Mock::method($this->mock->createUser(...))
 
 `string` must contain `@mail.com`
 ```php
+use Exan\Moock\Args\Str;
+
 Mock::method($this->mock->userExists(...))
     ->forceReturn(true);
 
@@ -229,6 +248,8 @@ Mock::method($this->mock->userExists(...))
 
 `string` must have specific length
 ```php
+use Exan\Moock\Args\Str;
+
 Mock::method($this->mock->userExists(...))
     ->forceReturn(true);
 
@@ -242,6 +263,9 @@ Mock::method($this->mock->userExists(...))
 
 `DateTimeInterface` must be before given time
 ```php
+use Exan\Moock\Args\Date;
+use DateTime;
+
 Mock::method($this->mock->getUsersCreatedBefore(...))
     ->forceReturn([]);
 
@@ -255,6 +279,9 @@ Mock::method($this->mock->getUsersCreatedBefore(...))
 
 `DateTimeInterface` must be after given time
 ```php
+use Exan\Moock\Args\Date;
+use DateTime;
+
 Mock::method($this->mock->getUsersCreatedBefore(...))
     ->forceReturn([]);
 
@@ -268,6 +295,8 @@ Mock::method($this->mock->getUsersCreatedBefore(...))
 
 `int|float` must be less than given number
 ```php
+use Exan\Moock\Args\Number;
+
 Mock::method($this->mock->getUsersByAge(...))
     ->forceReturn([]);
 
@@ -281,6 +310,8 @@ Mock::method($this->mock->getUsersByAge(...))
 
 `int|float` must be greater than given number
 ```php
+use Exan\Moock\Args\Number;
+
 Mock::method($this->mock->getUsersByAge(...))
     ->forceReturn([]);
 
@@ -294,6 +325,8 @@ Mock::method($this->mock->getUsersByAge(...))
 
 `int|float` must be within range
 ```php
+use Exan\Moock\Args\Number;
+
 Mock::method($this->mock->getUsersByAge(...))
     ->forceReturn([]);
 
@@ -307,6 +340,8 @@ Mock::method($this->mock->getUsersByAge(...))
 
 `array` must have given number of items
 ```php
+use Exan\Moock\Args\Arr;
+
 $this->mock->deleteUsersByEmail(['a','b','c']);
 
 Mock::method($this->mock->deleteUsersByEmail(...))
@@ -317,6 +352,8 @@ Mock::method($this->mock->deleteUsersByEmail(...))
 
 `array` must be a partial match
 ```php
+use Exan\Moock\Args\Arr;
+
 $this->mock->deleteUsersByEmail([
     'some-email@example.com',
     'ignore-this@mail.com',
@@ -334,7 +371,9 @@ Mock::method($this->mock->deleteUsersByEmail(...))
 
 ---
 
-## Filtering method args
+## Filtering method arguments
+
+Filters allow you to restrict which arguments a method will accept. This is useful for soft verification if you don't need strict assertion that a specific method has been called. A `RuntimeException` is thrown if given arguments do not match your filters.
 
 ### Filtering an argument
 To filter arguments that are allowed into a method, you can use the `filter()` method.
@@ -378,10 +417,12 @@ $this->mock->userExists('third@domain.com');
 
 ---
 
-## Partial mocks
+## Creating partial mocks
 
 ### Partial mocks
-Creating a partial mock can be done in the following way. A partial mock will automatically forward any method call or property get to the partial object.
+A partial mocks wraps the given object, any methods and properties will be forwarded and retrieved from its real instance. Allowing you to selectively overwrite public behaviour.
+
+ Generally speaking, sticking to full mocks is the recommended approach.
 ```php
 $this->real = new UserService();
 
@@ -394,7 +435,7 @@ $this->real->users = [
 $this->partial = Mock::partial($this->real);
 ```
 
-Any method not explicitly mocked will be forwarded to it's full implementation.
+Any method not explicitly mocked will be forwarded to its full implementation.
 ```php
 $this->assertTrue($this->partial->userExists('first@mail.com'));
 $this->assertFalse($this->partial->userExists('fourth@mail.com'));
@@ -402,6 +443,8 @@ $this->assertFalse($this->partial->userExists('fourth@mail.com'));
 
 Methods can still be mocked, in which case the full implementation is bypassed selectively.
 ```php
+use Exan\Moock\Mock;
+
 Mock::method($this->partial->userExists(...))
     ->replace(fn (string $email) => $email === 'fourth@mail.com');
 
@@ -430,6 +473,8 @@ Out of the box, Moock will use PHPUnit or Nette Tester assertion methods if they
 
 ### Registering a custom assertion
 ```php
+use Exan\Moock\MoockAssert;
+
 $usedAssert = false;
 
 MoockAssert::useAssert(function (bool $actual, bool $expected, string $message) use (&$usedAssert): void {
@@ -445,7 +490,7 @@ Mock::method($mock->createUser(...))
 $this->assertTrue($usedAssert);
 ```
 
-If you like, you can also add optional Moock compatibility from your end by adding the following into an autoloaded file.
+If you have your own asserting requirements for your library, you can also add optional Moock compatibility from your end by adding the following into an autoloaded file.
 ```php
 if (class_exists('\Exan\Moock\MoockAssert')) {
     \Exan\Moock\MoockAssert::useAssert($handler);

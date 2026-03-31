@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Tests\Components\UserServiceInterface;
 
-#[Page('Filtering method args')]
+#[Page('Filtering method arguments', 'Filters allow you to restrict which arguments a method will accept. This is useful for soft verification if you don\'t need strict assertion that a specific method has been called. A `RuntimeException` is thrown if given arguments do not match your filters.')]
 class FilteringMethodsTest extends TestCase
 {
     protected UserServiceInterface&MockedClassInterface $mock;

@@ -7,15 +7,17 @@ namespace Tests\Documentation;
 use Exan\Moock\Mock;
 use Exan\Pudocumenter\Attributes\Example;
 use Exan\Pudocumenter\Attributes\Page;
+use Exan\Pudocumenter\Attributes\ShowUse;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tests\Components\TestInterface;
 use Tests\Components\UserService;
 use Tests\Components\UserServiceInterface;
 
-#[Page('Mocking a class')]
+#[Page('Creating a mock', '_Note: all configuration of a mock is stored in `$mock`, the static `Mock::...` methods are there to provide the user-facing API._')]
 class BasicMockingTest extends TestCase
 {
+    #[ShowUse(Mock::class)]
     #[Example(
         'Mocking a class',
         'Creating a test dummy of whatever class you want',
@@ -28,6 +30,7 @@ class BasicMockingTest extends TestCase
         $this->assertInstanceOf(UserService::class, $mock);
     }
 
+    #[ShowUse(Mock::class)]
     #[Example(
         'Mocking an interface',
         'Creating a dummy implementation of whatever interface you want',
@@ -40,9 +43,10 @@ class BasicMockingTest extends TestCase
         $this->assertInstanceOf(UserServiceInterface::class, $mock);
     }
 
+    #[ShowUse(Mock::class)]
     #[Example(
         'Mocking several interfaces',
-        'Creating a dummy implementation of several interfaces. You should only use this if your interfaces are compatible.',
+        'Creating a mock implementation of several interfaces. Only use when interfaces are compatible to avoid unexpected behavior.',
     )]
     #[Test]
     public function it_can_mock_several_interfaces_at_once(): void

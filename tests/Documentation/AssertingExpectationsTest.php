@@ -13,6 +13,7 @@ use Exan\Moock\Mock;
 use Exan\Moock\MockedClassInterface;
 use Exan\Pudocumenter\Attributes\Example;
 use Exan\Pudocumenter\Attributes\Page;
+use Exan\Pudocumenter\Attributes\ShowUse;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tests\Components\UserServiceInterface;
@@ -188,6 +189,7 @@ class AssertingExpectationsTest extends TestCase
             )->toHaveBeenCalled();
     }
 
+    #[ShowUse(Str::class)]
     #[Example(null, '`string` must contain `@mail.com`')]
     #[Test]
     public function it_asserts_string_contains_helper(): void
@@ -203,6 +205,7 @@ class AssertingExpectationsTest extends TestCase
             ->toHaveBeenCalled();
     }
 
+    #[ShowUse(Str::class)]
     #[Example(null, '`string` must have specific length')]
     #[Test]
     public function it_asserts_string_length_helper(): void
@@ -218,6 +221,8 @@ class AssertingExpectationsTest extends TestCase
             ->toHaveBeenCalled();
     }
 
+    #[ShowUse(Date::class)]
+    #[ShowUse(DateTime::class)]
     #[Example(null, '`DateTimeInterface` must be before given time')]
     #[Test]
     public function it_asserts_date_before_helper(): void
@@ -233,6 +238,8 @@ class AssertingExpectationsTest extends TestCase
             ->toHaveBeenCalled();
     }
 
+    #[ShowUse(Date::class)]
+    #[ShowUse(DateTime::class)]
     #[Example(null, '`DateTimeInterface` must be after given time')]
     #[Test]
     public function it_asserts_date_after_helper(): void
@@ -248,6 +255,7 @@ class AssertingExpectationsTest extends TestCase
             ->toHaveBeenCalled();
     }
 
+    #[ShowUse(Number::class)]
     #[Example(null, '`int|float` must be less than given number')]
     #[Test]
     public function it_asserts_number_lt_helper(): void
@@ -263,6 +271,7 @@ class AssertingExpectationsTest extends TestCase
             ->toHaveBeenCalled();
     }
 
+    #[ShowUse(Number::class)]
     #[Example(null, '`int|float` must be greater than given number')]
     #[Test]
     public function it_asserts_number_gt_helper(): void
@@ -278,6 +287,7 @@ class AssertingExpectationsTest extends TestCase
             ->toHaveBeenCalled();
     }
 
+    #[ShowUse(Number::class)]
     #[Example(null, '`int|float` must be within range')]
     #[Test]
     public function it_asserts_number_range_helper(): void
@@ -293,6 +303,7 @@ class AssertingExpectationsTest extends TestCase
             ->toHaveBeenCalled();
     }
 
+    #[ShowUse(Arr::class)]
     #[Example(null, '`array` must have given number of items')]
     #[Test]
     public function it_asserts_array_count_helper(): void
@@ -305,6 +316,7 @@ class AssertingExpectationsTest extends TestCase
             ->toHaveBeenCalled();
     }
 
+    #[ShowUse(Arr::class)]
     #[Example(null, '`array` must be a partial match')]
     #[Test]
     public function it_asserts_array_partial_helper(): void
