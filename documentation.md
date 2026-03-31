@@ -420,9 +420,7 @@ $this->mock->userExists('third@domain.com');
 ## Creating partial mocks
 
 ### Partial mocks
-A partial mocks wraps the given object, any methods and properties will be forwarded and retrieved from its real instance. Allowing you to selectively overwrite public behaviour.
-
- Generally speaking, sticking to full mocks is the recommended approach.
+A partial mocks wraps the given object. Any methods and properties will be forwarded and retrieved from its real instance, allowing you to selectively overwrite public behaviour. These can be useful in some scenarios, however, overuse may lead to hard-to-follow tests.
 ```php
 $this->real = new UserService();
 
@@ -488,11 +486,4 @@ Mock::method($mock->createUser(...))
     ->toHaveBeenCalled(); // This now uses our custom assert, which doesn't throw exceptions on failure
 
 $this->assertTrue($usedAssert);
-```
-
-If you have your own asserting requirements for your library, you can also add optional Moock compatibility from your end by adding the following into an autoloaded file.
-```php
-if (class_exists('\Exan\Moock\MoockAssert')) {
-    \Exan\Moock\MoockAssert::useAssert($handler);
-}
 ```
