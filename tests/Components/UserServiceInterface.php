@@ -9,6 +9,7 @@ use DateTimeInterface;
 interface UserServiceInterface
 {
     public function userExists(string $email): bool;
+    public function isValidEmail(string $email): bool;
     public function createUser(string $email, string $username, string $password): void;
     public function getUsersCreatedBefore(DateTimeInterface $dateTime): array;
     public function getUsersByAge(int $age): array;

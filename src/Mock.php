@@ -103,4 +103,13 @@ class Mock
 
         return $mock;
     }
+
+    /**
+     * @template T
+     * @param Closure(Closure(Closure $method): MethodExpectation $expect): void $expectation
+     */
+    public static function expect(Closure $expectation): void
+    {
+
+    }
 }
