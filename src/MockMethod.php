@@ -9,6 +9,8 @@ use RuntimeException;
 
 class MockMethod
 {
+    private static int $methodCallId = 0;
+
     private readonly MockedClassInterface $classMock;
 
     private readonly string $methodName;
@@ -76,6 +78,17 @@ class MockMethod
 
     public function expect(): Expectation
     {
-        return new Expectation($this->methodName, $this->classMock->__getCalls($this->methodName));
+        return new Expectation(
+            $this->methodName,
+            array_map(
+                fn (array $call) => $call['args'],
+                $this->classMock->__getCalls($this->methodName)
+            )
+        );
+    }
+
+    public static function getMethodCallId(): int
+    {
+        return ++static::$methodCallId;
     }
 }

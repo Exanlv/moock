@@ -71,7 +71,7 @@ trait MockedClass
             $this->calls[$method] = [];
         }
 
-        $this->calls[$method][] = $args;
+        $this->calls[$method][] = ['mcId' => MockMethod::getMethodCallId(), 'args' => $args];
 
         $args = array_values($args);
 
