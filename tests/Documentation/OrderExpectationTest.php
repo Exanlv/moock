@@ -9,6 +9,7 @@ use Exan\Moock\Mock;
 use Exan\Moock\MockedClassInterface;
 use Exan\Pudocumenter\Attributes\Example;
 use Exan\Pudocumenter\Attributes\Page;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tests\Components\ProductServiceInterface;
 use Tests\Components\UserServiceInterface;
@@ -29,8 +30,12 @@ class OrderExpectationTest extends TestCase
     }
 
     #[Example('Verifying order of calls', 'To verify the order in which methods were called on a mock, call `$expect` in the desired order with the given method.')]
+    #[Test]
     public function it_can_verify_order_of_mocked_methods()
     {
+        Mock::method($this->mock->isValidEmail(...))->forceReturn(true);
+        Mock::method($this->mock->userExists(...))->forceReturn(false);
+
         $this->mock->isValidEmail('mail@domain.com');
         $this->mock->userExists('mail@domain.com');
         $this->mock->createUser('mail@domain.com', 'username', 'password');

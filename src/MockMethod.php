@@ -9,8 +9,6 @@ use RuntimeException;
 
 class MockMethod
 {
-    private static int $methodCallId = 0;
-
     private readonly MockedClassInterface $classMock;
 
     private readonly string $methodName;
@@ -85,10 +83,5 @@ class MockMethod
                 $this->classMock->__getCalls($this->methodName)
             )
         );
-    }
-
-    public static function getMethodCallId(): int
-    {
-        return ++static::$methodCallId;
     }
 }

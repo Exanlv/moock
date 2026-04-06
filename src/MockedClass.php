@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Exan\Moock;
 
+use Exan\Moock\Expector\MockExpector;
 use Exan\Moock\Properties\MockPropertyValue;
 use ReflectionClass;
 use RuntimeException;
@@ -71,7 +72,7 @@ trait MockedClass
             $this->calls[$method] = [];
         }
 
-        $this->calls[$method][] = ['mcId' => MockMethod::getMethodCallId(), 'args' => $args];
+        $this->calls[$method][] = ['mcId' => MockExpector::getMethodCallId(), 'args' => $args];
 
         $args = array_values($args);
 
