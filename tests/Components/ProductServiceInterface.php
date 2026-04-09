@@ -6,6 +6,6 @@ namespace Tests\Components;
 
 interface ProductServiceInterface
 {
-    public function productExists(int $productId): ?array;
+    public function productExists(int $productId): bool;
     public function purchase(int $productId, string $userEmail): bool;
 }

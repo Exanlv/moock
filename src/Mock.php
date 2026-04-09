@@ -6,6 +6,7 @@ namespace Exan\Moock;
 
 use Closure;
 use Exan\Moock\Class\Mocker as ClassMocker;
+use Exan\Moock\Expector\Expectation;
 use Exan\Moock\Expector\MockExpector;
 use ReflectionFunction;
 use Throwable;
@@ -107,7 +108,7 @@ class Mock
 
     /**
      * @template T
-     * @param Closure(Closure $expect): void $expectation
+     * @param Closure(Closure(Closure $expectedMethod): Expectation $expect): void $expectation
      */
     public static function expect(Closure $expectation): void
     {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Exan\Moock;
 
+use Exan\Moock\Dto\MethodCall;
 use ReflectionFunction;
 use RuntimeException;
 
@@ -79,7 +80,7 @@ class MockMethod
         return new Expectation(
             $this->methodName,
             array_map(
-                fn (array $call) => $call['args'],
+                fn (MethodCall $call) => $call->args,
                 $this->classMock->__getCalls($this->methodName)
             )
         );

@@ -49,8 +49,12 @@ class OrderExpectationTest extends TestCase
     }
 
     #[Example('Verifying order and arguments', 'Optionally attach expectations of the given arguments.')]
+    #[Test]
     public function it_can_verify_order_of_mocked_methods_and_args()
     {
+        Mock::method($this->mock->isValidEmail(...))->forceReturn(true); // @hide
+        Mock::method($this->mock->userExists(...))->forceReturn(false); // @hide
+
         $this->mock->isValidEmail('mail@domain.com'); // @hide
         $this->mock->userExists('mail@domain.com'); // @hide
         $this->mock->createUser('mail@domain.com', 'username', 'password'); // @hide
@@ -60,15 +64,20 @@ class OrderExpectationTest extends TestCase
             $expect($this->mock->userExists(...)); // Argument isn't verified, just order
 
             // Only mail and password are validated
-            $expect($this->mock->createUser(...))->with('mail@domain.com', password: 'password');
+            $expect($this->mock->createUser(...))->with(email: 'mail@domain.com', password: 'password');
         });
     }
 
     #[Example('Verifying order between different mocks', 'You may also validate in what order methods were called between several mocks')]
+    #[Test]
     public function it_can_verify_order_between_different_mocks()
     {
         $userService = Mock::interface(UserServiceInterface::class);
         $productsService = Mock::interface(ProductServiceInterface::class);
+
+        Mock::method($userService->isValidEmail(...))->forceReturn(true); // @hide
+        Mock::method($productsService->productExists(...))->forceReturn(true); // @hide
+        Mock::method($productsService->purchase(...))->forceReturn(true); // @hide
 
         $productsService->productExists(123);
         $userService->isValidEmail('mail@domain.com');
@@ -77,7 +86,7 @@ class OrderExpectationTest extends TestCase
         Mock::expect(function (Closure $expect) use ($userService, $productsService) {
             $expect($productsService->productExists(...))->with(123);
             $expect($userService->isValidEmail(...))->with('mail@domain.com');
-            $expect($productsService->productExists(...))->with(123, 'mail@domain.com');
+            $expect($productsService->purchase(...))->with(123, 'mail@domain.com');
         });
     }
 }

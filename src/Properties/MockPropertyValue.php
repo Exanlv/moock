@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Exan\Moock\Properties;
 
+/** @internal */
 readonly class MockPropertyValue
 {
     public function __construct(

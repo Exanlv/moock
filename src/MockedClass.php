@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Exan\Moock;
 
+use Exan\Moock\Dto\MethodCall;
 use Exan\Moock\Expector\MockExpector;
 use Exan\Moock\Properties\MockPropertyValue;
 use ReflectionClass;
@@ -52,6 +53,11 @@ trait MockedClass
         return $this->calls[$method] ?? [];
     }
 
+    public function __getAllCalls(): array
+    {
+        return $this->calls ?? [];
+    }
+
     public function __makePartial(mixed $real): void
     {
         $this->real = $real;
@@ -72,7 +78,7 @@ trait MockedClass
             $this->calls[$method] = [];
         }
 
-        $this->calls[$method][] = ['mcId' => MockExpector::getMethodCallId(), 'args' => $args];
+        $this->calls[$method][] = new MethodCall(MockExpector::getMethodCallId(), $args);
 
         $args = array_values($args);
 
