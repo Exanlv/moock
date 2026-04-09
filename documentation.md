@@ -397,12 +397,15 @@ If you're expecting many calls to be made after each other in specific order, yo
 ### Verifying order of calls
 To verify the order in which methods were called on a mock, call `$expect` in the desired order with the given method.
 ```php
+Mock::method($this->mock->isValidEmail(...))->forceReturn(true);
+Mock::method($this->mock->userExists(...))->forceReturn(false);
+
 $this->mock->isValidEmail('mail@domain.com');
 $this->mock->userExists('mail@domain.com');
 $this->mock->createUser('mail@domain.com', 'username', 'password');
 
 // Asserting the methods are called in the right order only
-Mock::expect(function ($expect) {
+Mock::expect(function ($expect): void {
     $expect($this->mock->isValidEmail(...));
     $expect($this->mock->userExists(...));
     $expect($this->mock->createUser(...));
@@ -412,12 +415,12 @@ Mock::expect(function ($expect) {
 ### Verifying order and arguments
 Optionally attach expectations of the given arguments.
 ```php
-Mock::expect(function (Closure $expect) {
+Mock::expect(function (Closure $expect): void {
     $expect($this->mock->isValidEmail(...))->with('mail@domain.com');
     $expect($this->mock->userExists(...)); // Argument isn't verified, just order
 
     // Only mail and password are validated
-    $expect($this->mock->createUser(...))->with('mail@domain.com', password: 'password');
+    $expect($this->mock->createUser(...))->with(email: 'mail@domain.com', password: 'password');
 });
 ```
 
@@ -427,14 +430,15 @@ You may also validate in what order methods were called between several mocks
 $userService = Mock::interface(UserServiceInterface::class);
 $productsService = Mock::interface(ProductServiceInterface::class);
 
+
 $productsService->productExists(123);
 $userService->isValidEmail('mail@domain.com');
 $productsService->purchase(123, 'mail@domain.com');
 
-Mock::expect(function (Closure $expect) use ($userService, $productsService) {
+Mock::expect(function (Closure $expect) use ($userService, $productsService): void {
     $expect($productsService->productExists(...))->with(123);
     $expect($userService->isValidEmail(...))->with('mail@domain.com');
-    $expect($productsService->productExists(...))->with(123, 'mail@domain.com');
+    $expect($productsService->purchase(...))->with(123, 'mail@domain.com');
 });
 ```
 
