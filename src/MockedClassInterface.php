@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Exan\Moock;
 
+use Exan\Moock\Dto\MethodCall;
+
 interface MockedClassInterface
 {
     /** @internal */
@@ -12,8 +14,17 @@ interface MockedClassInterface
     public function __replace(string $method, callable $replacement): void;
     /** @internal */
     public function __filter(string $method, mixed ...$filters): void;
-    /** @internal */
+    /**
+     * @internal
+     * @return MethodCall[]
+     */
     public function __getCalls(string $method): array;
+    /**
+     * @internal
+     * @return Array<string, Array<MethodCall>>
+     */
+    public function __getAllCalls(): array;
+
     /** @internal */
     public function __makePartial(mixed $real): void;
 

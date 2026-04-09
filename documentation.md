@@ -9,6 +9,10 @@
      - [Asserting amount of calls](#asserting-amount-of-calls)
      - [Asserting method was called with specific input](#asserting-method-was-called-with-specific-input)
      - [Built-in helpers](#built-in-helpers)
+ - [Order expectations](#order-expectations)
+     - [Verifying order of calls](#verifying-order-of-calls)
+     - [Verifying order and arguments](#verifying-order-and-arguments)
+     - [Verifying order between different mocks](#verifying-order-between-different-mocks)
  - [Filtering method arguments](#filtering-method-arguments)
      - [Filtering an argument](#filtering-an-argument)
      - [Using closures](#using-closures)
@@ -382,6 +386,56 @@ Mock::method($this->mock->deleteUsersByEmail(...))
         2 => fn ($email) => str_ends_with($email, '@example.com'),
     ]))
     ->toHaveBeenCalled();
+```
+
+---
+
+## Order expectations
+
+If you're expecting many calls to be made after each other in specific order, you may use `Mock::expect`
+
+### Verifying order of calls
+To verify the order in which methods were called on a mock, call `$expect` in the desired order with the given method.
+```php
+$this->mock->isValidEmail('mail@domain.com');
+$this->mock->userExists('mail@domain.com');
+$this->mock->createUser('mail@domain.com', 'username', 'password');
+
+// Asserting the methods are called in the right order only
+Mock::expect(function ($expect) {
+    $expect($this->mock->isValidEmail(...));
+    $expect($this->mock->userExists(...));
+    $expect($this->mock->createUser(...));
+});
+```
+
+### Verifying order and arguments
+Optionally attach expectations of the given arguments.
+```php
+Mock::expect(function (Closure $expect) {
+    $expect($this->mock->isValidEmail(...))->with('mail@domain.com');
+    $expect($this->mock->userExists(...)); // Argument isn't verified, just order
+
+    // Only mail and password are validated
+    $expect($this->mock->createUser(...))->with('mail@domain.com', password: 'password');
+});
+```
+
+### Verifying order between different mocks
+You may also validate in what order methods were called between several mocks
+```php
+$userService = Mock::interface(UserServiceInterface::class);
+$productsService = Mock::interface(ProductServiceInterface::class);
+
+$productsService->productExists(123);
+$userService->isValidEmail('mail@domain.com');
+$productsService->purchase(123, 'mail@domain.com');
+
+Mock::expect(function (Closure $expect) use ($userService, $productsService) {
+    $expect($productsService->productExists(...))->with(123);
+    $expect($userService->isValidEmail(...))->with('mail@domain.com');
+    $expect($productsService->productExists(...))->with(123, 'mail@domain.com');
+});
 ```
 
 ---

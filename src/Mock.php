@@ -6,8 +6,9 @@ namespace Exan\Moock;
 
 use Closure;
 use Exan\Moock\Class\Mocker as ClassMocker;
+use Exan\Moock\Expector\Expectation;
+use Exan\Moock\Expector\MockExpector;
 use ReflectionFunction;
-use Throwable;
 
 class Mock
 {
@@ -92,15 +93,21 @@ class Mock
 
     private static function codeToMock(string $code): MockedClassInterface
     {
-        try {
-            /** @var MockedClassInterface */
-            $mock = eval($code);
-        } catch (Throwable $e) {
-            dd($e->getMessage(), $code);
-        }
+        /** @var MockedClassInterface */
+        $mock = eval($code);
 
         $mock->__setQuine($code);
 
         return $mock;
+    }
+
+    /**
+     * @template T
+     * @param Closure(Closure(Closure $expectedMethod): Expectation $expect): void $expectation
+     */
+    public static function expect(Closure $expectation): void
+    {
+        $mockExpector = new MockExpector();
+        $mockExpector->validate($expectation);
     }
 }

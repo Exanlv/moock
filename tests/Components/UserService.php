@@ -10,6 +10,11 @@ class UserService implements UserServiceInterface
 {
     public array $users = [];
 
+    public function isValidEmail(string $email): bool
+    {
+        throw new \Exception('Not implemented');
+    }
+
     public function userExists(string $email): bool
     {
         return in_array($email, $this->users);
