@@ -10,6 +10,5 @@ readonly class MethodCall
     public function __construct(
         public int $methodCallId,
         public array $args,
-    ) {
-    }
+    ) {}
 }

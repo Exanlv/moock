@@ -11,6 +11,5 @@ readonly class DetailedMethodCall
         public string $objectHash,
         public string $method,
         public MethodCall $call,
-    ) {
-    }
+    ) {}
 }

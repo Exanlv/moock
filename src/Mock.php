@@ -9,7 +9,6 @@ use Exan\Moock\Class\Mocker as ClassMocker;
 use Exan\Moock\Expector\Expectation;
 use Exan\Moock\Expector\MockExpector;
 use ReflectionFunction;
-use Throwable;
 
 class Mock
 {
@@ -94,12 +93,8 @@ class Mock
 
     private static function codeToMock(string $code): MockedClassInterface
     {
-        try {
-            /** @var MockedClassInterface */
-            $mock = eval($code);
-        } catch (Throwable $e) {
-            dd($e->getMessage(), $code);
-        }
+        /** @var MockedClassInterface */
+        $mock = eval($code);
 
         $mock->__setQuine($code);
 

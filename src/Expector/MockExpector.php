@@ -44,12 +44,10 @@ class MockExpector
 
         $actual = $this->getActualCalls();
 
-        $matches = array_map(function (DetailedMethodCall $call) {
-            return array_map(
-                fn (Expectation $expectation) => $expectation->matches($call),
-                $this->expectations
-            );
-        }, $actual);
+        $matches = array_map(fn (DetailedMethodCall $call) => array_map(
+            fn (Expectation $expectation) => $expectation->matches($call),
+            $this->expectations
+        ), $actual);
 
         $this->assertCallsInOrder($matches);
     }
@@ -62,7 +60,7 @@ class MockExpector
         $expectationsCount = count($this->expectations);
         $i = 0;
 
-        while(count($matches) > 0) {
+        while (count($matches) > 0) {
             $toCheck = array_shift($matches);
             if ($toCheck[$i] === true) {
                 $i++;
@@ -95,9 +93,7 @@ class MockExpector
     private function getActualCalls(): array
     {
         /** @var MockedClassInterface[] */
-        $objects = array_map(function (Expectation $expectation) {
-            return $expectation->ref->getClosureThis();
-        }, $this->expectations);
+        $objects = array_map(fn (Expectation $expectation) => $expectation->ref->getClosureThis(), $this->expectations);
 
         $objectHashes = [];
         $totalCalls = [];
@@ -119,7 +115,7 @@ class MockExpector
                         $hash,
                         $methodName,
                         $methodCall
-                    ), $methodCalls)
+                    ), $methodCalls),
                 ];
             }
         }

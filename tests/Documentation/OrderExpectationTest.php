@@ -31,7 +31,7 @@ class OrderExpectationTest extends TestCase
 
     #[Example('Verifying order of calls', 'To verify the order in which methods were called on a mock, call `$expect` in the desired order with the given method.')]
     #[Test]
-    public function it_can_verify_order_of_mocked_methods()
+    public function it_can_verify_order_of_mocked_methods(): void
     {
         Mock::method($this->mock->isValidEmail(...))->forceReturn(true);
         Mock::method($this->mock->userExists(...))->forceReturn(false);
@@ -41,7 +41,7 @@ class OrderExpectationTest extends TestCase
         $this->mock->createUser('mail@domain.com', 'username', 'password');
 
         // Asserting the methods are called in the right order only
-        Mock::expect(function ($expect) {
+        Mock::expect(function ($expect): void {
             $expect($this->mock->isValidEmail(...));
             $expect($this->mock->userExists(...));
             $expect($this->mock->createUser(...));
@@ -50,7 +50,7 @@ class OrderExpectationTest extends TestCase
 
     #[Example('Verifying order and arguments', 'Optionally attach expectations of the given arguments.')]
     #[Test]
-    public function it_can_verify_order_of_mocked_methods_and_args()
+    public function it_can_verify_order_of_mocked_methods_and_args(): void
     {
         Mock::method($this->mock->isValidEmail(...))->forceReturn(true); // @hide
         Mock::method($this->mock->userExists(...))->forceReturn(false); // @hide
@@ -59,7 +59,7 @@ class OrderExpectationTest extends TestCase
         $this->mock->userExists('mail@domain.com'); // @hide
         $this->mock->createUser('mail@domain.com', 'username', 'password'); // @hide
 
-        Mock::expect(function (Closure $expect) {
+        Mock::expect(function (Closure $expect): void {
             $expect($this->mock->isValidEmail(...))->with('mail@domain.com');
             $expect($this->mock->userExists(...)); // Argument isn't verified, just order
 
@@ -70,7 +70,7 @@ class OrderExpectationTest extends TestCase
 
     #[Example('Verifying order between different mocks', 'You may also validate in what order methods were called between several mocks')]
     #[Test]
-    public function it_can_verify_order_between_different_mocks()
+    public function it_can_verify_order_between_different_mocks(): void
     {
         $userService = Mock::interface(UserServiceInterface::class);
         $productsService = Mock::interface(ProductServiceInterface::class);
@@ -83,7 +83,7 @@ class OrderExpectationTest extends TestCase
         $userService->isValidEmail('mail@domain.com');
         $productsService->purchase(123, 'mail@domain.com');
 
-        Mock::expect(function (Closure $expect) use ($userService, $productsService) {
+        Mock::expect(function (Closure $expect) use ($userService, $productsService): void {
             $expect($productsService->productExists(...))->with(123);
             $expect($userService->isValidEmail(...))->with('mail@domain.com');
             $expect($productsService->purchase(...))->with(123, 'mail@domain.com');
