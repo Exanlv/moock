@@ -13,8 +13,6 @@ use ReflectionFunction;
 class Mock
 {
     /**
-     * Returns a Mock for a singular given interface
-     *
      * @template T
      * @param class-string<T> $interface
      * @return T&MockedClassInterface
