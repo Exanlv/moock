@@ -102,7 +102,6 @@ class MockExpector
         return $expectation->ref->getName();
     }
 
-
     /**
      * @return DetailedMethodCall[]
      */
