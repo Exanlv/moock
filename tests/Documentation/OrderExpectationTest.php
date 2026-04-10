@@ -33,18 +33,18 @@ class OrderExpectationTest extends TestCase
     #[Test]
     public function it_can_verify_order_of_mocked_methods(): void
     {
-        Mock::method($this->mock->isValidEmail(...))->forceReturn(true);
-        Mock::method($this->mock->userExists(...))->forceReturn(false);
+        Mock::method($this->mock->isValidEmail(...))->returns(true);
+        Mock::method($this->mock->userExists(...))->returns(false);
 
         $this->mock->isValidEmail('mail@domain.com');
         $this->mock->userExists('mail@domain.com');
         $this->mock->createUser('mail@domain.com', 'username', 'password');
 
         // Asserting the methods are called in the right order only
-        Mock::expect(function ($expect): void {
-            $expect($this->mock->isValidEmail(...));
-            $expect($this->mock->userExists(...));
-            $expect($this->mock->createUser(...));
+        Mock::verify(function ($assert): void {
+            $assert($this->mock->isValidEmail(...));
+            $assert($this->mock->userExists(...));
+            $assert($this->mock->createUser(...));
         });
     }
 
@@ -52,19 +52,19 @@ class OrderExpectationTest extends TestCase
     #[Test]
     public function it_can_verify_order_of_mocked_methods_and_args(): void
     {
-        Mock::method($this->mock->isValidEmail(...))->forceReturn(true); // @hide
-        Mock::method($this->mock->userExists(...))->forceReturn(false); // @hide
+        Mock::method($this->mock->isValidEmail(...))->returns(true); // @hide
+        Mock::method($this->mock->userExists(...))->returns(false); // @hide
 
         $this->mock->isValidEmail('mail@domain.com'); // @hide
         $this->mock->userExists('mail@domain.com'); // @hide
         $this->mock->createUser('mail@domain.com', 'username', 'password'); // @hide
 
-        Mock::expect(function (Closure $expect): void {
-            $expect($this->mock->isValidEmail(...))->with('mail@domain.com');
-            $expect($this->mock->userExists(...)); // Argument isn't verified, just order
+        Mock::verify(function (Closure $assert): void {
+            $assert($this->mock->isValidEmail(...))->with('mail@domain.com');
+            $assert($this->mock->userExists(...)); // Argument isn't verified, just order
 
             // Only mail and password are validated
-            $expect($this->mock->createUser(...))->with('mail@domain.com', password: 'password');
+            $assert($this->mock->createUser(...))->with('mail@domain.com', password: 'password');
         });
     }
 
@@ -75,18 +75,18 @@ class OrderExpectationTest extends TestCase
         $userService = Mock::interface(UserServiceInterface::class);
         $productsService = Mock::interface(ProductServiceInterface::class);
 
-        Mock::method($userService->isValidEmail(...))->forceReturn(true); // @hide
-        Mock::method($productsService->productExists(...))->forceReturn(true); // @hide
-        Mock::method($productsService->purchase(...))->forceReturn(true); // @hide
+        Mock::method($userService->isValidEmail(...))->returns(true); // @hide
+        Mock::method($productsService->productExists(...))->returns(true); // @hide
+        Mock::method($productsService->purchase(...))->returns(true); // @hide
 
         $productsService->productExists(123);
         $userService->isValidEmail('mail@domain.com');
         $productsService->purchase(123, 'mail@domain.com');
 
-        Mock::expect(function (Closure $expect) use ($userService, $productsService): void {
-            $expect($productsService->productExists(...))->with(123);
-            $expect($userService->isValidEmail(...))->with('mail@domain.com');
-            $expect($productsService->purchase(...))->with(123, 'mail@domain.com');
+        Mock::verify(function (Closure $assert) use ($userService, $productsService): void {
+            $assert($productsService->productExists(...))->with(123);
+            $assert($userService->isValidEmail(...))->with('mail@domain.com');
+            $assert($productsService->purchase(...))->with(123, 'mail@domain.com');
         });
     }
 }

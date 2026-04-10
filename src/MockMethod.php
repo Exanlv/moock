@@ -26,7 +26,7 @@ class MockMethod
         $this->methodName = $this->ref->getName();
     }
 
-    public function filter(mixed ...$filters): static
+    public function allow(mixed ...$filters): static
     {
         $this->classMock->__filter($this->methodName, ...$filters);
 
@@ -47,14 +47,14 @@ class MockMethod
         return $this;
     }
 
-    public function forceReturn(mixed $returnValue): static
+    public function returns(mixed $returnValue): static
     {
         $this->classMock->__replace($this->methodName, fn () => $returnValue);
 
         return $this;
     }
 
-    public function forceReturnSequence(array $values): static
+    public function returnsSequence(array $values): static
     {
         $this->classMock->__replace($this->methodName, function () use (&$values): mixed {
             return array_shift($values);
@@ -66,7 +66,7 @@ class MockMethod
     /**
      * @param class-string<Throwable> $exception
      */
-    public function throwsException(string $exception): static
+    public function throws(string $exception): static
     {
         $this->classMock->__replace($this->methodName, function () use ($exception): never {
             throw new $exception();
@@ -75,7 +75,7 @@ class MockMethod
         return $this;
     }
 
-    public function expect(): Expectation
+    public function assert(): Expectation
     {
         return new Expectation(
             $this->methodName,
