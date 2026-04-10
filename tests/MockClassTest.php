@@ -37,8 +37,8 @@ class MockClassTest extends TestCase
         $mock->testWithTrueDefault();
 
         Mock::method($mock->testWithTrueDefault(...))
-            ->expect()
-            ->toHaveBeenCalled();
+            ->assert()
+            ->called();
     }
 
     public function test_it_keeps_track_of_amount_of_calls(): void
@@ -54,7 +54,7 @@ class MockClassTest extends TestCase
         $mock->myMethod();
 
         Mock::method($mock->myMethod(...))
-            ->expect()->toHaveBeenCalledTimes(4);
+            ->assert()->calledTimes(4);
     }
 
     public function test_method_input_is_passed_to_replacement(): void
@@ -75,7 +75,7 @@ class MockClassTest extends TestCase
         );
 
         Mock::method($mock->myOtherMethod(...))
-            ->expect()->toHaveBeenCalledOnce();
+            ->assert()->calledOnce();
     }
 
     public function test_it_can_partially_mock(): void
@@ -102,7 +102,7 @@ class MockClassTest extends TestCase
         static::assertEquals('::original value::', $mock->myMethod());
         static::assertTrue($mock->myMethodWasCalled);
 
-        Mock::method($mock->myMethod(...))->expect()->toHaveBeenCalledOnce();
+        Mock::method($mock->myMethod(...))->assert()->calledOnce();
     }
 
     public function test_it_can_set_arg_expectations(): void
@@ -118,38 +118,38 @@ class MockClassTest extends TestCase
         $mock->myOtherMethod('::3::', '::3::');
 
         Mock::method($mock->myOtherMethod(...))
-            ->expect()
+            ->assert()
             ->with('::1::')
-            ->toHaveBeenCalled();
+            ->called();
 
         Mock::method($mock->myOtherMethod(...))
-            ->expect()
+            ->assert()
             ->with('::1::')
-            ->toHaveBeenCalledTimes(3);
+            ->calledTimes(3);
 
         Mock::method($mock->myOtherMethod(...))
-            ->expect()
+            ->assert()
             ->with('::1::', '::2::')
-            ->toHaveBeenCalledTimes(2);
+            ->calledTimes(2);
 
         Mock::method($mock->myOtherMethod(...))
-            ->expect()
+            ->assert()
             ->with(fn (string $inputA) => $inputA === '::3::')
-            ->toHaveBeenCalledTimes(2);
+            ->calledTimes(2);
 
         Mock::method($mock->myOtherMethod(...))
-            ->expect()
+            ->assert()
             ->with(inputB: fn (string $inputB) => $inputB === '::3::')
-            ->toHaveBeenCalledTimes(3);
+            ->calledTimes(3);
     }
 
     public function test_it_can_filter_allowed_inputs(): void
     {
         $mock = Mock::class(TestClass::class);
 
-        Mock::method($mock->myOtherMethod(...))->forceReturn([]);
+        Mock::method($mock->myOtherMethod(...))->returns([]);
 
-        Mock::method($mock->myOtherMethod(...))->filter('::A::', fn () => true);
+        Mock::method($mock->myOtherMethod(...))->allow('::A::', fn () => true);
 
         $mock->myOtherMethod('::A::', 'asdf');
         $mock->myOtherMethod('::A::', 'ghjk');

@@ -70,7 +70,7 @@ Returning a static value
 ```php
 use Exan\Moock\Mock;
 
-Mock::method($this->mock->userExists(...))->forceReturn(true);
+Mock::method($this->mock->userExists(...))->returns(true);
 
 $this->assertTrue($this->mock->userExists('some-email@domain.com'));
 ```
@@ -79,7 +79,7 @@ Returning a sequence of values
 ```php
 use Exan\Moock\Mock;
 
-Mock::method($this->mock->userExists(...))->forceReturnSequence([true, true, false]);
+Mock::method($this->mock->userExists(...))->returnsSequence([true, true, false]);
 
 $this->assertTrue($this->mock->userExists('some-email@domain.com'));
 $this->assertTrue($this->mock->userExists('some-email@domain.com'));
@@ -93,7 +93,7 @@ Throwing an exception
 use Exan\Moock\Mock;
 use RuntimeException;
 
-Mock::method($this->mock->createUser(...))->throwsException(RuntimeException::class);
+Mock::method($this->mock->createUser(...))->throws(RuntimeException::class);
 
 $this->expectException(RuntimeException::class);
 
@@ -114,117 +114,117 @@ These assertions work out of the box with both [PHPUnit](https://packagist.org/p
 Asserting the method not called at all.
 ```php
 Mock::method($this->mock->userExists(...))
-    ->forceReturn(true);
+    ->returns(true);
 
 Mock::method($this->mock->userExists(...))
-    ->expect()
+    ->assert()
     ->not()
-    ->toHaveBeenCalled();
+    ->called();
 ```
 
 Asserting the method was called at all.
 ```php
 Mock::method($this->mock->userExists(...))
-    ->forceReturn(true);
+    ->returns(true);
 
 $this->mock->userExists('my-email@domain.com');
 
 Mock::method($this->mock->userExists(...))
-    ->expect()
-    ->toHaveBeenCalled();
+    ->assert()
+    ->called();
 ```
 
 Asserting the method was called exactly once.
 ```php
 Mock::method($this->mock->userExists(...))
-    ->forceReturn(true);
+    ->returns(true);
 
 $this->mock->userExists('my-email@domain.com');
 
 Mock::method($this->mock->userExists(...))
-    ->expect()
-    ->toHaveBeenCalledOnce();
+    ->assert()
+    ->calledOnce();
 ```
 
 Asserting the method was not called exactly once.
 ```php
 Mock::method($this->mock->userExists(...))
-    ->forceReturn(true);
+    ->returns(true);
 
 $this->mock->userExists('my-email@domain.com');
 $this->mock->userExists('my-email@domain.com');
 
 Mock::method($this->mock->userExists(...))
-    ->expect()
+    ->assert()
     ->not()
-    ->toHaveBeenCalledOnce();
+    ->calledOnce();
 ```
 
 Asserting the method was called _n_ times.
 ```php
 Mock::method($this->mock->userExists(...))
-    ->forceReturn(true);
+    ->returns(true);
 
 $this->mock->userExists('my-email@domain.com');
 $this->mock->userExists('my-email@domain.com');
 
 Mock::method($this->mock->userExists(...))
-    ->expect()
-    ->toHaveBeenCalledTimes(2);
+    ->assert()
+    ->calledTimes(2);
 ```
 
 Asserting the method was not called _n_ times.
 ```php
 Mock::method($this->mock->userExists(...))
-    ->forceReturn(true);
+    ->returns(true);
 
 $this->mock->userExists('my-email@domain.com');
 
 Mock::method($this->mock->userExists(...))
-    ->expect()
+    ->assert()
     ->not()
-    ->toHaveBeenCalledTimes(2);
+    ->calledTimes(2);
 ```
 
 ### Asserting method was called with specific input
 You can assert a method was called with specific input by passing the expected arguments into `with()`.
 ```php
 Mock::method($this->mock->userExists(...))
-    ->forceReturn(true);
+    ->returns(true);
 
 $this->mock->userExists('my-email@domain.com');
 
 Mock::method($this->mock->userExists(...))
-    ->expect()
+    ->assert()
     ->with('my-email@domain.com')
-    ->toHaveBeenCalled();
+    ->called();
 ```
 
 This can of course also be reversed.
 ```php
 Mock::method($this->mock->userExists(...))
-    ->forceReturn(true);
+    ->returns(true);
 
 $this->mock->userExists('my-email@domain.com');
 
 Mock::method($this->mock->userExists(...))
-    ->expect()
-    ->not()
+    ->assert()
     ->with('other-email@domain.com')
-    ->toHaveBeenCalled();
+    ->not()
+    ->called();
 ```
 
 Rather than being tied to static values, you can pass a closure as well.
 ```php
 Mock::method($this->mock->userExists(...))
-    ->forceReturn(true);
+    ->returns(true);
 
 $this->mock->userExists('my-email@domain.com');
 
 Mock::method($this->mock->userExists(...))
-    ->expect()
+    ->assert()
     ->with(fn (string $email) => str_ends_with($email, '@domain.com'))
-    ->toHaveBeenCalled();
+    ->called();
 ```
 
 If you only care about a specific argument, you can use named arguments.
@@ -232,9 +232,9 @@ If you only care about a specific argument, you can use named arguments.
 $this->mock->createUser('my-email@domain.com', 'my-username', 'password');
 
 Mock::method($this->mock->createUser(...))
-    ->expect()
+    ->assert()
     ->with(email: 'my-email@domain.com', password: 'password')
-    ->toHaveBeenCalled();
+    ->called();
 ```
 
 Of course, closures can be used here too.
@@ -242,11 +242,11 @@ Of course, closures can be used here too.
 $this->mock->createUser('my-email@domain.com', 'my-username', 'password');
 
 Mock::method($this->mock->createUser(...))
-    ->expect()
+    ->assert()
     ->with(
         email: fn (string $email) => str_ends_with($email, '@domain.com'),
         password: 'password',
-    )->toHaveBeenCalled();
+    )->called();
 ```
 
 ### Built-in helpers
@@ -255,14 +255,14 @@ Mock::method($this->mock->createUser(...))
 use Exan\Moock\Args\Str;
 
 Mock::method($this->mock->userExists(...))
-    ->forceReturn(true);
+    ->returns(true);
 
 $this->mock->userExists('test@mail.com');
 
 Mock::method($this->mock->userExists(...))
-    ->expect()
+    ->assert()
     ->with(Str::contains('@mail.com'))
-    ->toHaveBeenCalled();
+    ->called();
 ```
 
 `string` must have specific length
@@ -270,14 +270,14 @@ Mock::method($this->mock->userExists(...))
 use Exan\Moock\Args\Str;
 
 Mock::method($this->mock->userExists(...))
-    ->forceReturn(true);
+    ->returns(true);
 
 $this->mock->userExists('test@mail.com');
 
 Mock::method($this->mock->userExists(...))
-    ->expect()
+    ->assert()
     ->with(Str::length(13))
-    ->toHaveBeenCalled();
+    ->called();
 ```
 
 `DateTimeInterface` must be before given time
@@ -286,14 +286,14 @@ use Exan\Moock\Args\Date;
 use DateTime;
 
 Mock::method($this->mock->getUsersCreatedBefore(...))
-    ->forceReturn([]);
+    ->returns([]);
 
 $this->mock->getUsersCreatedBefore(new DateTime('2024-12-31'));
 
 Mock::method($this->mock->getUsersCreatedBefore(...))
-    ->expect()
+    ->assert()
     ->with(Date::before(new DateTime('2025-01-01 12:00:00')))
-    ->toHaveBeenCalled();
+    ->called();
 ```
 
 `DateTimeInterface` must be after given time
@@ -302,14 +302,14 @@ use Exan\Moock\Args\Date;
 use DateTime;
 
 Mock::method($this->mock->getUsersCreatedBefore(...))
-    ->forceReturn([]);
+    ->returns([]);
 
 $this->mock->getUsersCreatedBefore(new DateTime('2025-01-02'));
 
 Mock::method($this->mock->getUsersCreatedBefore(...))
-    ->expect()
+    ->assert()
     ->with(Date::after(new DateTime('2025-01-01 12:00:00')))
-    ->toHaveBeenCalled();
+    ->called();
 ```
 
 `int|float` must be less than given number
@@ -317,14 +317,14 @@ Mock::method($this->mock->getUsersCreatedBefore(...))
 use Exan\Moock\Args\Number;
 
 Mock::method($this->mock->getUsersByAge(...))
-    ->forceReturn([]);
+    ->returns([]);
 
 $this->mock->getUsersByAge(50);
 
 Mock::method($this->mock->getUsersByAge(...))
-    ->expect()
+    ->assert()
     ->with(Number::lt(100))
-    ->toHaveBeenCalled();
+    ->called();
 ```
 
 `int|float` must be greater than given number
@@ -332,14 +332,14 @@ Mock::method($this->mock->getUsersByAge(...))
 use Exan\Moock\Args\Number;
 
 Mock::method($this->mock->getUsersByAge(...))
-    ->forceReturn([]);
+    ->returns([]);
 
 $this->mock->getUsersByAge(75);
 
 Mock::method($this->mock->getUsersByAge(...))
-    ->expect()
+    ->assert()
     ->with(Number::gt(50))
-    ->toHaveBeenCalled();
+    ->called();
 ```
 
 `int|float` must be within range
@@ -347,14 +347,14 @@ Mock::method($this->mock->getUsersByAge(...))
 use Exan\Moock\Args\Number;
 
 Mock::method($this->mock->getUsersByAge(...))
-    ->forceReturn([]);
+    ->returns([]);
 
 $this->mock->getUsersByAge(15);
 
 Mock::method($this->mock->getUsersByAge(...))
-    ->expect()
+    ->assert()
     ->with(Number::range(10, 20))
-    ->toHaveBeenCalled();
+    ->called();
 ```
 
 `array` must have given number of items
@@ -364,9 +364,9 @@ use Exan\Moock\Args\Arr;
 $this->mock->deleteUsersByEmail(['a','b','c']);
 
 Mock::method($this->mock->deleteUsersByEmail(...))
-    ->expect()
+    ->assert()
     ->with(Arr::count(3))
-    ->toHaveBeenCalled();
+    ->called();
 ```
 
 `array` must be a partial match
@@ -380,12 +380,12 @@ $this->mock->deleteUsersByEmail([
 ]);
 
 Mock::method($this->mock->deleteUsersByEmail(...))
-    ->expect()
+    ->assert()
     ->with(Arr::partial([
         0 => 'some-email@example.com',
         2 => fn ($email) => str_ends_with($email, '@example.com'),
     ]))
-    ->toHaveBeenCalled();
+    ->called();
 ```
 
 ---
@@ -397,30 +397,30 @@ If you're expecting many calls to be made after each other in specific order, yo
 ### Verifying order of calls
 To verify the order in which methods were called on a mock, call `$expect` in the desired order with the given method.
 ```php
-Mock::method($this->mock->isValidEmail(...))->forceReturn(true);
-Mock::method($this->mock->userExists(...))->forceReturn(false);
+Mock::method($this->mock->isValidEmail(...))->returns(true);
+Mock::method($this->mock->userExists(...))->returns(false);
 
 $this->mock->isValidEmail('mail@domain.com');
 $this->mock->userExists('mail@domain.com');
 $this->mock->createUser('mail@domain.com', 'username', 'password');
 
 // Asserting the methods are called in the right order only
-Mock::expect(function ($expect): void {
-    $expect($this->mock->isValidEmail(...));
-    $expect($this->mock->userExists(...));
-    $expect($this->mock->createUser(...));
+Mock::verify(function ($assert): void {
+    $assert($this->mock->isValidEmail(...));
+    $assert($this->mock->userExists(...));
+    $assert($this->mock->createUser(...));
 });
 ```
 
 ### Verifying order and arguments
 Optionally attach expectations of the given arguments.
 ```php
-Mock::expect(function (Closure $expect): void {
-    $expect($this->mock->isValidEmail(...))->with('mail@domain.com');
-    $expect($this->mock->userExists(...)); // Argument isn't verified, just order
+Mock::verify(function (Closure $assert): void {
+    $assert($this->mock->isValidEmail(...))->with('mail@domain.com');
+    $assert($this->mock->userExists(...)); // Argument isn't verified, just order
 
     // Only mail and password are validated
-    $expect($this->mock->createUser(...))->with('mail@domain.com', password: 'password');
+    $assert($this->mock->createUser(...))->with('mail@domain.com', password: 'password');
 });
 ```
 
@@ -435,10 +435,10 @@ $productsService->productExists(123);
 $userService->isValidEmail('mail@domain.com');
 $productsService->purchase(123, 'mail@domain.com');
 
-Mock::expect(function (Closure $expect) use ($userService, $productsService): void {
-    $expect($productsService->productExists(...))->with(123);
-    $expect($userService->isValidEmail(...))->with('mail@domain.com');
-    $expect($productsService->purchase(...))->with(123, 'mail@domain.com');
+Mock::verify(function (Closure $assert) use ($userService, $productsService): void {
+    $assert($productsService->productExists(...))->with(123);
+    $assert($userService->isValidEmail(...))->with('mail@domain.com');
+    $assert($productsService->purchase(...))->with(123, 'mail@domain.com');
 });
 ```
 
@@ -449,11 +449,11 @@ Mock::expect(function (Closure $expect) use ($userService, $productsService): vo
 Filters restrict which arguments are allowed at runtime. Calls with disallowed input will immediately throw a `RuntimeException`.
 
 ### Filtering an argument
-To filter arguments that are allowed into a method, you can use the `filter()` method.
+To filter arguments that are allowed into a method, you can use the following.
 ```php
 Mock::method($this->mock->userExists(...))
-    ->filter('my-email@domain.com')
-    ->forceReturn(true);
+    ->allow('my-email@domain.com')
+    ->returns(true);
 
 $this->assertTrue($this->mock->userExists('my-email@domain.com'));
 
@@ -465,7 +465,7 @@ $this->mock->userExists('other-email@domain.com');
 To filter specific args of a method, use named properties.
 ```php
 Mock::method($this->mock->createUser(...))
-    ->filter(username: 'my-username');
+    ->allow(username: 'my-username');
 
 $this->mock->createUser('my-email@domain.com', 'my-username', 'password');
 
@@ -478,8 +478,8 @@ $this->mock->createUser('my-email@domain.com', 'other-username', 'password');
 You can also pass a closure instead of a straight value, or use some of the helper functions documented in the expectations section instead.
 ```php
 Mock::method($this->mock->userExists(...))
-    ->filter(fn (string $email) => in_array($email, ['first@mail.com', 'second@mail.com']))
-    ->forceReturn(true);
+    ->allow(fn (string $email) => in_array($email, ['first@mail.com', 'second@mail.com']))
+    ->returns(true);
 
 $this->mock->userExists('first@mail.com');
 $this->mock->userExists('second@mail.com');
@@ -557,8 +557,8 @@ MoockAssert::useAssert(function (bool $actual, bool $expected, string $message) 
 $mock = Mock::interface(UserServiceInterface::class);
 
 Mock::method($mock->createUser(...))
-    ->expect()
-    ->toHaveBeenCalled(); // This now uses our custom assert, which doesn't throw exceptions on failure
+    ->assert()
+    ->called(); // This now uses our custom assert, which doesn't throw exceptions on failure
 
 $this->assertTrue($usedAssert);
 ```

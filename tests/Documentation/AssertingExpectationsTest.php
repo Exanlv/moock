@@ -35,12 +35,12 @@ class AssertingExpectationsTest extends TestCase
     public function it_asserts_method_not_called_at_all(): void
     {
         Mock::method($this->mock->userExists(...))
-            ->forceReturn(true);
+            ->returns(true);
 
         Mock::method($this->mock->userExists(...))
-            ->expect()
+            ->assert()
             ->not()
-            ->toHaveBeenCalled();
+            ->called();
     }
 
     #[Example(null, 'Asserting the method was called at all.')]
@@ -48,13 +48,13 @@ class AssertingExpectationsTest extends TestCase
     public function it_asserts_method_was_called(): void
     {
         Mock::method($this->mock->userExists(...))
-            ->forceReturn(true);
+            ->returns(true);
 
         $this->mock->userExists('my-email@domain.com');
 
         Mock::method($this->mock->userExists(...))
-            ->expect()
-            ->toHaveBeenCalled();
+            ->assert()
+            ->called();
     }
 
     #[Example(null, 'Asserting the method was called exactly once.')]
@@ -62,13 +62,13 @@ class AssertingExpectationsTest extends TestCase
     public function it_asserts_method_called_once(): void
     {
         Mock::method($this->mock->userExists(...))
-            ->forceReturn(true);
+            ->returns(true);
 
         $this->mock->userExists('my-email@domain.com');
 
         Mock::method($this->mock->userExists(...))
-            ->expect()
-            ->toHaveBeenCalledOnce();
+            ->assert()
+            ->calledOnce();
     }
 
     #[Example(null, 'Asserting the method was not called exactly once.')]
@@ -76,15 +76,15 @@ class AssertingExpectationsTest extends TestCase
     public function it_asserts_method_not_called_once(): void
     {
         Mock::method($this->mock->userExists(...))
-            ->forceReturn(true);
+            ->returns(true);
 
         $this->mock->userExists('my-email@domain.com');
         $this->mock->userExists('my-email@domain.com');
 
         Mock::method($this->mock->userExists(...))
-            ->expect()
+            ->assert()
             ->not()
-            ->toHaveBeenCalledOnce();
+            ->calledOnce();
     }
 
     #[Example(null, 'Asserting the method was called _n_ times.')]
@@ -92,14 +92,14 @@ class AssertingExpectationsTest extends TestCase
     public function it_asserts_method_called_n_times(): void
     {
         Mock::method($this->mock->userExists(...))
-            ->forceReturn(true);
+            ->returns(true);
 
         $this->mock->userExists('my-email@domain.com');
         $this->mock->userExists('my-email@domain.com');
 
         Mock::method($this->mock->userExists(...))
-            ->expect()
-            ->toHaveBeenCalledTimes(2);
+            ->assert()
+            ->calledTimes(2);
     }
 
     #[Example(null, 'Asserting the method was not called _n_ times.')]
@@ -107,14 +107,14 @@ class AssertingExpectationsTest extends TestCase
     public function it_asserts_method_not_called_n_times(): void
     {
         Mock::method($this->mock->userExists(...))
-            ->forceReturn(true);
+            ->returns(true);
 
         $this->mock->userExists('my-email@domain.com');
 
         Mock::method($this->mock->userExists(...))
-            ->expect()
+            ->assert()
             ->not()
-            ->toHaveBeenCalledTimes(2);
+            ->calledTimes(2);
     }
 
     #[Example('Asserting method was called with specific input', 'You can assert a method was called with specific input by passing the expected arguments into `with()`.')]
@@ -122,14 +122,14 @@ class AssertingExpectationsTest extends TestCase
     public function it_asserts_method_was_called_with_specific_input(): void
     {
         Mock::method($this->mock->userExists(...))
-            ->forceReturn(true);
+            ->returns(true);
 
         $this->mock->userExists('my-email@domain.com');
 
         Mock::method($this->mock->userExists(...))
-            ->expect()
+            ->assert()
             ->with('my-email@domain.com')
-            ->toHaveBeenCalled();
+            ->called();
     }
 
     #[Example(null, 'This can of course also be reversed.')]
@@ -137,15 +137,15 @@ class AssertingExpectationsTest extends TestCase
     public function it_asserts_method_was_called_not_with_specific_input(): void
     {
         Mock::method($this->mock->userExists(...))
-            ->forceReturn(true);
+            ->returns(true);
 
         $this->mock->userExists('my-email@domain.com');
 
         Mock::method($this->mock->userExists(...))
-            ->expect()
-            ->not()
+            ->assert()
             ->with('other-email@domain.com')
-            ->toHaveBeenCalled();
+            ->not()
+            ->called();
     }
 
     #[Example(null, 'Rather than being tied to static values, you can pass a closure as well.')]
@@ -153,14 +153,14 @@ class AssertingExpectationsTest extends TestCase
     public function it_asserts_method_was_called_with_value_validated_by_closure(): void
     {
         Mock::method($this->mock->userExists(...))
-            ->forceReturn(true);
+            ->returns(true);
 
         $this->mock->userExists('my-email@domain.com');
 
         Mock::method($this->mock->userExists(...))
-            ->expect()
+            ->assert()
             ->with(fn (string $email) => str_ends_with($email, '@domain.com'))
-            ->toHaveBeenCalled();
+            ->called();
     }
 
     #[Example(null, 'If you only care about a specific argument, you can use named arguments.')]
@@ -170,9 +170,9 @@ class AssertingExpectationsTest extends TestCase
         $this->mock->createUser('my-email@domain.com', 'my-username', 'password');
 
         Mock::method($this->mock->createUser(...))
-            ->expect()
+            ->assert()
             ->with(email: 'my-email@domain.com', password: 'password')
-            ->toHaveBeenCalled();
+            ->called();
     }
 
     #[Example(null, 'Of course, closures can be used here too.')]
@@ -182,11 +182,11 @@ class AssertingExpectationsTest extends TestCase
         $this->mock->createUser('my-email@domain.com', 'my-username', 'password');
 
         Mock::method($this->mock->createUser(...))
-            ->expect()
+            ->assert()
             ->with(
                 email: fn (string $email) => str_ends_with($email, '@domain.com'),
                 password: 'password',
-            )->toHaveBeenCalled();
+            )->called();
     }
 
     #[ShowUse(Str::class)]
@@ -195,14 +195,14 @@ class AssertingExpectationsTest extends TestCase
     public function it_asserts_string_contains_helper(): void
     {
         Mock::method($this->mock->userExists(...))
-            ->forceReturn(true);
+            ->returns(true);
 
         $this->mock->userExists('test@mail.com');
 
         Mock::method($this->mock->userExists(...))
-            ->expect()
+            ->assert()
             ->with(Str::contains('@mail.com'))
-            ->toHaveBeenCalled();
+            ->called();
     }
 
     #[ShowUse(Str::class)]
@@ -211,14 +211,14 @@ class AssertingExpectationsTest extends TestCase
     public function it_asserts_string_length_helper(): void
     {
         Mock::method($this->mock->userExists(...))
-            ->forceReturn(true);
+            ->returns(true);
 
         $this->mock->userExists('test@mail.com');
 
         Mock::method($this->mock->userExists(...))
-            ->expect()
+            ->assert()
             ->with(Str::length(13))
-            ->toHaveBeenCalled();
+            ->called();
     }
 
     #[ShowUse(Date::class)]
@@ -228,14 +228,14 @@ class AssertingExpectationsTest extends TestCase
     public function it_asserts_date_before_helper(): void
     {
         Mock::method($this->mock->getUsersCreatedBefore(...))
-            ->forceReturn([]);
+            ->returns([]);
 
         $this->mock->getUsersCreatedBefore(new DateTime('2024-12-31'));
 
         Mock::method($this->mock->getUsersCreatedBefore(...))
-            ->expect()
+            ->assert()
             ->with(Date::before(new DateTime('2025-01-01 12:00:00')))
-            ->toHaveBeenCalled();
+            ->called();
     }
 
     #[ShowUse(Date::class)]
@@ -245,14 +245,14 @@ class AssertingExpectationsTest extends TestCase
     public function it_asserts_date_after_helper(): void
     {
         Mock::method($this->mock->getUsersCreatedBefore(...))
-            ->forceReturn([]);
+            ->returns([]);
 
         $this->mock->getUsersCreatedBefore(new DateTime('2025-01-02'));
 
         Mock::method($this->mock->getUsersCreatedBefore(...))
-            ->expect()
+            ->assert()
             ->with(Date::after(new DateTime('2025-01-01 12:00:00')))
-            ->toHaveBeenCalled();
+            ->called();
     }
 
     #[ShowUse(Number::class)]
@@ -261,14 +261,14 @@ class AssertingExpectationsTest extends TestCase
     public function it_asserts_number_lt_helper(): void
     {
         Mock::method($this->mock->getUsersByAge(...))
-            ->forceReturn([]);
+            ->returns([]);
 
         $this->mock->getUsersByAge(50);
 
         Mock::method($this->mock->getUsersByAge(...))
-            ->expect()
+            ->assert()
             ->with(Number::lt(100))
-            ->toHaveBeenCalled();
+            ->called();
     }
 
     #[ShowUse(Number::class)]
@@ -277,14 +277,14 @@ class AssertingExpectationsTest extends TestCase
     public function it_asserts_number_gt_helper(): void
     {
         Mock::method($this->mock->getUsersByAge(...))
-            ->forceReturn([]);
+            ->returns([]);
 
         $this->mock->getUsersByAge(75);
 
         Mock::method($this->mock->getUsersByAge(...))
-            ->expect()
+            ->assert()
             ->with(Number::gt(50))
-            ->toHaveBeenCalled();
+            ->called();
     }
 
     #[ShowUse(Number::class)]
@@ -293,14 +293,14 @@ class AssertingExpectationsTest extends TestCase
     public function it_asserts_number_range_helper(): void
     {
         Mock::method($this->mock->getUsersByAge(...))
-            ->forceReturn([]);
+            ->returns([]);
 
         $this->mock->getUsersByAge(15);
 
         Mock::method($this->mock->getUsersByAge(...))
-            ->expect()
+            ->assert()
             ->with(Number::range(10, 20))
-            ->toHaveBeenCalled();
+            ->called();
     }
 
     #[ShowUse(Arr::class)]
@@ -311,9 +311,9 @@ class AssertingExpectationsTest extends TestCase
         $this->mock->deleteUsersByEmail(['a','b','c']);
 
         Mock::method($this->mock->deleteUsersByEmail(...))
-            ->expect()
+            ->assert()
             ->with(Arr::count(3))
-            ->toHaveBeenCalled();
+            ->called();
     }
 
     #[ShowUse(Arr::class)]
@@ -328,11 +328,11 @@ class AssertingExpectationsTest extends TestCase
         ]);
 
         Mock::method($this->mock->deleteUsersByEmail(...))
-            ->expect()
+            ->assert()
             ->with(Arr::partial([
                 0 => 'some-email@example.com',
                 2 => fn ($email) => str_ends_with($email, '@example.com'),
             ]))
-            ->toHaveBeenCalled();
+            ->called();
     }
 }

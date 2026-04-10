@@ -35,7 +35,7 @@ class Expectation
         return count($this->calls);
     }
 
-    public function toHaveBeenCalledTimes(int $expectedCalls): void
+    public function calledTimes(int $expectedCalls): void
     {
         $callsCount = $this->callsAmount();
 
@@ -46,7 +46,7 @@ class Expectation
         $this->assert($callsCount === $expectedCalls, $message);
     }
 
-    public function toHaveBeenCalled(): void
+    public function called(): void
     {
         $callsCount = $this->callsAmount();
 
@@ -57,9 +57,9 @@ class Expectation
         $this->assert($callsCount > 0, $message);
     }
 
-    public function toHaveBeenCalledOnce(): void
+    public function calledOnce(): void
     {
-        $this->toHaveBeenCalledTimes(1);
+        $this->calledTimes(1);
     }
 
     public function dd(): never

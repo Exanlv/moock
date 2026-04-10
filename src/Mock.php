@@ -104,7 +104,7 @@ class Mock
     /**
      * @param Closure(Closure(Closure $expectedMethod): Expectation $expect): void $expectation
      */
-    public static function expect(Closure $expectation): void
+    public static function verify(Closure $expectation): void
     {
         $mockExpector = new MockExpector();
         $mockExpector->validate($expectation);

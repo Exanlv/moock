@@ -27,14 +27,14 @@ class FilteringMethodsTest extends TestCase
 
     #[Example(
         'Filtering an argument',
-        'To filter arguments that are allowed into a method, you can use the `filter()` method.',
+        'To filter arguments that are allowed into a method, you can use the following.',
     )]
     #[Test]
     public function it_can_filter_method_args(): void
     {
         Mock::method($this->mock->userExists(...))
-            ->filter('my-email@domain.com')
-            ->forceReturn(true);
+            ->allow('my-email@domain.com')
+            ->returns(true);
 
         $this->assertTrue($this->mock->userExists('my-email@domain.com'));
 
@@ -51,7 +51,7 @@ class FilteringMethodsTest extends TestCase
     public function it_can_filter_method_args_using_named_props(): void
     {
         Mock::method($this->mock->createUser(...))
-            ->filter(username: 'my-username');
+            ->allow(username: 'my-username');
 
         $this->mock->createUser('my-email@domain.com', 'my-username', 'password');
 
@@ -68,8 +68,8 @@ class FilteringMethodsTest extends TestCase
     public function it_can_filter_method_args_with_closures(): void
     {
         Mock::method($this->mock->userExists(...))
-            ->filter(fn (string $email) => in_array($email, ['first@mail.com', 'second@mail.com']))
-            ->forceReturn(true);
+            ->allow(fn (string $email) => in_array($email, ['first@mail.com', 'second@mail.com']))
+            ->returns(true);
 
         $this->mock->userExists('first@mail.com');
         $this->mock->userExists('second@mail.com');

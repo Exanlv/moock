@@ -26,7 +26,7 @@ class MockExpectTest extends TestCase
 
         $mock = Mock::interface(UserServiceInterface::class);
 
-        Mock::method($mock->getUsersByAge(...))->forceReturn([]);
+        Mock::method($mock->getUsersByAge(...))->returns([]);
 
         $mock->createUser('a', 'b', 'c');
         $mock->getUsersByAge(123);
@@ -34,7 +34,7 @@ class MockExpectTest extends TestCase
         $mock->createUser('a', 'b', 'c');
         $mock->getUsersByAge(123);
 
-        Mock::expect(function (Closure $expect) use ($mock): void {
+        Mock::verify(function (Closure $expect) use ($mock): void {
             $expect($mock->createUser(...));
             $expect($mock->getUsersByAge(...));
             $expect($mock->createUser(...));
@@ -46,7 +46,7 @@ class MockExpectTest extends TestCase
 
         $mock = Mock::interface(UserServiceInterface::class);
 
-        Mock::method($mock->getUsersByAge(...))->forceReturn([]);
+        Mock::method($mock->getUsersByAge(...))->returns([]);
 
         $mock->createUser('a', 'b', 'c');
         $mock->getUsersByAge(123);
@@ -54,7 +54,7 @@ class MockExpectTest extends TestCase
         $mock->createUser('a', 'b', 'c');
         $mock->getUsersByAge(123);
 
-        Mock::expect(function (Closure $expect) use ($mock): void {
+        Mock::verify(function (Closure $expect) use ($mock): void {
             $expect($mock->getUsersByAge(...));
             $expect($mock->createUser(...));
             $expect($mock->createUser(...));
@@ -86,7 +86,7 @@ class MockExpectTest extends TestCase
         $mock2->createUser('a', 'b', 'c');
         $mock1->createUser('a', 'b', 'c');
 
-        Mock::expect(function (Closure $expect) use ($mock1, $mock2, $mock3): void {
+        Mock::verify(function (Closure $expect) use ($mock1, $mock2, $mock3): void {
             $expect($mock1->createUser(...));
             $expect($mock2->createUser(...));
             $expect($mock3->createUser(...));
@@ -109,7 +109,7 @@ class MockExpectTest extends TestCase
         $mock2->createUser('a', 'b', 'c');
         $mock1->createUser('a', 'b', 'c');
 
-        Mock::expect(function (Closure $expect) use ($mock1, $mock2, $mock3): void {
+        Mock::verify(function (Closure $expect) use ($mock1, $mock2, $mock3): void {
             $expect($mock1->createUser(...));
             $expect($mock2->createUser(...));
             $expect($mock3->createUser(...));
@@ -136,7 +136,7 @@ class MockExpectTest extends TestCase
         $mock->createUser('d', 'e', 'f');
         $mock->createUser('g', 'h', 'i');
 
-        Mock::expect(function (Closure $expect) use ($mock): void {
+        Mock::verify(function (Closure $expect) use ($mock): void {
             $expect($mock->createUser(...))->with('a', 'b', 'c');
             $expect($mock->createUser(...))->with('d', 'e', 'f');
             $expect($mock->createUser(...))->with('g', 'h', 'i');
@@ -150,7 +150,7 @@ class MockExpectTest extends TestCase
         $mock->createUser('g', 'h', 'i');
         $mock->createUser('d', 'e', 'f');
 
-        Mock::expect(function (Closure $expect) use ($mock): void {
+        Mock::verify(function (Closure $expect) use ($mock): void {
             $expect($mock->createUser(...))->with('a', 'b', 'c');
             $expect($mock->createUser(...))->with('d', 'e', 'f');
             $expect($mock->createUser(...))->with('g', 'h', 'i');
@@ -170,7 +170,7 @@ class MockExpectTest extends TestCase
 
         $mock = Mock::interface(UserServiceInterface::class);
 
-        Mock::method($mock->getUsersByAge(...))->forceReturn([]);
+        Mock::method($mock->getUsersByAge(...))->returns([]);
 
         $mock->getUsersByAge(123);
         $mock->createUser('a', 'b', 'c');
@@ -183,7 +183,7 @@ class MockExpectTest extends TestCase
         $mock->getUsersByAge(123);
         $mock->createUser('g', 'h', 'i');
 
-        Mock::expect(function (Closure $expect) use ($mock): void {
+        Mock::verify(function (Closure $expect) use ($mock): void {
             $expect($mock->createUser(...))->with('a', 'b', 'c');
             $expect($mock->createUser(...))->with('d', 'e', 'f');
             $expect($mock->createUser(...))->with('g', 'h', 'i');
@@ -207,7 +207,7 @@ class MockExpectTest extends TestCase
         $mock->createUser('d', 'e', 'f');
         $mock->createUser('g', 'h', 'i');
 
-        Mock::expect(function (Closure $expect) use ($mock): void {
+        Mock::verify(function (Closure $expect) use ($mock): void {
             $expect($mock->createUser(...))->with('a', 'b', 'c');
             $expect($mock->createUser(...));
             $expect($mock->createUser(...))->with('g', 'h', 'i');
@@ -221,7 +221,7 @@ class MockExpectTest extends TestCase
         $mock->createUser('g', 'h', 'i');
         $mock->createUser('d', 'e', 'f');
 
-        Mock::expect(function (Closure $expect) use ($mock): void {
+        Mock::verify(function (Closure $expect) use ($mock): void {
             $expect($mock->createUser(...))->with('a', 'b', 'c');
             $expect($mock->createUser(...))->with('d', 'e', 'f');
             $expect($mock->createUser(...));
@@ -246,7 +246,7 @@ class MockExpectTest extends TestCase
         $mock->createUser('d', 'e', 'f');
         $mock->createUser('g', 'h', 'i');
 
-        Mock::expect(function (Closure $expect) use ($mock): void {
+        Mock::verify(function (Closure $expect) use ($mock): void {
             $expect($mock->createUser(...))->with(email: 'a', password: 'c');
             $expect($mock->createUser(...))->with(email: 'd', password: 'f');
         });
@@ -259,7 +259,7 @@ class MockExpectTest extends TestCase
         $mock->createUser('a', 'c', 'b');
         $mock->createUser('d', 'f', 'e');
 
-        Mock::expect(function (Closure $expect) use ($mock): void {
+        Mock::verify(function (Closure $expect) use ($mock): void {
             $expect($mock->createUser(...))->with(email: 'a', password: 'c');
             $expect($mock->createUser(...))->with(email: 'd', password: 'f');
         });

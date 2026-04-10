@@ -45,7 +45,7 @@ class ReplacingMethodTest extends TestCase
     #[Test]
     public function it_can_force_return_a_value(): void
     {
-        Mock::method($this->mock->userExists(...))->forceReturn(true);
+        Mock::method($this->mock->userExists(...))->returns(true);
 
         $this->assertTrue($this->mock->userExists('some-email@domain.com'));
     }
@@ -55,7 +55,7 @@ class ReplacingMethodTest extends TestCase
     #[Test]
     public function it_can_force_return_a_sequence_of_values(): void
     {
-        Mock::method($this->mock->userExists(...))->forceReturnSequence([true, true, false]);
+        Mock::method($this->mock->userExists(...))->returnsSequence([true, true, false]);
 
         $this->assertTrue($this->mock->userExists('some-email@domain.com'));
         $this->assertTrue($this->mock->userExists('some-email@domain.com'));
@@ -70,7 +70,7 @@ class ReplacingMethodTest extends TestCase
     #[Test]
     public function it_can_force_an_exception(): void
     {
-        Mock::method($this->mock->createUser(...))->throwsException(RuntimeException::class);
+        Mock::method($this->mock->createUser(...))->throws(RuntimeException::class);
 
         $this->expectException(RuntimeException::class);
 

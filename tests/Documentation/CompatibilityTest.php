@@ -32,8 +32,8 @@ class CompatibilityTest extends TestCase
         $mock = Mock::interface(UserServiceInterface::class);
 
         Mock::method($mock->createUser(...))
-            ->expect()
-            ->toHaveBeenCalled(); // This now uses our custom assert, which doesn't throw exceptions on failure
+            ->assert()
+            ->called(); // This now uses our custom assert, which doesn't throw exceptions on failure
 
         $this->assertTrue($usedAssert);
     }
