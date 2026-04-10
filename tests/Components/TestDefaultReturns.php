@@ -92,6 +92,11 @@ class TestDefaultReturns
         return $this;
     }
 
+    public function returnOwnClass(): TestDefaultReturns
+    {
+        return $this;
+    }
+
     public function returnDateTime(): DateTime
     {
         return new DateTime();

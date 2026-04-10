@@ -51,4 +51,14 @@ class MockDefaultReturns extends TestCase
         $this->assertInstanceOf(MockedClassInterface::class, $userServiceInterfaceMock);
         $this->assertInstanceOf(UserServiceInterface::class, $userServiceInterfaceMock);
     }
+
+    #[Test]
+    public function it_returns_itself()
+    {
+        $mock = Mock::class(TestDefaultReturns::class);
+
+        $this->assertEquals($mock, $mock->returnSelf());
+        $this->assertEquals($mock, $mock->returnStatic());
+        $this->assertEquals($mock, $mock->returnOwnClass());
+    }
 }
