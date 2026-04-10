@@ -84,7 +84,22 @@ class MockExpector
 
     private function fail(int $i): void
     {
-        MoockAssert::assert(false, true, sprintf('Failed at %d', $i));
+        $message = $i === 0
+            ? sprintf('Failed asserting %s was called', $this->getFunctionNameAt($i))
+            : sprintf(
+                'Failed asserting %s was called after %s',
+                $this->getFunctionNameAt($i),
+                $this->getFunctionNameAt($i - 1),
+            );
+
+
+        MoockAssert::assert(false, true, sprintf($message));
+    }
+
+    private function getFunctionNameAt(int $i): string
+    {
+        $expectation = $this->expectations[$i];
+        return $expectation->ref->getName();
     }
 
     /**

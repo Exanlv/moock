@@ -24,7 +24,7 @@ class MoockAssert
     public static function assert(bool $condition, bool $expected, string $message): void
     {
         if (self::$assert !== null) {
-            (self::$assert)($condition, $expected, $message);
+            (self::$assert)($expected, $condition, $message);
             return;
         }
 
