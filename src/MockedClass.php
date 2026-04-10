@@ -4,11 +4,19 @@ declare(strict_types=1);
 
 namespace Exan\Moock;
 
+use Closure;
+use DateInterval;
+use DatePeriod;
+use DateTime;
+use DateTimeImmutable;
 use Exan\Moock\Dto\MethodCall;
 use Exan\Moock\Expector\MockExpector;
 use Exan\Moock\Properties\MockPropertyValue;
 use ReflectionClass;
+use ReflectionMethod;
+use ReflectionNamedType;
 use RuntimeException;
+use stdClass;
 
 /**
  * @internal
@@ -96,10 +104,73 @@ trait MockedClass
                 return $this->real->{$method}(...$args);
             }
 
-            return null;
+            return $this->getDefault($method);
         }
 
         return $this->methodReplacements[$method](...$args);
+    }
+
+    private function getDefault(string $method): mixed
+    {
+        $method = new ReflectionMethod($this, $method);
+
+        $type = $method->getReturnType();
+
+        if ($type === null) {
+            return null;
+        }
+
+        if (! $type instanceof ReflectionNamedType) {
+            /** @var ReflectionNamedType */
+            $type = $type->getTypes()[0];
+        }
+
+        $plainType = $type->getName();
+
+        $returns = [
+            'bool' => false,
+            'true' => true,
+            'false' => false,
+
+            'int' => 123,
+            'float' => 123.456,
+
+            'string' => '::moock string::',
+
+            'array' => [],
+            'iterable' => [],
+
+            'object' => fn () => new stdClass(),
+            stdClass::class => fn () => new stdClass(),
+
+            'callable' => fn () => function (mixed ...$input): void {},
+            Closure::class => fn () => function (mixed ...$input): void {},
+
+            'null' => null,
+            'mixed' => null,
+
+            // 'self' => $this, self gets converted to class, so no need to declare it here
+            'static' => fn () => $this,
+
+            DateTime::class => fn () => new DateTime('24 february'),
+            DateTimeImmutable::class => fn () => new DateTimeImmutable(),
+            DateInterval::class => fn () => DateInterval::createFromDateString('1 day'),
+            DatePeriod::class => fn () => DatePeriod::createFromISO8601String('R4/2012-07-01T00:00:00Z/P7D'),
+        ];
+
+        if (isset($returns[$plainType])) {
+            return is_callable($returns[$plainType]) ? $returns[$plainType]() : $returns[$plainType];
+        }
+
+        if (class_exists($plainType)) {
+            return $this instanceof $plainType ? $this : Mock::class($plainType);
+        }
+
+        if (interface_exists($plainType)) {
+            return $this instanceof $plainType ? $this : Mock::interface($plainType);
+        }
+
+        return null;
     }
 
     private function callFailsFilter(string $method, array $args): bool
