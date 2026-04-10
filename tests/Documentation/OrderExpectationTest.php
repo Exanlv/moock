@@ -64,7 +64,7 @@ class OrderExpectationTest extends TestCase
             $expect($this->mock->userExists(...)); // Argument isn't verified, just order
 
             // Only mail and password are validated
-            $expect($this->mock->createUser(...))->with(email: 'mail@domain.com', password: 'password');
+            $expect($this->mock->createUser(...))->with('mail@domain.com', password: 'password');
         });
     }
 

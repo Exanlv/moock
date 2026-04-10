@@ -11,11 +11,22 @@ trait FiltersMethodArgs
 {
     private function filterArgs(array $inputs, array $filters): array
     {
+        if (empty($inputs)) {
+            return [];
+        }
+
+        $inputs = array_values($inputs);
+        $keys = array_keys($inputs[0]);
+
         $filters = array_is_list($filters)
             ? $this->convertArgsToDictionary($inputs, $filters)
             : $filters;
 
         foreach ($filters as $name => $valueOrValidator) {
+            if (is_int($name)) {
+                $name = $keys[$name];
+            }
+
             $validator = $valueOrValidator instanceof Closure
                 ? fn ($call): bool => $valueOrValidator($call[$name])
                 : fn ($call): bool => $call[$name] === $valueOrValidator;
