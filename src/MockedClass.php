@@ -155,7 +155,7 @@ trait MockedClass
             DateTime::class => fn () => new DateTime('24 february'),
             DateTimeImmutable::class => fn () => new DateTimeImmutable(),
             DateInterval::class => fn () => DateInterval::createFromDateString('1 day'),
-            DatePeriod::class => fn () => DatePeriod::createFromISO8601String('R4/2012-07-01T00:00:00Z/P7D'),
+            DatePeriod::class => fn () => DatePeriod::createFromISO8601String('R/2026-02-24T00:00:00Z/P1Y'),
         ];
 
         if (isset($returns[$plainType])) {
