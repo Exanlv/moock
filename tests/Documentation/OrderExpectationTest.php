@@ -33,9 +33,6 @@ class OrderExpectationTest extends TestCase
     #[Test]
     public function it_can_verify_order_of_mocked_methods(): void
     {
-        Mock::method($this->mock->isValidEmail(...))->returns(true);
-        Mock::method($this->mock->userExists(...))->returns(false);
-
         $this->mock->isValidEmail('mail@domain.com');
         $this->mock->userExists('mail@domain.com');
         $this->mock->createUser('mail@domain.com', 'username', 'password');
@@ -52,9 +49,6 @@ class OrderExpectationTest extends TestCase
     #[Test]
     public function it_can_verify_order_of_mocked_methods_and_args(): void
     {
-        Mock::method($this->mock->isValidEmail(...))->returns(true); // @hide
-        Mock::method($this->mock->userExists(...))->returns(false); // @hide
-
         $this->mock->isValidEmail('mail@domain.com'); // @hide
         $this->mock->userExists('mail@domain.com'); // @hide
         $this->mock->createUser('mail@domain.com', 'username', 'password'); // @hide
@@ -74,10 +68,6 @@ class OrderExpectationTest extends TestCase
     {
         $userService = Mock::interface(UserServiceInterface::class);
         $productsService = Mock::interface(ProductServiceInterface::class);
-
-        Mock::method($userService->isValidEmail(...))->returns(true); // @hide
-        Mock::method($productsService->productExists(...))->returns(true); // @hide
-        Mock::method($productsService->purchase(...))->returns(true); // @hide
 
         $productsService->productExists(123);
         $userService->isValidEmail('mail@domain.com');
