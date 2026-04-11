@@ -397,9 +397,6 @@ If you're expecting many calls to be made after each other in specific order, yo
 ### Verifying order of calls
 To verify the order in which methods were called on a mock, call `$expect` in the desired order with the given method.
 ```php
-Mock::method($this->mock->isValidEmail(...))->returns(true);
-Mock::method($this->mock->userExists(...))->returns(false);
-
 $this->mock->isValidEmail('mail@domain.com');
 $this->mock->userExists('mail@domain.com');
 $this->mock->createUser('mail@domain.com', 'username', 'password');
@@ -429,7 +426,6 @@ You may also validate in what order methods were called between several mocks
 ```php
 $userService = Mock::interface(UserServiceInterface::class);
 $productsService = Mock::interface(ProductServiceInterface::class);
-
 
 $productsService->productExists(123);
 $userService->isValidEmail('mail@domain.com');
