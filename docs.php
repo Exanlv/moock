@@ -8,6 +8,7 @@ use Exan\Pudocumenter\StdOutMarkdownTOCPrinter;
 use Tests\Documentation\AssertingExpectationsTest;
 use Tests\Documentation\BasicMockingTest;
 use Tests\Documentation\CompatibilityTest;
+use Tests\Documentation\DefaultReturnValuesTest;
 use Tests\Documentation\OrderExpectationTest;
 use Tests\Documentation\FilteringMethodsTest;
 use Tests\Documentation\PartialMocksTest;
@@ -19,6 +20,7 @@ $documenter = new Documenter(
     BasicMockingTest::class,
     ReplacingMethodTest::class,
     AssertingExpectationsTest::class,
+    DefaultReturnValuesTest::class,
     OrderExpectationTest::class,
     FilteringMethodsTest::class,
     PartialMocksTest::class,
