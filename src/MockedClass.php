@@ -38,6 +38,9 @@ trait MockedClass
 
     private mixed $real = null;
 
+    /** @var Array<string, mixed> */
+    private array $defaultReturns = [];
+
     public private(set) string $quine;
 
     public function __setQuine(string $code): void
@@ -104,7 +107,9 @@ trait MockedClass
                 return $this->real->{$method}(...$args);
             }
 
-            return $this->getDefault($method);
+            $this->defaultReturns[$method] ??= $this->getDefault($method);
+
+            return $this->defaultReturns[$method];
         }
 
         return $this->methodReplacements[$method](...$args);
@@ -155,7 +160,7 @@ trait MockedClass
             DateTime::class => fn () => new DateTime('24 february'),
             DateTimeImmutable::class => fn () => new DateTimeImmutable(),
             DateInterval::class => fn () => DateInterval::createFromDateString('1 day'),
-            DatePeriod::class => fn () => DatePeriod::createFromISO8601String('R/2026-02-24T00:00:00Z/P1Y'),
+            DatePeriod::class => fn () => DatePeriod::createFromISO8601String('R1337/2026-02-24T00:00:00Z/P1Y'),
         ];
 
         if (isset($returns[$plainType])) {

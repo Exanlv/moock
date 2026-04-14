@@ -61,4 +61,15 @@ class MockDefaultReturns extends TestCase
         $this->assertEquals($mock, $mock->returnStatic());
         $this->assertEquals($mock, $mock->returnOwnClass());
     }
+
+    #[Test]
+    public function it_returns_the_same_mocks_each_time()
+    {
+        $mock = Mock::class(TestDefaultReturns::class);
+
+        $this->assertEquals(
+            spl_object_id($mock->returnUserService()),
+            spl_object_id($mock->returnUserService()),
+        );
+    }
 }
