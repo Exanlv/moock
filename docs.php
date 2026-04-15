@@ -20,9 +20,9 @@ $documenter = new Documenter(
     BasicMockingTest::class,
     ReplacingMethodTest::class,
     AssertingExpectationsTest::class,
-    DefaultReturnValuesTest::class,
     OrderExpectationTest::class,
     FilteringMethodsTest::class,
+    DefaultReturnValuesTest::class,
     PartialMocksTest::class,
     CompatibilityTest::class,
 );
