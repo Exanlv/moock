@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Exan\Moock;
 
+use Exan\Moock\Args\Arr;
+
 class Expectation
 {
     use FiltersMethodArgs;
 
     public function __construct(
+        private readonly MockedClassInterface $classMock,
         private readonly string $methodName,
         private readonly array $calls,
         private readonly bool $expectation = true,
@@ -16,7 +19,7 @@ class Expectation
 
     public function not(): Expectation
     {
-        return new Expectation($this->methodName, $this->calls, !$this->expectation);
+        return new Expectation($this->classMock, $this->methodName, $this->calls, !$this->expectation);
     }
 
     public function with(mixed ...$expectedArg): Expectation
@@ -25,9 +28,11 @@ class Expectation
             return $this;
         }
 
-        $filteredCalls = $this->filterArgs($this->calls, $expectedArg);
+        $filters = $this->classMock instanceof MockFnInterface ? ['inputs' => Arr::partial($expectedArg)] : $expectedArg;
 
-        return new Expectation($this->methodName, $filteredCalls, $this->expectation);
+        $filteredCalls = $this->filterArgs($this->calls, $filters);
+
+        return new Expectation($this->classMock, $this->methodName, $filteredCalls, $this->expectation);
     }
 
     private function callsAmount(): int

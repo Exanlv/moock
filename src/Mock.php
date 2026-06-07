@@ -107,4 +107,11 @@ class Mock
         $mockExpector = new MockExpector();
         $mockExpector->validate($expectation);
     }
+
+    public static function fn(): Closure
+    {
+        $mock = Mock::interface(MockFnInterface::class);
+
+        return $mock->mockFn(...);
+    }
 }
