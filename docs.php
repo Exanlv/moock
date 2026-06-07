@@ -11,6 +11,7 @@ use Tests\Documentation\CompatibilityTest;
 use Tests\Documentation\DefaultReturnValuesTest;
 use Tests\Documentation\OrderExpectationTest;
 use Tests\Documentation\FilteringMethodsTest;
+use Tests\Documentation\MockFnTest;
 use Tests\Documentation\PartialMocksTest;
 use Tests\Documentation\ReplacingMethodTest;
 
@@ -24,6 +25,7 @@ $documenter = new Documenter(
     FilteringMethodsTest::class,
     DefaultReturnValuesTest::class,
     PartialMocksTest::class,
+    MockFnTest::class,
     CompatibilityTest::class,
 );
 

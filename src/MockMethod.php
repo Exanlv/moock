@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Exan\Moock;
 
+use Exan\Moock\Args\Arr;
 use Exan\Moock\Dto\MethodCall;
 use ReflectionFunction;
 use RuntimeException;
+use Throwable;
 
 class MockMethod
 {
@@ -28,7 +30,11 @@ class MockMethod
 
     public function allow(mixed ...$filters): static
     {
-        $this->classMock->__filter($this->methodName, ...$filters);
+        $limiter = $this->classMock instanceof MockFnInterface
+            ? ['inputs' => Arr::partial($filters)]
+            : $filters;
+
+        $this->classMock->__filter($this->methodName, ...$limiter);
 
         return $this;
     }
@@ -78,6 +84,7 @@ class MockMethod
     public function assert(): Expectation
     {
         return new Expectation(
+            $this->classMock,
             $this->methodName,
             array_map(
                 fn (MethodCall $call) => $call->args,

@@ -53,7 +53,7 @@ class MockDefaultReturns extends TestCase
     }
 
     #[Test]
-    public function it_returns_itself()
+    public function it_returns_itself(): void
     {
         $mock = Mock::class(TestDefaultReturns::class);
 
@@ -63,7 +63,7 @@ class MockDefaultReturns extends TestCase
     }
 
     #[Test]
-    public function it_returns_the_same_mocks_each_time()
+    public function it_returns_the_same_mocks_each_time(): void
     {
         $mock = Mock::class(TestDefaultReturns::class);
 

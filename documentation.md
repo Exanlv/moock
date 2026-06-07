@@ -20,6 +20,7 @@
      - [Basic types](#basic-types)
      - [Returning mocked objects](#returning-mocked-objects)
  - [Creating partial mocks](#creating-partial-mocks)
+ - [Mock Closures](#mock-closures)
  - [Compatibility](#compatibility)
 
 ## Creating a mock
@@ -584,6 +585,43 @@ $this->assertEquals([
 $this->partial->users = ['fourth@mail.com'];
 
 $this->assertEquals(['fourth@mail.com'], $this->real->users);
+```
+
+---
+
+## Mock Closures
+
+Closures are often used as callbacks, with Mock Closures you can assert what happens with these like you would for any other class mock
+
+```php
+$mockFn = Mock::fn();
+
+$mockFn();
+$mockFn('first arg', 'second arg');
+
+Mock::method($mockFn)->assert()->calledTimes(2);
+Mock::method($mockFn)->assert()->with('first arg')->called();
+```
+
+Named arguments are also supported
+```php
+$mockFn = Mock::fn(); // hide
+
+$mockFn('first arg', someArg: 'some value');
+
+Mock::method($mockFn)->assert()->with(someArg: 'some value')->called();
+```
+
+Filters can also be applied
+```php
+$mockFn = Mock::fn(); // hide
+
+Mock::method($mockFn)->allow(someArg: 'some value');
+
+$mockFn('first arg', someArg: 'some value');
+
+$this->expectException(RuntimeException::class);
+$mockFn('first arg', someArg: 'some other value');
 ```
 
 ---
