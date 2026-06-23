@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Exan\Moock\Methods;
 
+use Exan\Moock\Extractor;
 use Exan\Moock\Formatting\Variables as FormatsVariables;
 use ReflectionClass;
 use ReflectionMethod;
@@ -70,7 +71,7 @@ class Mocker
         $functionArgs = implode(
             ', ',
             array_map(
-                fn (ReflectionParameter $parameter) => $this->getParameterSignature($parameter, $declaringClass),
+                fn (ReflectionParameter $parameter) => $this->getParameterSignature($parameter, $method, $declaringClass),
                 $method->getParameters(),
             ),
         );
@@ -95,7 +96,7 @@ class Mocker
             FUNC;
     }
 
-    private function getParameterSignature(ReflectionParameter $parameter, ReflectionClass $declaringClass): string
+    private function getParameterSignature(ReflectionParameter $parameter, ReflectionMethod $declaringMethod, ReflectionClass $declaringClass): string
     {
         $type = $parameter->getType();
 
@@ -115,10 +116,40 @@ class Mocker
         if ($parameter->isDefaultValueAvailable()) {
             $defaultValue = $parameter->getDefaultValue();
 
-            $signature .= ' = ' . $this->formatValue($defaultValue);
+            $signature .= ' = ' . (is_object($defaultValue)
+                ? $this->extractDefaultParamSignature($parameter, $declaringMethod, $declaringClass)
+                : $this->formatValue($defaultValue));
         }
 
         return $signature;
+    }
+
+    private function extractDefaultParamSignature(ReflectionParameter $parameter, ReflectionMethod $method, ReflectionClass $class): string
+    {
+        // public function myMethod(MyClass $myArg = new MyClass())
+        // Unfortunately, reflection only gives the exact instance of the default value. It is therefore impossible to recreate the
+        // code used to instantiate an object based on reflection. It needs to be extracted from the original file instead.
+
+        $fileContents = file_get_contents($class->getFileName());
+
+        $tokens = Extractor::lines(token_get_all($fileContents), $method->getStartLine(), $method->getEndLine());
+        $method = Extractor::function($tokens, $method->getName());
+        $arg = Extractor::arg($method, $parameter->getName());
+
+        while(
+            count($arg)
+            && (!is_array($arg) || $arg[0][0] !== T_NEW)
+        ) {
+            array_shift($arg);
+        }
+
+        array_shift($arg); // new
+        array_shift($arg); // (whitespace)
+        array_shift($arg); // (classname)
+
+        $flattenedTokens = array_map(fn (string|array $token) => is_array($token) ? $token[1] : $token, $arg);
+
+        return 'new \\' . $parameter->getDefaultValue()::class . implode(' ', $flattenedTokens);
     }
 
     private function getInternalMockCallArgs(ReflectionMethod $method): string

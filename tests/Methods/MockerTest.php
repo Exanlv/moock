@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Methods;
 
+use Closure;
 use Exan\Moock\Methods\Mocker;
+use Exan\Moock\Mock;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
+use Tests\Components\InstantiatedDefaultArgs;
+use Tests\Components\MixedConstructor;
 
 class MockerTest extends TestCase
 {
@@ -92,5 +97,34 @@ class MockerTest extends TestCase
 
             $haystack = substr($haystack, $pos);
         }
+    }
+
+    #[Test]
+    #[DataProvider('objectInstantiationDataProvider')]
+    public function it_instantiates_objects_for_arg_defaults(string $method, Closure $validator): void
+    {
+        $mock = Mock::class(InstantiatedDefaultArgs::class);
+
+        Mock::method($mock->{$method}(...))->replace($validator);
+
+        $this->assertTrue($mock->{$method}());
+    }
+
+    public static function objectInstantiationDataProvider(): array
+    {
+        return [
+            'Empty constructor' => [
+                'methodDefaultEmpty',
+                function (MixedConstructor $mixedConstructor) {
+                    return $mixedConstructor->property === null;
+                }
+            ],
+            'String in constructor' => [
+                'methodDefaultString',
+                function (MixedConstructor $mixedConstructor) {
+                    return $mixedConstructor->property === '::my string::';
+                }
+            ],
+        ];
     }
 }
