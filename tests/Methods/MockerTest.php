@@ -103,47 +103,33 @@ class MockerTest extends TestCase
         return [
             'Empty constructor' => [
                 'methodDefaultEmpty',
-                function (MixedConstructor $mixedConstructor) {
-                    return $mixedConstructor->property === null;
-                }
+                fn (MixedConstructor $mixedConstructor) => $mixedConstructor->property === null,
             ],
             'String in constructor' => [
                 'methodDefaultString',
-                function (MixedConstructor $mixedConstructor) {
-                    return $mixedConstructor->property === '::my string::';
-                }
+                fn (MixedConstructor $mixedConstructor) => $mixedConstructor->property === '::my string::',
             ],
             'Recursive empty constructor' => [
                 'methodDefaultRecursiveEmpty',
-                function (MixedConstructor $mixedConstructor) {
-                    return $mixedConstructor->property instanceof MixedConstructor
-                        && $mixedConstructor->property->property === null;
-                }
+                fn (MixedConstructor $mixedConstructor) => $mixedConstructor->property instanceof MixedConstructor
+                        && $mixedConstructor->property->property === null,
             ],
             'Recursive constructor with string' => [
                 'methodDefaultRecursiveWithString',
-                function (MixedConstructor $mixedConstructor) {
-                    return $mixedConstructor->property instanceof MixedConstructor
-                        && $mixedConstructor->property->property === '::nested string::';
-                }
+                fn (MixedConstructor $mixedConstructor) => $mixedConstructor->property instanceof MixedConstructor
+                        && $mixedConstructor->property->property === '::nested string::',
             ],
             'PHP variable syntax in string' => [
                 'methodDefaultPhpVariableSyntaxString',
-                function (MixedConstructor $mixedConstructor) {
-                    return $mixedConstructor->property === '$variable';
-                }
+                fn (MixedConstructor $mixedConstructor) => $mixedConstructor->property === '$variable',
             ],
             'PHP tag syntax in string' => [
                 'methodDefaultPhpTagSyntaxString',
-                function (MixedConstructor $mixedConstructor) {
-                    return $mixedConstructor->property === '<?php echo "test"; ?>';
-                }
+                fn (MixedConstructor $mixedConstructor) => $mixedConstructor->property === '<?php echo "test"; ?>',
             ],
             'New keyword in string' => [
                 'methodDefaultNewKeywordInString',
-                function (MixedConstructor $mixedConstructor) {
-                    return $mixedConstructor->property === 'new ClassName()';
-                }
+                fn (MixedConstructor $mixedConstructor) => $mixedConstructor->property === 'new ClassName()',
             ],
         ];
     }

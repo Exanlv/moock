@@ -71,7 +71,7 @@ class Extractor
             }
         }
 
-        while(
+        while (
             count($captured)
             && is_array($captured[count($captured) - 1])
             && in_array(
@@ -120,7 +120,7 @@ class Extractor
             }
         }
 
-        while(
+        while (
             count($captured)
             && array_pop($captured) !== $trimToLast
         ) {

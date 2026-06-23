@@ -143,7 +143,7 @@ class Mocker
         $method = Extractor::function($class, $method->getName());
         $arg = Extractor::arg($method, $parameter->getName());
 
-        while(
+        while (
             count($arg)
             && (!is_array($arg) || $arg[0][0] !== T_NEW)
         ) {

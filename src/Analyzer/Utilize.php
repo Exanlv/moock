@@ -20,8 +20,7 @@ class Utilize
     public function __construct(
         private readonly ?string $declaringNamespace,
         private readonly array $uses,
-    ) {
-    }
+    ) {}
 
     public function fullyQuantify(string $className): string
     {
@@ -131,7 +130,7 @@ class Utilize
 
         $imports = static::splitGroupUse($tokens);
 
-        return array_merge(...array_map(function (array $tokens) use ($namespacePrefix)  {
+        return array_merge(...array_map(function (array $tokens) use ($namespacePrefix) {
             while (count($tokens) && is_array($tokens) && $tokens[0][0] === T_WHITESPACE) {
                 array_shift($tokens);
             }
