@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Components;
 
-use Tests\Components\MixedConstructor;
+use Tests\Components\{MixedConstructor, MixedConstructor as AliasedMC, MixedConstructor as AliasedMCTwo};
+use Tests\Components\MixedConstructor as IndividualAliasMC;
+use Tests\{Components\MixedConstructor as SubNamespaceMC};
 
 class InstantiatedDefaultArgs
 {
@@ -39,6 +41,46 @@ class InstantiatedDefaultArgs
     }
 
     public function methodDefaultNewKeywordInString(MixedConstructor $prop = new MixedConstructor('new ClassName()')): bool
+    {
+        return false;
+    }
+
+    public function methodAliasedEmpty(AliasedMC $prop = new AliasedMC()): bool
+    {
+        return false;
+    }
+
+    public function methodAliasedWithString(AliasedMC $prop = new AliasedMC('::aliased string::')): bool
+    {
+        return false;
+    }
+
+    public function methodAliasedRecursive(AliasedMC $prop = new AliasedMC(new AliasedMCTwo())): bool
+    {
+        return false;
+    }
+
+    public function methodAliasedRecursiveWithString(AliasedMC $prop = new AliasedMC(new AliasedMCTwo('::aliased nested string::'))): bool
+    {
+        return false;
+    }
+
+    public function methodIndividualAliasEmpty(IndividualAliasMC $prop = new IndividualAliasMC()): bool
+    {
+        return false;
+    }
+
+    public function methodIndividualAliasWithString(IndividualAliasMC $prop = new IndividualAliasMC('::individual alias string::')): bool
+    {
+        return false;
+    }
+
+    public function methodSubNamespaceGroupUseEmpty(SubNamespaceMC $prop = new SubNamespaceMC()): bool
+    {
+        return false;
+    }
+
+    public function methodSubNamespaceGroupUseWithString(SubNamespaceMC $prop = new SubNamespaceMC('::sub namespace string::')): bool
     {
         return false;
     }

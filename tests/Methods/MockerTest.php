@@ -10,8 +10,11 @@ use Exan\Moock\Mock;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Tests\Components\FqcnDefaultArgs;
 use Tests\Components\InstantiatedDefaultArgs;
+use Tests\Components\InstantiatedDefaultArgsInterface;
 use Tests\Components\MixedConstructor;
+use Tests\Components\SameNamespaceDefaultArgs;
 
 class MockerTest extends TestCase
 {
@@ -130,6 +133,115 @@ class MockerTest extends TestCase
             'New keyword in string' => [
                 'methodDefaultNewKeywordInString',
                 fn (MixedConstructor $mixedConstructor) => $mixedConstructor->property === 'new ClassName()',
+            ],
+            'Aliased import - empty constructor' => [
+                'methodAliasedEmpty',
+                fn (MixedConstructor $mixedConstructor) => $mixedConstructor->property === null,
+            ],
+            'Aliased import - string in constructor' => [
+                'methodAliasedWithString',
+                fn (MixedConstructor $mixedConstructor) => $mixedConstructor->property === '::aliased string::',
+            ],
+            'Aliased import - recursive empty constructor' => [
+                'methodAliasedRecursive',
+                fn (MixedConstructor $mixedConstructor) => $mixedConstructor->property instanceof MixedConstructor
+                        && $mixedConstructor->property->property === null,
+            ],
+            'Aliased import - recursive with string' => [
+                'methodAliasedRecursiveWithString',
+                fn (MixedConstructor $mixedConstructor) => $mixedConstructor->property instanceof MixedConstructor
+                        && $mixedConstructor->property->property === '::aliased nested string::',
+            ],
+            'Individual aliased import - empty constructor' => [
+                'methodIndividualAliasEmpty',
+                fn (MixedConstructor $mixedConstructor) => $mixedConstructor->property === null,
+            ],
+            'Individual aliased import - string in constructor' => [
+                'methodIndividualAliasWithString',
+                fn (MixedConstructor $mixedConstructor) => $mixedConstructor->property === '::individual alias string::',
+            ],
+            'Sub-namespace group use - empty constructor' => [
+                'methodSubNamespaceGroupUseEmpty',
+                fn (MixedConstructor $mixedConstructor) => $mixedConstructor->property === null,
+            ],
+            'Sub-namespace group use - string in constructor' => [
+                'methodSubNamespaceGroupUseWithString',
+                fn (MixedConstructor $mixedConstructor) => $mixedConstructor->property === '::sub namespace string::',
+            ],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('fqcnObjectInstantiationDataProvider')]
+    public function it_instantiates_objects_when_using_fqcn(string $method, Closure $validator): void
+    {
+        $mock = Mock::class(FqcnDefaultArgs::class);
+
+        Mock::method($mock->{$method}(...))->replace($validator);
+
+        $this->assertTrue($mock->{$method}());
+    }
+
+    public static function fqcnObjectInstantiationDataProvider(): array
+    {
+        return [
+            'Empty constructor' => [
+                'methodEmpty',
+                fn (MixedConstructor $m) => $m->property === null,
+            ],
+            'String in constructor' => [
+                'methodWithString',
+                fn (MixedConstructor $m) => $m->property === '::fqcn string::',
+            ],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('sameNamespaceObjectInstantiationDataProvider')]
+    public function it_instantiates_objects_when_in_same_namespace(string $method, Closure $validator): void
+    {
+        $mock = Mock::class(SameNamespaceDefaultArgs::class);
+
+        Mock::method($mock->{$method}(...))->replace($validator);
+
+        $this->assertTrue($mock->{$method}());
+    }
+
+    public static function sameNamespaceObjectInstantiationDataProvider(): array
+    {
+        return [
+            'Empty constructor' => [
+                'methodEmpty',
+                fn (MixedConstructor $m) => $m->property === null,
+            ],
+            'String in constructor' => [
+                'methodWithString',
+                fn (MixedConstructor $m) => $m->property === '::same namespace string::',
+            ],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('interfaceObjectInstantiationDataProvider')]
+    public function it_instantiates_objects_when_declared_on_interface(string $method, Closure $validator): void
+    {
+        $mock = Mock::interface(InstantiatedDefaultArgsInterface::class);
+
+        Mock::method($mock->{$method}(...))->replace($validator);
+
+        $this->assertTrue($mock->{$method}());
+    }
+
+    public static function interfaceObjectInstantiationDataProvider(): array
+    {
+        return [
+            'Empty constructor' => [
+                'methodEmpty',
+                fn (MixedConstructor $m) => $m->property === null,
+            ],
+            'String in constructor' => [
+                'methodWithString',
+                fn (MixedConstructor $m) => $m->property === '::interface string::',
             ],
         ];
     }
