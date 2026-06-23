@@ -15,6 +15,7 @@ use Tests\Components\InstantiatedDefaultArgs;
 use Tests\Components\InstantiatedDefaultArgsInterface;
 use Tests\Components\MixedConstructor;
 use Tests\Components\SameNamespaceDefaultArgs;
+use Tests\Components\WeirdFormattingDefaultArgs;
 
 class MockerTest extends TestCase
 {
@@ -242,6 +243,76 @@ class MockerTest extends TestCase
             'String in constructor' => [
                 'methodWithString',
                 fn (MixedConstructor $m) => $m->property === '::interface string::',
+            ],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('weirdFormattingObjectInstantiationDataProvider')]
+    public function it_instantiates_objects_with_weird_formatting(string $method, Closure $validator): void
+    {
+        $mock = Mock::class(WeirdFormattingDefaultArgs::class);
+
+        Mock::method($mock->{$method}(...))->replace($validator);
+
+        $this->assertTrue($mock->{$method}());
+    }
+
+    public static function weirdFormattingObjectInstantiationDataProvider(): array
+    {
+        return [
+            'Extra spaces around equals' => [
+                'methodExtraSpacesAroundEquals',
+                fn (MixedConstructor $m) => $m->property === null,
+            ],
+            'Multiline signature' => [
+                'methodMultilineSignature',
+                fn (MixedConstructor $m) => $m->property === null,
+            ],
+            'Multiline signature with string' => [
+                'methodMultilineSignatureWithString',
+                fn (MixedConstructor $m) => $m->property === '::multiline string::',
+            ],
+            'Spaces inside constructor args' => [
+                'methodSpacesInsideConstructorArgs',
+                fn (MixedConstructor $m) => $m->property === '::spaced args string::',
+            ],
+            'Space between class and opening paren' => [
+                'methodSpaceBetweenClassAndParens',
+                fn (MixedConstructor $m) => $m->property === '::spaced parens::',
+            ],
+            'Everything on its own line' => [
+                'methodEverythingOnItsOwnLine',
+                fn (MixedConstructor $m) => $m->property === '::everything separate::',
+            ],
+            'Tabs as indentation' => [
+                'methodTabsAsIndentation',
+                fn (MixedConstructor $m) => $m->property === '::tabs indented::',
+            ],
+            'Trailing comma in constructor' => [
+                'methodTrailingCommaInConstructor',
+                fn (MixedConstructor $m) => $m->property === '::trailing comma::',
+            ],
+            'Comment inside constructor args' => [
+                'methodCommentInsideArgs',
+                fn (MixedConstructor $m) => $m->property === '::commented args::',
+            ],
+            'Multiline nested constructors' => [
+                'methodMultilineNested',
+                fn (MixedConstructor $m) => $m->property instanceof MixedConstructor
+                    && $m->property->property === '::multiline nested::',
+            ],
+            'Comment between new and class name' => [
+                'methodCommentBetweenNewAndClass',
+                fn (MixedConstructor $m) => $m->property === '::new comment::',
+            ],
+            'Named argument in constructor' => [
+                'methodNamedArg',
+                fn (MixedConstructor $m) => $m->property === '::named arg::',
+            ],
+            'Comment between function keyword and method name' => [
+                'methodFunctionKeywordCommented',
+                fn (MixedConstructor $m) => $m->property === '::function commented::',
             ],
         ];
     }
