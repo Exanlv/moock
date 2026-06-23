@@ -10,8 +10,6 @@ use Exan\Moock\Mock;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
-use ReflectionMethod;
 use Tests\Components\InstantiatedDefaultArgs;
 use Tests\Components\MixedConstructor;
 
@@ -78,16 +76,6 @@ class MockerTest extends TestCase
         ]);
     }
 
-    /**
-     * @param string[] $methods
-     *
-     * @return ReflectionMethod[]
-     */
-    private function getReflectionMethods(array $methods, ReflectionClass $ref): array
-    {
-        return array_map(fn (string $method) => $ref->getMethod($method), $methods);
-    }
-
     public function assertStringContainsInOrder(string $haystack, array $needles): void
     {
         foreach ($needles as $needle) {
@@ -123,6 +111,38 @@ class MockerTest extends TestCase
                 'methodDefaultString',
                 function (MixedConstructor $mixedConstructor) {
                     return $mixedConstructor->property === '::my string::';
+                }
+            ],
+            'Recursive empty constructor' => [
+                'methodDefaultRecursiveEmpty',
+                function (MixedConstructor $mixedConstructor) {
+                    return $mixedConstructor->property instanceof MixedConstructor
+                        && $mixedConstructor->property->property === null;
+                }
+            ],
+            'Recursive constructor with string' => [
+                'methodDefaultRecursiveWithString',
+                function (MixedConstructor $mixedConstructor) {
+                    return $mixedConstructor->property instanceof MixedConstructor
+                        && $mixedConstructor->property->property === '::nested string::';
+                }
+            ],
+            'PHP variable syntax in string' => [
+                'methodDefaultPhpVariableSyntaxString',
+                function (MixedConstructor $mixedConstructor) {
+                    return $mixedConstructor->property === '$variable';
+                }
+            ],
+            'PHP tag syntax in string' => [
+                'methodDefaultPhpTagSyntaxString',
+                function (MixedConstructor $mixedConstructor) {
+                    return $mixedConstructor->property === '<?php echo "test"; ?>';
+                }
+            ],
+            'New keyword in string' => [
+                'methodDefaultNewKeywordInString',
+                function (MixedConstructor $mixedConstructor) {
+                    return $mixedConstructor->property === 'new ClassName()';
                 }
             ],
         ];

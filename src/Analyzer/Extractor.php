@@ -2,10 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Exan\Moock;
+namespace Exan\Moock\Analyzer;
 
 /**
  * @internal
+ *
+ * I am not a language dev, please don't judge me too harshly for this poor excuse of a parser :)
+ *
+ * Valid PHP can be assumed, as the files have gone through reflection already prior to reaching this stage.
  */
 class Extractor
 {
@@ -123,5 +127,64 @@ class Extractor
         }
 
         return $captured;
+    }
+
+    /**
+     * @param array<int, string|array{0:int, 1:string, 2:int}> $tokens
+     * @return array<int, string|array{0:int, 1:string, 2:int}>
+     */
+    public static function uses(array $tokens): array
+    {
+        $uses = [];
+        $use = null;
+
+        $blockScope = 0;
+
+        foreach ($tokens as $token) {
+            if ($token === '{') {
+                $blockScope++;
+            }
+
+            if ($token === '}') {
+                $blockScope--;
+            }
+
+            if ($token === ';') {
+                $use = null;
+            }
+
+            if ($blockScope === 0 && is_array($token) && $token[0] === T_USE) {
+                $use = count($uses);
+                $uses[] = [];
+            }
+
+            if ($use !== null) {
+                $uses[$use][] = $token;
+            }
+        }
+
+        return $uses;
+    }
+
+    public static function namespace(array $tokens): array
+    {
+        $namespace = [];
+        $capturing = false;
+
+        foreach ($tokens as $token) {
+            if (is_array($token) && $token[0] === T_NAMESPACE) {
+                $capturing = true;
+            }
+
+            if ($capturing && $token === ';') {
+                break;
+            }
+
+            if ($capturing) {
+                $namespace[] = $token;
+            }
+        }
+
+        return $namespace;
     }
 }

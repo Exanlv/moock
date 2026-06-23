@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Exan\Moock\Methods;
 
-use Exan\Moock\Extractor;
+use Exan\Moock\Analyzer\Extractor;
+use Exan\Moock\Analyzer\Utilize;
 use Exan\Moock\Formatting\Variables as FormatsVariables;
 use ReflectionClass;
 use ReflectionMethod;
@@ -132,8 +133,14 @@ class Mocker
 
         $fileContents = file_get_contents($class->getFileName());
 
-        $tokens = Extractor::lines(token_get_all($fileContents), $method->getStartLine(), $method->getEndLine());
-        $method = Extractor::function($tokens, $method->getName());
+        $tokens = token_get_all($fileContents);
+
+        $uses = Extractor::uses($tokens);
+        $namespace = Extractor::namespace($tokens);
+        $utilize = Utilize::fromTokens(count($namespace) > 0 ? $namespace[2][1] : null, $uses);
+
+        $class = Extractor::lines($tokens, $method->getStartLine(), $method->getEndLine());
+        $method = Extractor::function($class, $method->getName());
         $arg = Extractor::arg($method, $parameter->getName());
 
         while(
@@ -147,7 +154,17 @@ class Mocker
         array_shift($arg); // (whitespace)
         array_shift($arg); // (classname)
 
-        $flattenedTokens = array_map(fn (string|array $token) => is_array($token) ? $token[1] : $token, $arg);
+        $flattenedTokens = array_map(function (string|array $token) use ($utilize) {
+            if (is_string($token)) {
+                return $token;
+            }
+
+            if ($token[0] === T_STRING) {
+                return $utilize->fullyQuantify($token[1]);
+            }
+
+            return $token[1];
+        }, $arg);
 
         return 'new \\' . $parameter->getDefaultValue()::class . implode(' ', $flattenedTokens);
     }
