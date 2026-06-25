@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Exan\Moock\Methods;
 
+use Exan\Moock\Analyzer\Extractor;
+use Exan\Moock\Analyzer\Utilize;
 use Exan\Moock\Formatting\Variables as FormatsVariables;
 use ReflectionClass;
 use ReflectionMethod;
@@ -70,7 +72,7 @@ class Mocker
         $functionArgs = implode(
             ', ',
             array_map(
-                fn (ReflectionParameter $parameter) => $this->getParameterSignature($parameter, $declaringClass),
+                fn (ReflectionParameter $parameter) => $this->getParameterSignature($parameter, $method, $declaringClass),
                 $method->getParameters(),
             ),
         );
@@ -95,7 +97,7 @@ class Mocker
             FUNC;
     }
 
-    private function getParameterSignature(ReflectionParameter $parameter, ReflectionClass $declaringClass): string
+    private function getParameterSignature(ReflectionParameter $parameter, ReflectionMethod $declaringMethod, ReflectionClass $declaringClass): string
     {
         $type = $parameter->getType();
 
@@ -115,10 +117,77 @@ class Mocker
         if ($parameter->isDefaultValueAvailable()) {
             $defaultValue = $parameter->getDefaultValue();
 
-            $signature .= ' = ' . $this->formatValue($defaultValue);
+            $signature .= ' = ' . (is_object($defaultValue)
+                ? $this->extractDefaultParamSignature($parameter, $declaringMethod, $declaringClass)
+                : $this->formatValue($defaultValue));
         }
 
         return $signature;
+    }
+
+    private function extractDefaultParamSignature(ReflectionParameter $parameter, ReflectionMethod $method, ReflectionClass $class): string
+    {
+        // public function myMethod(MyClass $myArg = new MyClass())
+        // Unfortunately, reflection only gives the exact instance of the default value. It is therefore impossible to recreate the
+        // code used to instantiate an object based on reflection. It needs to be extracted from the original file instead.
+
+        $fileContents = file_get_contents($class->getFileName());
+
+        $tokens = array_filter(
+            token_get_all($fileContents),
+            fn (string|array $token) => !is_array($token) || !in_array($token[0], [T_COMMENT, T_DOC_COMMENT])
+        );
+
+        $tokens = array_values($tokens);
+
+        $isWhitespace = fn (string|array $token) => is_array($token) && $token[0] === T_WHITESPACE;
+        foreach ($tokens as $i => $token) {
+            if ($isWhitespace($token) && isset($tokens[$i + 1]) && $isWhitespace($tokens[$i + 1])) {
+                unset($tokens[$i]);
+            }
+        }
+
+        $tokens = array_values($tokens);
+
+        $uses = Extractor::uses($tokens);
+        $namespace = Extractor::namespace($tokens);
+        $utilize = Utilize::fromTokens(count($namespace) > 0 ? $namespace[2][1] : null, $uses);
+
+        $class = Extractor::lines($tokens, $method->getStartLine(), $method->getEndLine());
+        $method = Extractor::function($class, $method->getName());
+        $arg = Extractor::arg($method, $parameter->getName());
+
+        while (
+            count($arg)
+            && (!is_array($arg) || $arg[0][0] !== T_NEW)
+        ) {
+            array_shift($arg);
+        }
+
+        array_shift($arg); // new
+        array_shift($arg); // (whitespace)
+        array_shift($arg); // (classname)
+
+        $flattenedTokens = array_map(function (string|array $token, int $index) use ($utilize, $arg) {
+            if (is_string($token)) {
+                return $token;
+            }
+
+            $argIsColon = fn (int $i) => isset($arg[$i]) && $arg[$i] === ':';
+            $argIsWhitespace = fn (int $i) => isset($arg[$i]) && is_array($arg[$i]) && $arg[$i][0] === T_WHITESPACE;
+
+            if (
+                $token[0] === T_STRING
+                && !($argIsColon($index + 1))
+                && !($argIsWhitespace($index + 1) && $argIsColon($index + 2))
+            ) {
+                return $utilize->fullyQuantify($token[1]);
+            }
+
+            return $token[1];
+        }, $arg, array_keys($arg));
+
+        return 'new \\' . $parameter->getDefaultValue()::class . implode(' ', $flattenedTokens);
     }
 
     private function getInternalMockCallArgs(ReflectionMethod $method): string

@@ -111,4 +111,6 @@ class TestClass
     {
         die();
     }
+
+    public function testDefaultNewClassValue(UserService $userService = new UserService()): void {}
 }

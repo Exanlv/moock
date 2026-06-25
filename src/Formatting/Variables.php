@@ -6,7 +6,6 @@ namespace Exan\Moock\Formatting;
 
 use ReflectionClass;
 use ReflectionIntersectionType;
-use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionUnionType;
 

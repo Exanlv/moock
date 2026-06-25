@@ -17,5 +17,6 @@ return (new Config())
     ->setFinder(
         (new Finder())
             ->in(__DIR__)
+            ->notPath('tests/Components/WeirdFormattingDefaultArgs.php')
     )
 ;

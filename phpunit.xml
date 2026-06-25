@@ -7,7 +7,7 @@
   beStrictAboutOutputDuringTests="true"
   failOnRisky="true"
   failOnWarning="true"
-  stopOnError="true"
+  stopOnError="false"
   cacheDirectory=".phpunit.cache"
   requireCoverageMetadata="false"
   beStrictAboutCoverageMetadata="false"
