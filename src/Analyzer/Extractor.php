@@ -111,7 +111,7 @@ class Extractor
                 }
             }
 
-            if ($token === ':' || $token === '{') {
+            if ($token === '{') {
                 break;
             }
 

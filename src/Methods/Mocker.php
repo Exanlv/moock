@@ -168,17 +168,24 @@ class Mocker
         array_shift($arg); // (whitespace)
         array_shift($arg); // (classname)
 
-        $flattenedTokens = array_map(function (string|array $token) use ($utilize) {
+        $flattenedTokens = array_map(function (string|array $token, int $index) use ($utilize, $arg) {
             if (is_string($token)) {
                 return $token;
             }
 
-            if ($token[0] === T_STRING) {
+            $argIsColon = fn (int $i) => isset($arg[$i]) && $arg[$i] === ':';
+            $argIsWhitespace = fn (int $i) => isset($arg[$i]) && is_array($arg[$i]) && $arg[$i][0] === T_WHITESPACE;
+
+            if (
+                $token[0] === T_STRING
+                && !($argIsColon($index + 1))
+                && !($argIsWhitespace($index + 1) && $argIsColon($index + 2))
+             ) {
                 return $utilize->fullyQuantify($token[1]);
             }
 
             return $token[1];
-        }, $arg);
+        }, $arg, array_keys($arg));
 
         return 'new \\' . $parameter->getDefaultValue()::class . implode(' ', $flattenedTokens);
     }
