@@ -138,13 +138,16 @@ class Mocker
             fn (string|array $token) => !is_array($token) || !in_array($token[0], [T_COMMENT, T_DOC_COMMENT])
         );
 
-        $isWhitespace = fn (string|array $token) => is_array($token) && $token[0] === T_WHITESPACE;
+        $tokens = array_values($tokens);
 
+        $isWhitespace = fn (string|array $token) => is_array($token) && $token[0] === T_WHITESPACE;
         foreach ($tokens as $i => $token) {
             if ($isWhitespace($token) && isset($tokens[$i + 1]) && $isWhitespace($tokens[$i + 1])) {
                 unset($tokens[$i]);
             }
         }
+
+        $tokens = array_values($tokens);
 
         $uses = Extractor::uses($tokens);
         $namespace = Extractor::namespace($tokens);
@@ -171,8 +174,6 @@ class Mocker
             }
 
             if ($token[0] === T_STRING) {
-                dump($token, $utilize->fullyQuantify($token[1]));
-
                 return $utilize->fullyQuantify($token[1]);
             }
 
