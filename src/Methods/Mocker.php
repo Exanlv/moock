@@ -180,7 +180,7 @@ class Mocker
                 $token[0] === T_STRING
                 && !($argIsColon($index + 1))
                 && !($argIsWhitespace($index + 1) && $argIsColon($index + 2))
-             ) {
+            ) {
                 return $utilize->fullyQuantify($token[1]);
             }
 
