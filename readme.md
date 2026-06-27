@@ -20,7 +20,7 @@ Check out the docs [here!](./documentation.md)
 
 ### Sales pitch
 
-If you're looking into this library, there's a good chance you already know of some other mocking library.
+If you're looking into this library, there's a good chance you already know of some other mocking library. (If not, see the [new to mocking](./new-to-mocking.md) introduction)
 For Moock, the goal is to rely on PHP language tricks as much as possible for the syntax.
 
 Take for example the mocking of methods:
