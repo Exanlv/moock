@@ -93,7 +93,7 @@ class MockExpector
             );
 
 
-        MoockAssert::assert(false, true, sprintf($message));
+        MoockAssert::assert(false, true, $message);
     }
 
     private function getFunctionNameAt(int $i): string

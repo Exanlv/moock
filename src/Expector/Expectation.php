@@ -15,7 +15,7 @@ class Expectation
 {
     use FiltersMethodArgs;
 
-    public private(set) array $with;
+    public private(set) ?array $with = null;
 
     private MockedClassInterface $mock;
 
@@ -44,7 +44,7 @@ class Expectation
             return false;
         }
 
-        if (isset($this->with) && empty(
+        if ($this->with !== null && empty(
             $this->filterArgs([$call->call->args], $this->with)
         )) {
             return false;

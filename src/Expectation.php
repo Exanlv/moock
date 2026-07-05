@@ -75,6 +75,9 @@ class Expectation
             dd($data);
         }
 
+        /**
+         * @psalm-suppress ForbiddenCode
+         */
         var_dump($this->calls);
         die();
     }
