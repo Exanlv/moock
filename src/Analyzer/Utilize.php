@@ -54,6 +54,7 @@ class Utilize
     {
         array_shift($line); // use
         array_shift($line); // (whitespace)
+        array_pop($line); // ;
 
         return array_map(static::parseIndividualUse(...), static::individualUses($line));
     }

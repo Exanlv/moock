@@ -12,6 +12,8 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tests\Components\FqcnDefaultArgs;
 use Tests\Components\InstantiatedDefaultArgs;
+use Tests\Components\InstantiatedDefaultArgsAbstractClass;
+use Tests\Components\InstantiatedDefaultArgsExtension;
 use Tests\Components\InstantiatedDefaultArgsInterface;
 use Tests\Components\MixedConstructor;
 use Tests\Components\SameNamespaceDefaultArgs;
@@ -227,6 +229,28 @@ class MockerTest extends TestCase
     public function it_instantiates_objects_when_declared_on_interface(string $method, Closure $validator): void
     {
         $mock = Mock::interface(InstantiatedDefaultArgsInterface::class);
+
+        Mock::method($mock->{$method}(...))->replace($validator);
+
+        $this->assertTrue($mock->{$method}());
+    }
+
+    #[Test]
+    #[DataProvider('interfaceObjectInstantiationDataProvider')]
+    public function it_instantiates_objects_when_declared_on_abstract_class(string $method, Closure $validator): void
+    {
+        $mock = Mock::interface(InstantiatedDefaultArgsAbstractClass::class);
+
+        Mock::method($mock->{$method}(...))->replace($validator);
+
+        $this->assertTrue($mock->{$method}());
+    }
+
+    #[Test]
+    #[DataProvider('interfaceObjectInstantiationDataProvider')]
+    public function it_instantiates_objects_when_declared_on_parent_class(string $method, Closure $validator): void
+    {
+        $mock = Mock::interface(InstantiatedDefaultArgsExtension::class);
 
         Mock::method($mock->{$method}(...))->replace($validator);
 
