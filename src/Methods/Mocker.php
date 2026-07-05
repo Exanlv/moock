@@ -137,9 +137,11 @@ class Mocker
         $fileName = $class->getFileName();
 
         if (str_contains($fileName, 'eval()\'d code')) {
-            throw new RuntimeException(sprintf(
-                'Unable to retrieve class construction in default parameters from eval-based class `%s`',
-                $fileName)
+            throw new RuntimeException(
+                sprintf(
+                    'Unable to retrieve class construction in default parameters from eval-based class `%s`',
+                    $fileName
+                )
             );
         }
 

@@ -53,7 +53,7 @@ class MethodArgs
 
     private function targetAnonymousClasses(): void
     {
-        $this->tokenEmitter->onLineChange(function () {
+        $this->tokenEmitter->onLineChange(function (): void {
             $this->anonymousClassIndex = 0;
         });
 
@@ -86,7 +86,7 @@ class MethodArgs
         return false;
     }
 
-    private function handleClass(array $token)
+    private function handleClass(array $token): void
     {
         if (!$this->shouldCapture('class', $token[1])) {
             return;
@@ -106,12 +106,12 @@ class MethodArgs
 
         $this->tokenEmitter->once(function (string|array $token) use (&$blockLevel) {
             return $blockLevel === 0 && $token === '}';
-        }, function () use ($capture) {
+        }, function () use ($capture): void {
             $this->tokenEmitter->remove($capture);
         });
     }
 
-    public function handlePotentialAnonymousClass(string|array $token)
+    public function handlePotentialAnonymousClass(string|array $token): void
     {
         if (!is_array($token) || $token[0] !== T_CLASS) {
             return;
@@ -126,7 +126,7 @@ class MethodArgs
         $this->handleClass($fakeToken);
     }
 
-    public function handleMethod(array $token)
+    public function handleMethod(array $token): void
     {
         if (!$this->shouldCapture('method', $token[1])) {
             return;
@@ -143,7 +143,7 @@ class MethodArgs
         );
     }
 
-    public function handleArg(array $token)
+    public function handleArg(array $token): void
     {
         if (!$this->shouldCapture('arg', $token[1])) {
             return;
@@ -154,15 +154,15 @@ class MethodArgs
 
         $toCancel = [];
 
-        $toCancel[] = $this->tokenEmitter->on(TokenFilter::eq('('), function () use (&$parenthesisLevel) {
+        $toCancel[] = $this->tokenEmitter->on(TokenFilter::eq('('), function () use (&$parenthesisLevel): void {
             $parenthesisLevel++;
         });
 
-        $toCancel[] = $this->tokenEmitter->on(TokenFilter::eq(')'), function () use (&$parenthesisLevel) {
+        $toCancel[] = $this->tokenEmitter->on(TokenFilter::eq(')'), function () use (&$parenthesisLevel): void {
             $parenthesisLevel--;
         });
 
-        $toCancel[] = $this->tokenEmitter->all(function (array|string $token) use (&$arg) {
+        $toCancel[] = $this->tokenEmitter->all(function (array|string $token) use (&$arg): void {
             $arg[] = $token;
         });
 
@@ -171,7 +171,7 @@ class MethodArgs
             $methodEnding = $parenthesisLevel === -1 && $token === ')';
 
             return $nextArgStarting || $methodEnding;
-        }, function () use (&$arg, $toCancel) {
+        }, function () use (&$arg, $toCancel): void {
             $this->tokenEmitter->remove(...$toCancel);
 
             $this->captured = array_slice($arg, 3, -1);

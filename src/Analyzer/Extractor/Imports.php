@@ -18,14 +18,14 @@ class Imports
     ) {
         $tokenEmitter->on(
             TokenFilter::eq('{'),
-            function () use (&$blockLevel) {
+            function () use (&$blockLevel): void {
                 $this->blockLevel++;
             }
         );
 
         $tokenEmitter->on(
             TokenFilter::eq('}'),
-            function () use (&$blockLevel) {
+            function () use (&$blockLevel): void {
                 $this->blockLevel--;
             }
         );
@@ -36,7 +36,7 @@ class Imports
         );
     }
 
-    private function handleUse(array $token)
+    private function handleUse(array $token): void
     {
         if ($this->blockLevel > 0) {
             return;
@@ -44,13 +44,13 @@ class Imports
 
         $statement = [$token];
 
-        $capture = $this->tokenEmitter->all(function (string|array $token) use (&$statement) {
+        $capture = $this->tokenEmitter->all(function (string|array $token) use (&$statement): void {
             $statement[] = $token;
         });
 
         $end = $this->tokenEmitter->on(
             TokenFilter::eq(';'),
-            function () use (&$end, $capture, &$statement) {
+            function () use (&$end, $capture, &$statement): void {
                 /** @var int $end */
 
                 $this->imports[] = $statement;

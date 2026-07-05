@@ -26,7 +26,7 @@ class TokenEmitter
     {
         $line = 0;
 
-        return $this->all(function (string|array $token) use (&$line, $handler) {
+        return $this->all(function (string|array $token) use (&$line, $handler): void {
             if (is_string($token)) {
                 return;
             }
@@ -55,12 +55,12 @@ class TokenEmitter
     public function counter(Closure $up, Closure $down, int &$value): array
     {
         return [
-            $this->on($up, function () use (&$value) {
+            $this->on($up, function () use (&$value): void {
                 $value++;
             }),
-            $this->on($down, function () use (&$value) {
+            $this->on($down, function () use (&$value): void {
                 $value--;
-            })
+            }),
         ];
     }
 
@@ -74,7 +74,7 @@ class TokenEmitter
     private function getId(): int
     {
         do {
-            $id = rand(100_000, 999_999);
+            $id = random_int(100_000, 999_999);
         } while (isset($this->handlers[$id]));
 
         return $id;

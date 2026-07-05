@@ -10,6 +10,5 @@ readonly class Yanked
         public ?array $namespace,
         public array $uses,
         public ?array $args,
-    ) {
-    }
+    ) {}
 }

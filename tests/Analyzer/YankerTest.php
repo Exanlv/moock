@@ -10,29 +10,29 @@ use PHPUnit\Framework\Attributes\Test;
 class YankerTest extends AnalyzerTestCase
 {
     #[Test]
-    public function it_captures_namespace_and_imports()
+    public function it_captures_namespace_and_imports(): void
     {
         $yanked = Yanker::fetch(<<<PHP
-            <?php
+                <?php
 
-            declare(strict_types=1);
+                declare(strict_types=1);
 
-            namespace Some\Cool\Namespace;
+                namespace Some\Cool\Namespace;
 
-            use Some\Namespaced\Class;
-            use Some\OtherClass\Too as /* Why would you put a comment here? */ SomeAlias;
-            use A\Third\Class\{
-                // There's even a comment here
-                With\Funky\Syntax as WayToMakeYouCry,
-                AndMore,
-            };
+                use Some\Namespaced\Class;
+                use Some\OtherClass\Too as /* Why would you put a comment here? */ SomeAlias;
+                use A\Third\Class\{
+                    // There's even a comment here
+                    With\Funky\Syntax as WayToMakeYouCry,
+                    AndMore,
+                };
 
-            class SomeClass {
-                use ShouldntBeCaptured;
-            }
+                class SomeClass {
+                    use ShouldntBeCaptured;
+                }
 
-            use Some\Import\In\Wrong\But\Valid\Place;
-        PHP, ['SomeClass', 'someMethod', '$arg']);
+                use Some\Import\In\Wrong\But\Valid\Place;
+            PHP, ['SomeClass', 'someMethod', '$arg']);
 
         $this->assertContainsTokenAnywhere('Some\Cool\Namespace', $yanked->namespace);
 
@@ -60,100 +60,100 @@ class YankerTest extends AnalyzerTestCase
     }
 
     #[Test]
-    public function it_extracts_method_args_from_classes()
+    public function it_extracts_method_args_from_classes(): void
     {
         $yanked = Yanker::fetch(<<<PHP
-            <?php
+                <?php
 
-            class MyClass
-            {
-                public function myMethod(string \$arg /* Some comment */ = /* More comment */ 'test'): void
+                class MyClass
                 {
-                    if (true) {
-                        return;
+                    public function myMethod(string \$arg /* Some comment */ = /* More comment */ 'test'): void
+                    {
+                        if (true) {
+                            return;
+                        }
                     }
                 }
-            }
 
-            class OtherClass
-            {
-                public function myMethod(string \$arg = 'not-test'): void
+                class OtherClass
                 {
-                    if (true) {
-                        return;
+                    public function myMethod(string \$arg = 'not-test'): void
+                    {
+                        if (true) {
+                            return;
+                        }
                     }
                 }
-            }
-        PHP, ['MyClass', 'myMethod', '$arg']);
+            PHP, ['MyClass', 'myMethod', '$arg']);
 
         $this->assertEquals([[
             T_CONSTANT_ENCAPSED_STRING,
             "'test'",
-            5
+            5,
         ]], $yanked->args);
     }
 
     #[Test]
-    public function it_extracts_args_not_at_the_start_of_method()
+    public function it_extracts_args_not_at_the_start_of_method(): void
     {
         $yanked = Yanker::fetch(<<<PHP
-            <?php
+                <?php
 
-            class MyClass
-            {
-                public function myMethod(string \$other = 'something', string \$arg = new Something(new OtherThing())): void
+                class MyClass
                 {
-                    if (true) {
-                        return;
+                    public function myMethod(string \$other = 'something', string \$arg = new Something(new OtherThing())): void
+                    {
+                        if (true) {
+                            return;
+                        }
                     }
                 }
-            }
-        PHP, ['MyClass', 'myMethod', '$arg']);
+            PHP, ['MyClass', 'myMethod', '$arg']);
 
         $this->assertEquals('new Something(new OtherThing())', $this->implode($yanked->args));
     }
 
     #[Test]
-    public function it_extracts_args_not_at_the_start_or_end()
+    public function it_extracts_args_not_at_the_start_or_end(): void
     {
         $yanked = Yanker::fetch(<<<PHP
-            <?php
+                <?php
 
-            class MyClass
-            {
-                public function myMethod(string \$other = 'something', string \$arg = new Something('class MyClass'), string \$somethingElse = 'dummy'): void
+                class MyClass
                 {
-                    if (true) {
-                        return;
+                    public function myMethod(string \$other = 'something', string \$arg = new Something('class MyClass'), string \$somethingElse = 'dummy'): void
+                    {
+                        if (true) {
+                            return;
+                        }
                     }
                 }
-            }
-        PHP, ['MyClass', 'myMethod', '$arg']);
+            PHP, ['MyClass', 'myMethod', '$arg']);
 
         $this->assertEquals('new Something(\'class MyClass\')', $this->implode($yanked->args));
     }
 
     #[Test]
-    public function it_extracts_args_from_anonymous_classes()
+    public function it_extracts_args_from_anonymous_classes(): void
     {
         $yanked = Yanker::fetch(<<<PHP
-            <?php
+                <?php
 
-            \$instance = new class () {
-                public function myMethod(string \$other = 'something', string \$arg = new Something('class MyClass'), string \$somethingElse = 'dummy'): void
-                {
-                    if (true) {
-                        return;
+                \$instance = new class () {
+                    public function myMethod(string \$other = 'something', string \$arg = new Something('class MyClass'), string \$somethingElse = 'dummy'): void
+                    {
+                        if (true) {
+                            return;
+                        }
                     }
-                }
-            };
-        PHP, ['3$0', 'myMethod', '$arg']);
+                };
+            PHP, ['3$0', 'myMethod', '$arg']);
 
         $this->assertEquals('new Something(\'class MyClass\')', $this->implode($yanked->args));
     }
 
     #[Test]
-    public function it_extracts_args_from_the_correct_anonymous_class_on_single_line()
+    public function it_extracts_args_from_the_correct_anonymous_class_on_single_line(): void
     {
         $code = '<?php '
             . '$instance = new class () {'
@@ -172,39 +172,39 @@ class YankerTest extends AnalyzerTestCase
         $this->assertEquals([[
             T_CONSTANT_ENCAPSED_STRING,
             '"expected"',
-            1
+            1,
         ]], $yanked->args);
     }
 
     #[Test]
-    public function it_extracts_args_from_the_correct_anonymous_class_on_separated_lines()
+    public function it_extracts_args_from_the_correct_anonymous_class_on_separated_lines(): void
     {
         $yanked = Yanker::fetch(<<<PHP
-            <?php
+                <?php
 
-            \$instance = new class () {
-                public function myMethod(string \$arg = 'something'): void
-                {
-                    if (true) {
-                        return;
+                \$instance = new class () {
+                    public function myMethod(string \$arg = 'something'): void
+                    {
+                        if (true) {
+                            return;
+                        }
                     }
-                }
-            };
+                };
 
-            \$other = new class () {
-                public function myMethod(string \$arg = 'expected'): void
-                {
-                    if (true) {
-                        return;
+                \$other = new class () {
+                    public function myMethod(string \$arg = 'expected'): void
+                    {
+                        if (true) {
+                            return;
+                        }
                     }
-                }
-            };
-        PHP, ['12$0', 'myMethod', '$arg']);
+                };
+            PHP, ['12$0', 'myMethod', '$arg']);
 
         $this->assertEquals([[
             T_CONSTANT_ENCAPSED_STRING,
             "'expected'",
-            13
+            13,
         ]], $yanked->args);
     }
 }
