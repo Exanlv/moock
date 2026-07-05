@@ -33,7 +33,7 @@ jobs:
         run: php docs/generators/docs.php > docs/documentation.md
 
       - name: Generate arg validation documentation
-        run: php docs/generators/docs.php > docs/arg-validation.md
+        run: php docs/generators/arg-validation.php > docs/arg-validation.md
 
       - name: Commit and push if changed
         run: |
