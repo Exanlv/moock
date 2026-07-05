@@ -16,19 +16,7 @@ class Imports
         public readonly TokenEmitter $tokenEmitter,
         public array &$imports,
     ) {
-        $tokenEmitter->on(
-            TokenFilter::eq('{'),
-            function () use (&$blockLevel): void {
-                $this->blockLevel++;
-            }
-        );
-
-        $tokenEmitter->on(
-            TokenFilter::eq('}'),
-            function () use (&$blockLevel): void {
-                $this->blockLevel--;
-            }
-        );
+        $tokenEmitter->counter(TokenFilter::eq('{'), TokenFilter::eq('}'), $this->blockLevel);
 
         $tokenEmitter->on(
             TokenFilter::ofType(T_USE),
@@ -48,14 +36,11 @@ class Imports
             $statement[] = $token;
         });
 
-        $end = $this->tokenEmitter->on(
+        $this->tokenEmitter->once(
             TokenFilter::eq(';'),
-            function () use (&$end, $capture, &$statement): void {
-                /** @var int $end */
-
+            function () use ($capture, &$statement): void {
                 $this->imports[] = $statement;
 
-                $this->tokenEmitter->remove($end);
                 $this->tokenEmitter->remove($capture);
             }
         );

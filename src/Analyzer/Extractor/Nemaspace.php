@@ -25,15 +25,7 @@ class Nemaspace
                 $this->namespace[] = $token;
             });
 
-            $end = $this->tokenEmitter->on(
-                TokenFilter::eq(';'),
-                function () use (&$end, $capture): void {
-                    /** @var int $end */
-
-                    $this->tokenEmitter->remove($end);
-                    $this->tokenEmitter->remove($capture);
-                }
-            );
+            $this->tokenEmitter->once(TokenFilter::eq(';'), fn () => $this->tokenEmitter->remove($capture));
         });
     }
 }
