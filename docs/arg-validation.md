@@ -412,6 +412,8 @@ $this->expectException(RuntimeException::class);
 $this->mock->userExists('third@domain.com');
 ```
 
+To see the available validation helpers, head on over to the [argument validators](./arg-validation.md) documentation.
+
 ---
 
 ## Default return values
