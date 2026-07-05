@@ -284,38 +284,6 @@ Mock::method($this->mock->userExists(...))
     ->called();
 ```
 
-`DateTimeInterface` must be before given time
-```php
-use Exan\Moock\Args\Date;
-use DateTime;
-
-Mock::method($this->mock->getUsersCreatedBefore(...))
-    ->returns([]);
-
-$this->mock->getUsersCreatedBefore(new DateTime('2024-12-31'));
-
-Mock::method($this->mock->getUsersCreatedBefore(...))
-    ->assert()
-    ->with(Date::before(new DateTime('2025-01-01 12:00:00')))
-    ->called();
-```
-
-`DateTimeInterface` must be after given time
-```php
-use Exan\Moock\Args\Date;
-use DateTime;
-
-Mock::method($this->mock->getUsersCreatedBefore(...))
-    ->returns([]);
-
-$this->mock->getUsersCreatedBefore(new DateTime('2025-01-02'));
-
-Mock::method($this->mock->getUsersCreatedBefore(...))
-    ->assert()
-    ->with(Date::after(new DateTime('2025-01-01 12:00:00')))
-    ->called();
-```
-
 `int|float` must be less than given number
 ```php
 use Exan\Moock\Args\Number;
@@ -346,51 +314,7 @@ Mock::method($this->mock->getUsersByAge(...))
     ->called();
 ```
 
-`int|float` must be within range
-```php
-use Exan\Moock\Args\Number;
-
-Mock::method($this->mock->getUsersByAge(...))
-    ->returns([]);
-
-$this->mock->getUsersByAge(15);
-
-Mock::method($this->mock->getUsersByAge(...))
-    ->assert()
-    ->with(Number::range(10, 20))
-    ->called();
-```
-
-`array` must have given number of items
-```php
-use Exan\Moock\Args\Arr;
-
-$this->mock->deleteUsersByEmail(['a','b','c']);
-
-Mock::method($this->mock->deleteUsersByEmail(...))
-    ->assert()
-    ->with(Arr::count(3))
-    ->called();
-```
-
-`array` must be a partial match
-```php
-use Exan\Moock\Args\Arr;
-
-$this->mock->deleteUsersByEmail([
-    'some-email@example.com',
-    'ignore-this@mail.com',
-    'another@example.com',
-]);
-
-Mock::method($this->mock->deleteUsersByEmail(...))
-    ->assert()
-    ->with(Arr::partial([
-        0 => 'some-email@example.com',
-        2 => fn ($email) => str_ends_with($email, '@example.com'),
-    ]))
-    ->called();
-```
+To see more of these helpers, head on over to the [argument validators](./arg-validation.md) documentation.
 
 ---
 

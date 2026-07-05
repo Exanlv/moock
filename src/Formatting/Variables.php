@@ -44,7 +44,7 @@ trait Variables
             : (string) $value;
     }
 
-    private function getTypeSignature(ReflectionType|null $type, ?ReflectionClass $declaringClass = null): string
+    private function getTypeSignature(?ReflectionType $type, ?ReflectionClass $declaringClass = null): string
     {
         if ($type === null) {
             return '';

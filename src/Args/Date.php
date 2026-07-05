@@ -20,8 +20,48 @@ class Date
     /**
      * @psalm-return Closure(DateTimeInterface):bool
      */
-    public static function after(DateTimeInterface $beforeDate): Closure
+    public static function after(DateTimeInterface $afterDate): Closure
     {
-        return fn (DateTimeInterface $date): bool => $date > $beforeDate;
+        return fn (DateTimeInterface $date): bool => $date > $afterDate;
+    }
+
+    /**
+     * @psalm-return Closure(DateTimeInterface):bool
+     */
+    public static function between(DateTimeInterface $start, DateTimeInterface $end): Closure
+    {
+        return fn (DateTimeInterface $date): bool => $date >= $start && $date <= $end;
+    }
+
+    /**
+     * @psalm-return Closure(DateTimeInterface):bool
+     */
+    public static function equal(DateTimeInterface $target): Closure
+    {
+        return fn (DateTimeInterface $date): bool => $date == $target;
+    }
+
+    /**
+     * @psalm-return Closure(DateTimeInterface):bool
+     */
+    public static function sameDay(DateTimeInterface $target): Closure
+    {
+        return fn (DateTimeInterface $date): bool => $date->format('Y-m-d') === $target->format('Y-m-d');
+    }
+
+    /**
+     * @psalm-return Closure(DateTimeInterface):bool
+     */
+    public static function inPast(): Closure
+    {
+        return fn (DateTimeInterface $date): bool => $date < new \DateTimeImmutable('now');
+    }
+
+    /**
+     * @psalm-return Closure(DateTimeInterface):bool
+     */
+    public static function inFuture(): Closure
+    {
+        return fn (DateTimeInterface $date): bool => $date > new \DateTimeImmutable('now');
     }
 }
