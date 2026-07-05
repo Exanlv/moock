@@ -50,9 +50,9 @@ class Utilize
     /**
      * @param array<int, string|array{0:int, 1:string, 2:int}> $line
      *
-     * @return array[]
+     * @return (mixed|string)[][]
      *
-     * @psalm-return array<int<0, max>, array>
+     * @psalm-return array<int<0, max>, array<string, mixed|string>>
      */
     private static function parseLine($line): array
     {
@@ -97,6 +97,11 @@ class Utilize
         return $individual;
     }
 
+    /**
+     * @return (mixed|string)[]
+     *
+     * @psalm-return array<string, mixed|string>
+     */
     private static function parseIndividualUse(array $use): array
     {
         while (is_array($use[0]) && $use[0][0] === T_WHITESPACE) {

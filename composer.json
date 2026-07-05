@@ -29,7 +29,7 @@
     "scripts": {
         "test": "phpunit tests",
 
-        "psalm": "psalm --no-cache",
+        "psalm": "psalm --no-cache --show-info",
 
         "psalm-fix": "psalm --no-cache --alter --issues=MissingReturnType,MissingClosureReturnType,InvalidReturnType,InvalidNullableReturnType,InvalidFalsableReturnType,MissingParamType,MissingPropertyType,MismatchingDocblockParamType,MismatchingDocblockReturnType,LessSpecificReturnType,PossiblyUndefinedVariable,PossiblyUndefinedGlobalVariable,UnusedMethod,PossiblyUnusedMethod,UnusedProperty,PossiblyUnusedProperty,UnusedVariable,UnnecessaryVarAnnotation,ParamNameMismatch",
 
