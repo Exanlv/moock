@@ -26,21 +26,20 @@ class Mocker
     public function __construct(
         public readonly array $interfaces,
     ) {
-        /** @var ReflectionMethod[] */
-        $allMethods = array_merge(
-            ...array_map(/**
-             * @return \ReflectionMethod[]
-             *
-             * @psalm-return list<ReflectionMethod>
+        /** @var list<list<ReflectionMethod>> */
+        $allMethodsPerInterface = array_map(
+            /**
+             * @return list<ReflectionMethod>
              */
-                function (string $interface): array {
-                    $ref = new ReflectionClass($interface);
+            function (string $interface): array {
+                $ref = new ReflectionClass($interface);
 
-                    return $ref->getMethods(ReflectionMethod::IS_PUBLIC);
-                },
-                $this->interfaces
-            ),
+                return $ref->getMethods(ReflectionMethod::IS_PUBLIC);
+            },
+            $this->interfaces
         );
+
+        $allMethods = array_merge(...$allMethodsPerInterface);
 
         $methodNames = [];
         $methodsToMock = [];

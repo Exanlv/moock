@@ -110,11 +110,16 @@ class Utilize
         }
 
         if (count($use) === 5 && is_array($use[2]) && $use[2][1] === 'as') {
-            // use Some\Potentially\Namespaced\Class as Alias
+            // use Some\Class as Alias
+
+            /** @var array{0: int, 1: string, 2: int} */
             $trueImport = array_shift($use);
+            /** @var array{0: int, 1: string, 2: int} */
             $alias = array_pop($use);
 
-            return [$alias[1] => $trueImport[1]];
+            return [
+                $alias[1] => $trueImport[1],
+            ];
         }
 
         // use Some\Potentially\Namespaced\{Class, Or\Other\Class}
