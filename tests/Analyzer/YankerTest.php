@@ -90,7 +90,7 @@ class YankerTest extends AnalyzerTestCase
             T_CONSTANT_ENCAPSED_STRING,
             "'test'",
             5,
-        ]], $yanked->args);
+        ]], $yanked->arg);
     }
 
     #[Test]
@@ -110,7 +110,7 @@ class YankerTest extends AnalyzerTestCase
                 }
             PHP, ['MyClass', 'myMethod', '$arg']);
 
-        $this->assertEquals('new Something(new OtherThing())', $this->implode($yanked->args));
+        $this->assertEquals('new Something(new OtherThing())', $this->implode($yanked->arg));
     }
 
     #[Test]
@@ -130,7 +130,7 @@ class YankerTest extends AnalyzerTestCase
                 }
             PHP, ['MyClass', 'myMethod', '$arg']);
 
-        $this->assertEquals('new Something(\'class MyClass\')', $this->implode($yanked->args));
+        $this->assertEquals('new Something(\'class MyClass\')', $this->implode($yanked->arg));
     }
 
     #[Test]
@@ -149,7 +149,7 @@ class YankerTest extends AnalyzerTestCase
                 };
             PHP, ['3$0', 'myMethod', '$arg']);
 
-        $this->assertEquals('new Something(\'class MyClass\')', $this->implode($yanked->args));
+        $this->assertEquals('new Something(\'class MyClass\')', $this->implode($yanked->arg));
     }
 
     #[Test]
@@ -173,7 +173,7 @@ class YankerTest extends AnalyzerTestCase
             T_CONSTANT_ENCAPSED_STRING,
             '"expected"',
             1,
-        ]], $yanked->args);
+        ]], $yanked->arg);
     }
 
     #[Test]
@@ -205,6 +205,6 @@ class YankerTest extends AnalyzerTestCase
             T_CONSTANT_ENCAPSED_STRING,
             "'expected'",
             13,
-        ]], $yanked->args);
+        ]], $yanked->arg);
     }
 }

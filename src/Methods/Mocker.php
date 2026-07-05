@@ -173,7 +173,7 @@ class Mocker
             $yanked->uses
         );
 
-        $arg = $yanked->args;
+        $arg = $yanked->arg;
         if ($arg === null) {
             throw new RuntimeException(
                 sprintf('Unable to retrieve constructor args for %s::%s()', $class->getName(), $method->getName())

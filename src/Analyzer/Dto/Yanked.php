@@ -9,6 +9,6 @@ readonly class Yanked
     public function __construct(
         public ?array $namespace,
         public array $uses,
-        public ?array $args,
+        public ?array $arg,
     ) {}
 }
