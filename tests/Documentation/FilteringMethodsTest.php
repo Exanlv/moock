@@ -77,4 +77,7 @@ class FilteringMethodsTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->mock->userExists('third@domain.com');
     }
+
+    #[Example(null, 'To see the available validation helpers, head on over to the [argument validators](./arg-validation.md) documentation.')]
+    public function redirect_to_arg_validator_doc(): void {}
 }
