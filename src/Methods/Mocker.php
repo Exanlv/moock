@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Exan\Moock\Methods;
 
-use Exan\Moock\Analyzer\Extractor;
 use Exan\Moock\Analyzer\Utilize;
+use Exan\Moock\Analyzer\Yanker;
 use Exan\Moock\Formatting\Variables as FormatsVariables;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
+use RuntimeException;
 
 /**
  * @internal
@@ -21,7 +22,7 @@ class Mocker
 
     public readonly array $methods;
 
-    /** @param string[] */
+    /** @param string[] $interfaces */
     public function __construct(
         public readonly array $interfaces,
     ) {
@@ -118,51 +119,48 @@ class Mocker
             $defaultValue = $parameter->getDefaultValue();
 
             $signature .= ' = ' . (is_object($defaultValue)
-                ? $this->extractDefaultParamSignature($parameter, $declaringMethod, $declaringClass)
+                ? $this->extractDefaultParamSignature($parameter, $declaringMethod)
                 : $this->formatValue($defaultValue));
         }
 
         return $signature;
     }
 
-    private function extractDefaultParamSignature(ReflectionParameter $parameter, ReflectionMethod $method, ReflectionClass $class): string
+    private function extractDefaultParamSignature(ReflectionParameter $parameter, ReflectionMethod $method): string
     {
         // public function myMethod(MyClass $myArg = new MyClass())
         // Unfortunately, reflection only gives the exact instance of the default value. It is therefore impossible to recreate the
         // code used to instantiate an object based on reflection. It needs to be extracted from the original file instead.
 
+        $class = $method->getDeclaringClass();
+
+        $fileName = $class->getFileName();
+
+        if (str_contains($fileName, 'eval()\'d code')) {
+            throw new RuntimeException(sprintf(
+                'Unable to retrieve class construction in default parameters from eval-based class `%s`',
+                $fileName)
+            );
+        }
+
         $fileContents = file_get_contents($class->getFileName());
 
-        $tokens = array_filter(
-            token_get_all($fileContents),
-            fn (string|array $token) => !is_array($token) || !in_array($token[0], [T_COMMENT, T_DOC_COMMENT])
+        if ($class->isAnonymous()) {
+            $fullName = explode(':', $class->getName());
+            $className = array_pop($fullName);
+        } else {
+            $fullName = explode('\\', $class->getName());
+            $className = array_pop($fullName);
+        }
+
+        $yanked = Yanker::fetch($fileContents, [$className, $method->getName(), '$' . $parameter->getName()]);
+
+        $utilize = Utilize::fromTokens(
+            $yanked->namespace === null ? null : $yanked->namespace[2][1],
+            $yanked->uses
         );
 
-        $tokens = array_values($tokens);
-
-        $isWhitespace = fn (string|array $token) => is_array($token) && $token[0] === T_WHITESPACE;
-        foreach ($tokens as $i => $token) {
-            if ($isWhitespace($token) && isset($tokens[$i + 1]) && $isWhitespace($tokens[$i + 1])) {
-                unset($tokens[$i]);
-            }
-        }
-
-        $tokens = array_values($tokens);
-
-        $uses = Extractor::uses($tokens);
-        $namespace = Extractor::namespace($tokens);
-        $utilize = Utilize::fromTokens(count($namespace) > 0 ? $namespace[2][1] : null, $uses);
-
-        $class = Extractor::lines($tokens, $method->getStartLine(), $method->getEndLine());
-        $method = Extractor::function($class, $method->getName());
-        $arg = Extractor::arg($method, $parameter->getName());
-
-        while (
-            count($arg)
-            && (!is_array($arg) || $arg[0][0] !== T_NEW)
-        ) {
-            array_shift($arg);
-        }
+        $arg = $yanked->args;
 
         array_shift($arg); // new
         array_shift($arg); // (whitespace)

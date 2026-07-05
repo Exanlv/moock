@@ -7,6 +7,7 @@ namespace Exan\Moock\Analyzer\Extractor;
 use Exan\Moock\Analyzer\TokenEmitter;
 use Exan\Moock\Analyzer\TokenFilter;
 
+/** @internal */
 class Imports
 {
     private int $blockLevel = 0;

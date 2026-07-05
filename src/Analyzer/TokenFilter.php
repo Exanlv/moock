@@ -4,6 +4,7 @@ namespace Exan\Moock\Analyzer;
 
 use Closure;
 
+/** @internal */
 class TokenFilter
 {
     public static function eq(mixed $value): Closure

@@ -7,6 +7,7 @@ namespace Exan\Moock\Analyzer\Extractor;
 use Exan\Moock\Analyzer\TokenEmitter;
 use Exan\Moock\Analyzer\TokenFilter;
 
+/** @internal */
 class MethodArgs
 {
     private static function anonymousClassInternalName(int $line, int $i): string
@@ -39,7 +40,10 @@ class MethodArgs
     private function targetRealClasses(): void
     {
         $this->tokenEmitter->on(
-            TokenFilter::ofType(T_CLASS),
+            TokenFilter::any(
+                TokenFilter::ofType(T_CLASS),
+                TokenFilter::ofType(T_INTERFACE),
+            ),
             fn () => $this->tokenEmitter->once(
                 TokenFilter::ofType(T_STRING),
                 $this->handleClass(...)

@@ -6,6 +6,7 @@ namespace Exan\Moock\Analyzer;
 
 use Closure;
 
+/** @internal */
 class TokenEmitter
 {
     /**
@@ -113,7 +114,6 @@ class TokenEmitter
                 }
             }
         }
-
     }
 
     private static function isType(string|array $token, int $type): bool

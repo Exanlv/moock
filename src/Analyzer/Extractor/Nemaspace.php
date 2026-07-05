@@ -9,6 +9,8 @@ use Exan\Moock\Analyzer\TokenFilter;
 
 /**
  * Deliberate typo. Namespace is reserved
+ *
+ * @internal
  */
 class Nemaspace
 {
