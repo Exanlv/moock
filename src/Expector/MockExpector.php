@@ -93,7 +93,7 @@ class MockExpector
             );
 
 
-        MoockAssert::assert(false, true, sprintf($message));
+        MoockAssert::assert(false, true, $message);
     }
 
     private function getFunctionNameAt(int $i): string
@@ -104,6 +104,8 @@ class MockExpector
 
     /**
      * @return DetailedMethodCall[]
+     *
+     * @psalm-return list<DetailedMethodCall>
      */
     private function getActualCalls(): array
     {

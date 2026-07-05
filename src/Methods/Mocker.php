@@ -22,18 +22,24 @@ class Mocker
 
     public readonly array $methods;
 
-    /** @param string[] $interfaces */
+    /** @param class-string[] $interfaces */
     public function __construct(
         public readonly array $interfaces,
     ) {
-        /** @var ReflectionMethod[] */
-        $allMethods = array_merge(
-            ...array_map(function (string $interface): array {
+        /** @var list<list<ReflectionMethod>> */
+        $allMethodsPerInterface = array_map(
+            /**
+             * @return list<ReflectionMethod>
+             */
+            function (string $interface): array {
                 $ref = new ReflectionClass($interface);
 
                 return $ref->getMethods(ReflectionMethod::IS_PUBLIC);
-            }, $this->interfaces),
+            },
+            $this->interfaces
         );
+
+        $allMethods = array_merge(...$allMethodsPerInterface);
 
         $methodNames = [];
         $methodsToMock = [];
@@ -146,6 +152,11 @@ class Mocker
         }
 
         $fileContents = file_get_contents($class->getFileName());
+        if ($fileContents === false) {
+            throw new RuntimeException(
+                sprintf('Unable to load source file for class %s', $class->getFileName())
+            );
+        }
 
         if ($class->isAnonymous()) {
             $fullName = explode(':', $class->getName());
@@ -162,7 +173,12 @@ class Mocker
             $yanked->uses
         );
 
-        $arg = $yanked->args;
+        $arg = $yanked->arg;
+        if ($arg === null) {
+            throw new RuntimeException(
+                sprintf('Unable to retrieve constructor args for %s::%s()', $class->getName(), $method->getName())
+            );
+        }
 
         array_shift($arg); // new
         array_shift($arg); // (whitespace)
@@ -173,8 +189,8 @@ class Mocker
                 return $token;
             }
 
-            $argIsColon = fn (int $i) => isset($arg[$i]) && $arg[$i] === ':';
-            $argIsWhitespace = fn (int $i) => isset($arg[$i]) && is_array($arg[$i]) && $arg[$i][0] === T_WHITESPACE;
+            $argIsColon = fn (int $i): bool => isset($arg[$i]) && $arg[$i] === ':';
+            $argIsWhitespace = fn (int $i): bool => isset($arg[$i]) && is_array($arg[$i]) && $arg[$i][0] === T_WHITESPACE;
 
             if (
                 $token[0] === T_STRING

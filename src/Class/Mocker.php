@@ -16,7 +16,8 @@ use RuntimeException;
 class Mocker
 {
     public private(set) array $interfaces = [];
-    public private(set) string $extends;
+    /** @var null|class-string */
+    public private(set) ?string $extends = null;
 
     public function getCode(): string
     {
@@ -37,7 +38,7 @@ class Mocker
 
         $creator = 'return new class ';
 
-        if (isset($this->extends)) {
+        if ($this->extends !== null) {
             $parent = str_contains($this->extends, '@anonymous')
                 ? get_parent_class($this->extends)
                 : $this->extends;

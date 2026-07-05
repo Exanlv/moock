@@ -15,7 +15,7 @@ use Exan\Moock\Analyzer\TokenFilter;
 class Nemaspace
 {
     public function __construct(
-        private readonly TokenEmitter $tokenEmitter,
+        public readonly TokenEmitter $tokenEmitter,
         private ?array &$namespace,
     ) {
         $this->tokenEmitter->on(TokenFilter::ofType(T_NAMESPACE), function (array $token): void {

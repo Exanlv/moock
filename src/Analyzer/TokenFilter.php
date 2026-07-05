@@ -9,16 +9,25 @@ use Closure;
 /** @internal */
 class TokenFilter
 {
-    public static function eq(mixed $value): Closure
+    /**
+     * @psalm-return Closure(array|string):bool
+     */
+    public static function eq(string $value): Closure
     {
         return fn (array|string $token) => $token === $value;
     }
 
+    /**
+     * @psalm-return Closure(array|string):bool
+     */
     public static function ofType(int $type): Closure
     {
         return fn (array|string $token) => is_array($token) && $token[0] === $type;
     }
 
+    /**
+     * @psalm-return Closure(array|string):bool
+     */
     public static function any(Closure ...$closures): Closure
     {
         return function (array|string $token) use ($closures) {

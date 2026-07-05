@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Exan\Moock;
 
 use Closure;
+use Exan\Moock\Dto\MethodCall;
 use RuntimeException;
 
 trait FiltersMethodArgs
 {
+    /**
+     * @psalm-return array<int<0, max>, mixed>
+     */
     private function filterArgs(array $inputs, array $filters): array
     {
         if (empty($inputs)) {
@@ -28,8 +32,8 @@ trait FiltersMethodArgs
             }
 
             $validator = $valueOrValidator instanceof Closure
-                ? fn ($call): bool => $valueOrValidator($call[$name])
-                : fn ($call): bool => $call[$name] === $valueOrValidator;
+                ? fn (array $call): bool => $valueOrValidator($call[$name])
+                : fn (array $call): bool => $call[$name] === $valueOrValidator;
 
             $inputs = array_filter($inputs, $validator);
         }
@@ -37,7 +41,15 @@ trait FiltersMethodArgs
         return $inputs;
     }
 
-    private function convertArgsToDictionary(array $inputs, array $filters)
+    /**
+     * @template TArray of array<array-key, mixed>
+     *
+     * @param non-empty-list<TArray> $inputs
+     * @param list<mixed> $filters
+     *
+     * @return array<key-of<TArray>, mixed>
+     */
+    private function convertArgsToDictionary(array $inputs, array $filters): array
     {
         $argKeys = array_keys($inputs[0]);
 

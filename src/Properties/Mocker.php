@@ -16,8 +16,12 @@ class Mocker
 {
     use FormatsVariables;
 
+    /** @var null|class-string */
     public readonly ?string $parent;
 
+    /**
+     * @param class-string $toMock
+     */
     public function __construct(
         public readonly string $toMock,
     ) {
@@ -94,6 +98,8 @@ class Mocker
 
     /**
      * @return ReflectionProperty[]
+     *
+     * @psalm-return array<int<0, max>, ReflectionProperty>
      */
     private function getPropertiesToMock(): array
     {

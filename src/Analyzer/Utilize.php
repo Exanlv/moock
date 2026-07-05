@@ -40,15 +40,19 @@ class Utilize
      * @param string $declaringNamespace
      * @param array<int, array<int, string|array{0:int, 1:string, 2:int}>> $uses
      */
-    public static function fromTokens(?string $declaringNamespace, array $uses): static
+    public static function fromTokens(?string $declaringNamespace, array $uses): self
     {
         $convertedUses = array_merge(...array_map(static::parseLine(...), $uses));
 
-        return new static($declaringNamespace, array_merge(...$convertedUses));
+        return new self($declaringNamespace, array_merge(...$convertedUses));
     }
 
     /**
      * @param array<int, string|array{0:int, 1:string, 2:int}> $line
+     *
+     * @return array[]
+     *
+     * @psalm-return array<int<0, max>, array>
      */
     private static function parseLine($line): array
     {
@@ -61,7 +65,10 @@ class Utilize
 
     /**
      * @param array<int, string|array{0:int, 1:string, 2:int}> $tokens
-     * @return array<int, array<int, string|array{0:int, 1:string, 2:int}>>
+     *
+     * @return ((int|string)[]|string)[][]
+     *
+     * @psalm-return array<int<0, max>, list<array{0: int, 1: string, 2: int}|string>>
      */
     private static function individualUses($tokens): array
     {
@@ -103,11 +110,16 @@ class Utilize
         }
 
         if (count($use) === 5 && is_array($use[2]) && $use[2][1] === 'as') {
-            // use Some\Potentially\Namespaced\Class as Alias
+            // use Some\Class as Alias
+
+            /** @var array{0: int, 1: string, 2: int} */
             $trueImport = array_shift($use);
+            /** @var array{0: int, 1: string, 2: int} */
             $alias = array_pop($use);
 
-            return [$alias[1] => $trueImport[1]];
+            return [
+                $alias[1] => $trueImport[1],
+            ];
         }
 
         // use Some\Potentially\Namespaced\{Class, Or\Other\Class}
@@ -116,6 +128,10 @@ class Utilize
 
     /**
      * @param array<int, string|array{0:int, 1:string, 2:int}> $tokens
+     *
+     * @return string[]
+     *
+     * @psalm-return array<string, string>
      */
     private static function parseGroupUse(array $tokens): array
     {
@@ -132,7 +148,7 @@ class Utilize
         $imports = static::splitGroupUse($tokens);
 
         return array_merge(...array_map(function (array $tokens) use ($namespacePrefix) {
-            while (count($tokens) && is_array($tokens) && $tokens[0][0] === T_WHITESPACE) {
+            while (count($tokens) && is_array($tokens[0]) && $tokens[0][0] === T_WHITESPACE) {
                 array_shift($tokens);
             }
 
@@ -152,7 +168,10 @@ class Utilize
 
     /**
      * @param array<int, string|array{0:int, 1:string, 2:int}> $tokens
-     * @return array<int, array<int, string|array{0:int, 1:string, 2:int}>>
+     *
+     * @return ((int|string)[]|string)[][]
+     *
+     * @psalm-return array<int<0, max>, list<array{0: int, 1: string, 2: int}|string>>
      */
     private static function splitGroupUse(array $tokens): array
     {

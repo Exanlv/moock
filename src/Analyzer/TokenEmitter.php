@@ -10,10 +10,13 @@ use Closure;
 class TokenEmitter
 {
     /**
-     * @var array<int, array{match: Closure, handler: Closure, once: bool}>
+     * @var array<int, array{match?: Closure, handler: Closure, once?: bool}>
      */
     private array $handlers = [];
 
+    /**
+     * @psalm-return int<100000, 999999>
+     */
     public function on(Closure $match, Closure $handler): int
     {
         $id = $this->getId();
@@ -22,6 +25,9 @@ class TokenEmitter
         return $id;
     }
 
+    /**
+     * @psalm-return int<100000, 999999>
+     */
     public function onLineChange(Closure $handler): int
     {
         $line = 0;
@@ -38,6 +44,9 @@ class TokenEmitter
         });
     }
 
+    /**
+     * @psalm-return int<100000, 999999>
+     */
     public function all(Closure $handler): int
     {
         $id = $this->getId();
@@ -52,6 +61,11 @@ class TokenEmitter
         $this->handlers[$id] = ['match' => $match, 'handler' => $handler, 'once' => true];
     }
 
+    /**
+     * @return int[]
+     *
+     * @psalm-return list{int<100000, 999999>, int<100000, 999999>}
+     */
     public function counter(Closure $up, Closure $down, int &$value): array
     {
         return [
@@ -71,6 +85,9 @@ class TokenEmitter
         }
     }
 
+    /**
+     * @psalm-return int<100000, 999999>
+     */
     private function getId(): int
     {
         do {
