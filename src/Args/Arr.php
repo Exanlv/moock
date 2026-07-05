@@ -13,7 +13,7 @@ class Arr
      */
     public static function count(int $expectedCount): Closure
     {
-        return fn (array $actual): bool => count($actual) === $expectedCount;
+        return fn (iterable $actual): bool => count($actual) === $expectedCount;
     }
 
     /**
@@ -33,15 +33,13 @@ class Arr
                     if ($expectedValue($actualValue) !== true) {
                         return false;
                     }
-
                     continue;
                 }
 
                 if (is_array($expectedValue)) {
-                    if (!$validator($actualValue, $expectedValue)) {
+                    if (!is_array($actualValue) || !$validator($actualValue, $expectedValue)) {
                         return false;
                     }
-
                     continue;
                 }
 
@@ -54,5 +52,93 @@ class Arr
         };
 
         return fn (array $actual) => $validator($actual, $expectation);
+    }
+
+    /**
+     * @psalm-return Closure(array):bool
+     */
+    public static function all(Closure $match): Closure
+    {
+        return function (array $actual) use ($match): bool {
+            foreach ($actual as $item) {
+                if (!$match($item)) {
+                    return false;
+                }
+            }
+
+            return true;
+        };
+    }
+
+    /**
+     * @psalm-return Closure(array):bool
+     */
+    public static function any(Closure $match): Closure
+    {
+        return function (array $actual) use ($match): bool {
+            foreach ($actual as $item) {
+                if ($match($item)) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+    }
+
+    /**
+     * @psalm-return Closure(array):bool
+     */
+    public static function none(Closure $match): Closure
+    {
+        return function (array $actual) use ($match): bool {
+            foreach ($actual as $item) {
+                if ($match($item)) {
+                    return false;
+                }
+            }
+
+            return true;
+        };
+    }
+
+    /**
+     * @psalm-return Closure(array):bool
+     */
+    public static function contains(mixed $expected): Closure
+    {
+        return fn (array $actual): bool => in_array($expected, $actual, true);
+    }
+
+    /**
+     * @psalm-return Closure(array):bool
+     */
+    public static function keys(array $expectedKeys): Closure
+    {
+        return fn (array $actual): bool => count(array_diff($expectedKeys, array_keys($actual))) === 0;
+    }
+
+    /**
+     * @psalm-return Closure(array):bool
+     */
+    public static function empty(): Closure
+    {
+        return fn (array $actual): bool => empty($actual);
+    }
+
+    /**
+     * @psalm-return Closure(array):bool
+     */
+    public static function notEmpty(): Closure
+    {
+        return fn (array $actual): bool => !empty($actual);
+    }
+
+    /**
+     * @psalm-return Closure(array):bool
+     */
+    public static function indexed(): Closure
+    {
+        return fn (array $actual): bool => array_keys($actual) === range(0, count($actual) - 1);
     }
 }

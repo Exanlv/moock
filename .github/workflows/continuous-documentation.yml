@@ -29,8 +29,11 @@ jobs:
       - name: Install packages
         run: composer install --prefer-dist --no-progress
 
-      - name: Run command
-        run: php docs.php > documentation.md
+      - name: Generate general documentation
+        run: php docs/generators/docs.php > docs/documentation.md
+
+      - name: Generate arg validation documentation
+        run: php docs/generators/docs.php > docs/arg-validation.md
 
       - name: Commit and push if changed
         run: |

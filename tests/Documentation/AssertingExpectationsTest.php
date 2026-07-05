@@ -221,40 +221,6 @@ class AssertingExpectationsTest extends TestCase
             ->called();
     }
 
-    #[ShowUse(Date::class)]
-    #[ShowUse(DateTime::class)]
-    #[Example(null, '`DateTimeInterface` must be before given time')]
-    #[Test]
-    public function it_asserts_date_before_helper(): void
-    {
-        Mock::method($this->mock->getUsersCreatedBefore(...))
-            ->returns([]);
-
-        $this->mock->getUsersCreatedBefore(new DateTime('2024-12-31'));
-
-        Mock::method($this->mock->getUsersCreatedBefore(...))
-            ->assert()
-            ->with(Date::before(new DateTime('2025-01-01 12:00:00')))
-            ->called();
-    }
-
-    #[ShowUse(Date::class)]
-    #[ShowUse(DateTime::class)]
-    #[Example(null, '`DateTimeInterface` must be after given time')]
-    #[Test]
-    public function it_asserts_date_after_helper(): void
-    {
-        Mock::method($this->mock->getUsersCreatedBefore(...))
-            ->returns([]);
-
-        $this->mock->getUsersCreatedBefore(new DateTime('2025-01-02'));
-
-        Mock::method($this->mock->getUsersCreatedBefore(...))
-            ->assert()
-            ->with(Date::after(new DateTime('2025-01-01 12:00:00')))
-            ->called();
-    }
-
     #[ShowUse(Number::class)]
     #[Example(null, '`int|float` must be less than given number')]
     #[Test]
@@ -287,52 +253,6 @@ class AssertingExpectationsTest extends TestCase
             ->called();
     }
 
-    #[ShowUse(Number::class)]
-    #[Example(null, '`int|float` must be within range')]
-    #[Test]
-    public function it_asserts_number_range_helper(): void
-    {
-        Mock::method($this->mock->getUsersByAge(...))
-            ->returns([]);
-
-        $this->mock->getUsersByAge(15);
-
-        Mock::method($this->mock->getUsersByAge(...))
-            ->assert()
-            ->with(Number::range(10, 20))
-            ->called();
-    }
-
-    #[ShowUse(Arr::class)]
-    #[Example(null, '`array` must have given number of items')]
-    #[Test]
-    public function it_asserts_array_count_helper(): void
-    {
-        $this->mock->deleteUsersByEmail(['a','b','c']);
-
-        Mock::method($this->mock->deleteUsersByEmail(...))
-            ->assert()
-            ->with(Arr::count(3))
-            ->called();
-    }
-
-    #[ShowUse(Arr::class)]
-    #[Example(null, '`array` must be a partial match')]
-    #[Test]
-    public function it_asserts_array_partial_helper(): void
-    {
-        $this->mock->deleteUsersByEmail([
-            'some-email@example.com',
-            'ignore-this@mail.com',
-            'another@example.com',
-        ]);
-
-        Mock::method($this->mock->deleteUsersByEmail(...))
-            ->assert()
-            ->with(Arr::partial([
-                0 => 'some-email@example.com',
-                2 => fn ($email) => str_ends_with($email, '@example.com'),
-            ]))
-            ->called();
-    }
+    #[Example(null, 'To see more of these helpers, head on over to the [argument validators](./arg-validation.md) documentation.')]
+    public function redirect_to_arg_validator_doc(): void {}
 }
