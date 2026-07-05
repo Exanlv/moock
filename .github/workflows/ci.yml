@@ -9,3 +9,5 @@ on:
 jobs:
   build:
     uses: Exanlv/ci/.github/workflows/php-unit-tests.yml@main
+  psalm:
+    uses: Exanlv/ci/.github/workflows/psalm-l1.yml
