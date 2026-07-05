@@ -10,6 +10,9 @@ use Exan\Moock\Expector\Expectation;
 use Exan\Moock\Expector\MockExpector;
 use ReflectionFunction;
 
+/**
+ * @psalm-suppress InvalidReturnStatement,InvalidReturnType
+ */
 class Mock
 {
     /**
@@ -108,6 +111,9 @@ class Mock
         $mockExpector->validate($expectation);
     }
 
+    /**
+     * @psalm-return Closure(...mixed):mixed
+     */
     public static function fn(): Closure
     {
         $mock = Mock::interface(MockFnInterface::class);

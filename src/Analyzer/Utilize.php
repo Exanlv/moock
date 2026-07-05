@@ -49,6 +49,10 @@ class Utilize
 
     /**
      * @param array<int, string|array{0:int, 1:string, 2:int}> $line
+     *
+     * @return array[]
+     *
+     * @psalm-return array<int<0, max>, array>
      */
     private static function parseLine($line): array
     {
@@ -61,7 +65,10 @@ class Utilize
 
     /**
      * @param array<int, string|array{0:int, 1:string, 2:int}> $tokens
-     * @return array<int, array<int, string|array{0:int, 1:string, 2:int}>>
+     *
+     * @return ((int|string)[]|string)[][]
+     *
+     * @psalm-return array<int<0, max>, list<array{0: int, 1: string, 2: int}|string>>
      */
     private static function individualUses($tokens): array
     {
@@ -116,6 +123,10 @@ class Utilize
 
     /**
      * @param array<int, string|array{0:int, 1:string, 2:int}> $tokens
+     *
+     * @return string[]
+     *
+     * @psalm-return array<string, string>
      */
     private static function parseGroupUse(array $tokens): array
     {
@@ -152,7 +163,10 @@ class Utilize
 
     /**
      * @param array<int, string|array{0:int, 1:string, 2:int}> $tokens
-     * @return array<int, array<int, string|array{0:int, 1:string, 2:int}>>
+     *
+     * @return ((int|string)[]|string)[][]
+     *
+     * @psalm-return array<int<0, max>, list<array{0: int, 1: string, 2: int}|string>>
      */
     private static function splitGroupUse(array $tokens): array
     {

@@ -35,6 +35,9 @@ class Expectation
         return new Expectation($this->classMock, $this->methodName, $filteredCalls, $this->expectation);
     }
 
+    /**
+     * @psalm-return int<0, max>
+     */
     private function callsAmount(): int
     {
         return count($this->calls);

@@ -24,5 +24,6 @@
         <UnusedProperty errorLevel="suppress" />
         <UnusedVariable errorLevel="suppress" />
         <UnusedClass errorLevel="suppress" />
+        <ClassMustBeFinal errorLevel="suppress" />
     </issueHandlers>
 </psalm>

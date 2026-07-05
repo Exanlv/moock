@@ -31,7 +31,7 @@
 
         "psalm": "psalm --no-cache",
 
-        "psalm-fix": "psalm --no-cache --alter --issues=all",
+        "psalm-fix": "psalm --no-cache --alter --issues=MissingReturnType,MissingClosureReturnType,InvalidReturnType,InvalidNullableReturnType,InvalidFalsableReturnType,MissingParamType,MissingPropertyType,MismatchingDocblockParamType,MismatchingDocblockReturnType,LessSpecificReturnType,PossiblyUndefinedVariable,PossiblyUndefinedGlobalVariable,UnusedMethod,PossiblyUnusedMethod,UnusedProperty,PossiblyUnusedProperty,UnusedVariable,UnnecessaryVarAnnotation,ParamNameMismatch",
 
 
         "csf": "php-cs-fixer fix --using-cache=no --allow-risky=yes",

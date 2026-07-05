@@ -9,6 +9,9 @@ use RuntimeException;
 
 trait FiltersMethodArgs
 {
+    /**
+     * @psalm-return array<int<0, max>, mixed>
+     */
     private function filterArgs(array $inputs, array $filters): array
     {
         if (empty($inputs)) {
@@ -37,7 +40,15 @@ trait FiltersMethodArgs
         return $inputs;
     }
 
-    private function convertArgsToDictionary(array $inputs, array $filters)
+    /**
+     * @template TArray of array<array-key, mixed>
+     *
+     * @param non-empty-list<TArray> $inputs
+     * @param list<mixed> $filters
+     *
+     * @return array<key-of<TArray>, mixed>
+     */
+    private function convertArgsToDictionary(array $inputs, array $filters): array
     {
         $argKeys = array_keys($inputs[0]);
 

@@ -94,6 +94,8 @@ class Mocker
 
     /**
      * @return ReflectionProperty[]
+     *
+     * @psalm-return array<int<0, max>, ReflectionProperty>
      */
     private function getPropertiesToMock(): array
     {

@@ -8,11 +8,17 @@ use Closure;
 
 class Arr
 {
+    /**
+     * @psalm-return Closure(array):bool
+     */
     public static function count(int $expectedCount): Closure
     {
         return fn (array $actual): bool => count($actual) === $expectedCount;
     }
 
+    /**
+     * @psalm-return Closure(array):bool
+     */
     public static function partial(array $expectation): Closure
     {
         $validator = function (array $actual, array $expectation) use (&$validator): bool {

@@ -104,6 +104,8 @@ class MockExpector
 
     /**
      * @return DetailedMethodCall[]
+     *
+     * @psalm-return list<DetailedMethodCall>
      */
     private function getActualCalls(): array
     {

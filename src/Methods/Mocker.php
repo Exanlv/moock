@@ -28,11 +28,18 @@ class Mocker
     ) {
         /** @var ReflectionMethod[] */
         $allMethods = array_merge(
-            ...array_map(function (string $interface): array {
-                $ref = new ReflectionClass($interface);
+            ...array_map(/**
+             * @return \ReflectionMethod[]
+             *
+             * @psalm-return list<ReflectionMethod>
+             */
+                function (string $interface): array {
+                    $ref = new ReflectionClass($interface);
 
-                return $ref->getMethods(ReflectionMethod::IS_PUBLIC);
-            }, $this->interfaces),
+                    return $ref->getMethods(ReflectionMethod::IS_PUBLIC);
+                },
+                $this->interfaces
+            ),
         );
 
         $methodNames = [];
@@ -173,8 +180,8 @@ class Mocker
                 return $token;
             }
 
-            $argIsColon = fn (int $i) => isset($arg[$i]) && $arg[$i] === ':';
-            $argIsWhitespace = fn (int $i) => isset($arg[$i]) && is_array($arg[$i]) && $arg[$i][0] === T_WHITESPACE;
+            $argIsColon = fn (int $i): bool => isset($arg[$i]) && $arg[$i] === ':';
+            $argIsWhitespace = fn (int $i): bool => isset($arg[$i]) && is_array($arg[$i]) && $arg[$i][0] === T_WHITESPACE;
 
             if (
                 $token[0] === T_STRING
