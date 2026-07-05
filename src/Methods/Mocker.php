@@ -22,7 +22,7 @@ class Mocker
 
     public readonly array $methods;
 
-    /** @param string[] $interfaces */
+    /** @param class-string[] $interfaces */
     public function __construct(
         public readonly array $interfaces,
     ) {
@@ -152,6 +152,11 @@ class Mocker
         }
 
         $fileContents = file_get_contents($class->getFileName());
+        if ($fileContents === false) {
+            throw new RuntimeException(
+                sprintf('Unable to load source file for class %s', $class->getFileName())
+            );
+        }
 
         if ($class->isAnonymous()) {
             $fullName = explode(':', $class->getName());
@@ -169,6 +174,11 @@ class Mocker
         );
 
         $arg = $yanked->args;
+        if ($arg === null) {
+            throw new RuntimeException(
+                sprintf('Unable to retrieve constructor args for %s::%s()', $class->getName(), $method->getName())
+            );
+        }
 
         array_shift($arg); // new
         array_shift($arg); // (whitespace)

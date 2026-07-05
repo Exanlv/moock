@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Exan\Moock;
 
 use Closure;
+use Exan\Moock\Dto\MethodCall;
 use RuntimeException;
 
 trait FiltersMethodArgs
@@ -31,8 +32,8 @@ trait FiltersMethodArgs
             }
 
             $validator = $valueOrValidator instanceof Closure
-                ? fn ($call): bool => $valueOrValidator($call[$name])
-                : fn ($call): bool => $call[$name] === $valueOrValidator;
+                ? fn (array $call): bool => $valueOrValidator($call[$name])
+                : fn (array $call): bool => $call[$name] === $valueOrValidator;
 
             $inputs = array_filter($inputs, $validator);
         }

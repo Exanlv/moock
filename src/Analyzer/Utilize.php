@@ -40,11 +40,11 @@ class Utilize
      * @param string $declaringNamespace
      * @param array<int, array<int, string|array{0:int, 1:string, 2:int}>> $uses
      */
-    public static function fromTokens(?string $declaringNamespace, array $uses): static
+    public static function fromTokens(?string $declaringNamespace, array $uses): self
     {
         $convertedUses = array_merge(...array_map(static::parseLine(...), $uses));
 
-        return new static($declaringNamespace, array_merge(...$convertedUses));
+        return new self($declaringNamespace, array_merge(...$convertedUses));
     }
 
     /**
@@ -148,7 +148,7 @@ class Utilize
         $imports = static::splitGroupUse($tokens);
 
         return array_merge(...array_map(function (array $tokens) use ($namespacePrefix) {
-            while (count($tokens) && is_array($tokens) && $tokens[0][0] === T_WHITESPACE) {
+            while (count($tokens) && is_array($tokens[0]) && $tokens[0][0] === T_WHITESPACE) {
                 array_shift($tokens);
             }
 

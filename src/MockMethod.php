@@ -55,7 +55,7 @@ class MockMethod
 
     public function returns(mixed $returnValue): static
     {
-        $this->classMock->__replace($this->methodName, fn () => $returnValue);
+        $this->classMock->__replace($this->methodName, fn (): mixed => $returnValue);
 
         return $this;
     }

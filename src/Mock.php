@@ -65,8 +65,10 @@ class Mock
 
         $mocker = new ClassMocker();
 
-        foreach ($implements as $interface) {
-            $mocker->addInterface($interface);
+        if ($implements !== false) {
+            foreach ($implements as $interface) {
+                $mocker->addInterface($interface);
+            }
         }
 
         return static::codeToMock($mocker->extends($class)->getCode());

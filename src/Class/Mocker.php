@@ -16,6 +16,7 @@ use RuntimeException;
 class Mocker
 {
     public private(set) array $interfaces = [];
+    /** @var null|class-string */
     public private(set) ?string $extends = null;
 
     public function getCode(): string
