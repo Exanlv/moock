@@ -45,4 +45,10 @@ class AnalyzerTestCase extends TestCase
 
         return false;
     }
+
+    protected function implode(array $tokens)
+    {
+        $tokens = array_map(fn (string|array $token) => is_array($token) ? $token[1] : $token, $tokens);
+        return implode('', $tokens);
+    }
 }
