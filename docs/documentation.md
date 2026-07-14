@@ -432,6 +432,7 @@ $this->assertEquals(123.456, $mock->returnFloat());
 
 $this->assertEquals([], $mock->returnArray());
 $this->assertEquals([], $mock->returnIterable());
+$this->assertEmpty(iterator_to_array($mock->returnGenerator()));
 
 // These objects do not have any properties
 $this->assertInstanceOf(stdClass::class, $mock->returnObject());
