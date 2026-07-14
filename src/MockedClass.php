@@ -12,6 +12,7 @@ use DateTimeImmutable;
 use Exan\Moock\Dto\MethodCall;
 use Exan\Moock\Expector\MockExpector;
 use Exan\Moock\Properties\MockPropertyValue;
+use Generator;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
@@ -161,6 +162,10 @@ trait MockedClass
             DateTimeImmutable::class => fn () => new DateTimeImmutable(),
             DateInterval::class => fn () => DateInterval::createFromDateString('1 day'),
             DatePeriod::class => fn () => DatePeriod::createFromISO8601String('R1337/2026-02-24T00:00:00Z/P1Y'),
+
+            Generator::class => function (): Generator {
+                yield from [];
+            }
         ];
 
         if (isset($returns[$plainType])) {

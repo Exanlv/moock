@@ -52,6 +52,8 @@ class DefaultReturnValuesTest extends TestCase
         $this->assertInstanceOf(DateTimeImmutable::class, $mock->returnDateTimeImmutable());
         $this->assertInstanceOf(DateInterval::class, $mock->returnDateInterval());
         $this->assertInstanceOf(DatePeriod::class, $mock->returnDatePeriod());
+
+        $this->assertEmpty(iterator_to_array($mock->returnGenerator()));
     }
 
     #[Example('Returning mocked objects', 'If a method has a return type of an object, a mocked instance will be returned. It will return the same mock each time, so it can be used for assertions too.')]
