@@ -8,6 +8,7 @@ use DateInterval;
 use DatePeriod;
 use DateTime;
 use DateTimeImmutable;
+use Generator;
 use stdClass;
 
 class TestDefaultReturns
@@ -125,5 +126,10 @@ class TestDefaultReturns
     public function returnUserServiceInterface(): UserServiceInterface
     {
         return new UserService();
+    }
+
+    public function returnGenerator(): Generator
+    {
+        yield 'value';
     }
 }
